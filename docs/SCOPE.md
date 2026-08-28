@@ -28,28 +28,38 @@ after a scoping correction.
 
 ## The slice, by the numbers
 
-- **20 programs** COPY one of CVACT01Y/02Y/03Y with an active (non-commented)
-  `COPY` statement. 16 are in the core `cbl/` app; 4 are in optional
+- **21 programs** COPY one of CVACT01Y/02Y/03Y with an active (non-commented)
+  `COPY` statement. 17 are in the core `cbl/` app; 4 are in optional
   integration modules (`app-authorization-ims-db2-mq/`: 2,
   `app-transaction-type-db2/`: 1, `app-vsam-mq/`: 1) that demonstrate
   alternate IMS/DB2/MQ integrations of the same account/card domain.
-- This sits at the top of the 8-20 program range targeted for hand
-  verification within about an hour. No adjustment was made because 20 is
-  within bounds, but if verification runs long, the 4 optional-module
-  programs are the first candidates to drop (they're alternate integration
-  demos, not part of the core online/batch path).
+  (Corrected from an earlier report of "20 programs, 16 core" — that was an
+  arithmetic error in the summary prose; the underlying enumerated list was
+  always complete. Re-verified 2026-08-28 by re-running the unique-file count
+  independently; see `scripts/ground_truth_extract.py`'s `PROGRAMS` list for
+  the authoritative 21-entry set.)
+- This is slightly above the 8-20 program range targeted for hand
+  verification within about an hour. No slice reduction was made, but if
+  verification runs long, the 4 optional-module programs are the first
+  candidates to drop (they're alternate integration demos, not part of the
+  core online/batch path).
 - Real dependency structure confirmed, not assumed: `COPY` statements were
   checked column-by-column (COBOL indicator column 7) to exclude 4 lines
   that are commented out in the source (`COCRDSLC.cbl`, `COCRDUPC.cbl` each
   have 2 dead `COPY` references to CVACT01Y/03Y that a naive text search
   would over-count).
-- 3 of the 20 programs (`CBACT03C.cbl`, `COTRTLIC.cbl`, `CBACT02C.cbl`) COPY
+- 3 of the 21 programs (`CBACT03C.cbl`, `COTRTLIC.cbl`, `CBACT02C.cbl`) COPY
   a slice copybook but never name an individual field from it in their own
   code — they only move/read/display the record as an opaque group item.
   They still matter structurally (a field-width change shifts the record
   layout under them) but they are not "field-aware" callers, which is a
   real distinction the impact scorecard should capture, not something to
   paper over as identical to programs that read the field's value.
+- Some programs `COPY` a slice copybook that turns out to be entirely dead:
+  no field from it, and no whole-group I/O on it, appears anywhere else in
+  the file (`COTRN02C.cbl`/CVACT01Y, `COTRTLIC.cbl`/CVACT02Y). These are
+  documented as UNCERTAIN in the ground truth files rather than force-fit
+  into either tier — see `docs/ground_truth/`.
 
 ## Method
 
@@ -59,25 +69,58 @@ recalled from prior knowledge of CardDemo. The exact commands are captured in
 `bash scripts/survey_slice.sh` to reproduce the program list, descriptions,
 and field usage counts.
 
-## Candidate target fields (surveyed, not yet exhaustively traced)
+## Target fields: final selection and exhaustive ground truth
 
-Three fields were surveyed as impact-analysis targets, chosen to vary in
-blast radius and to include real naming aliases (the "account ID" vs
-`ACCT-ID` problem naive grep can't resolve). Full writeup with evidence in
-the handoff conversation; two of the three will be picked for an exhaustive
-hand-verified trace next:
+Two of the three surveyed candidates were selected for exhaustive,
+line-level, hand-verified ground truth (the medium candidate,
+`ACCT-ACTIVE-STATUS`/`CARD-ACTIVE-STATUS`, was dropped as time-boxed — same
+naming-trap lesson as the narrow field):
 
-1. **Narrow** — `ACCT-ADDR-ZIP` (CVACT01Y), used in 2/20 programs
-   (`CBEXPORT.cbl`, `CBIMPORT.cbl`). Alias trap: `CUST-ADDR-ZIP`
-   (CVCUS01Y, outside the slice) is a *different* field co-resident in the
-   same two programs — a "zip code" change request is ambiguous between the
-   two without field-level resolution.
-2. **Medium** — `ACCT-ACTIVE-STATUS` (CVACT01Y, 6/20) vs `CARD-ACTIVE-STATUS`
-   (CVACT02Y, 5/20), union 9/20. Same suffix, same `PIC X(01)` shape, two
-   distinct real-world fields (account status vs. card status).
-3. **Wide** — `ACCT-ID` (CVACT01Y) / `CARD-ACCT-ID` (CVACT02Y) /
-   `XREF-ACCT-ID` (CVACT03Y), union 17/20. Confirmed as one logical value
-   under three names by `CBTRN01C.cbl:175` (`MOVE XREF-ACCT-ID TO ACCT-ID`)
-   and `CBTRN01C.cbl:237` (`DISPLAY 'ACCOUNT ID : ' XREF-ACCT-ID` — the
-   human-facing label "ACCOUNT ID" mapped directly onto the `XREF-ACCT-ID`
-   code name).
+1. **Narrow — `ACCT-ADDR-ZIP`** (CVACT01Y, `PIC X(10)`). Scope: only the 14
+   of 21 slice programs that actively COPY CVACT01Y (the only copybook that
+   declares this field) — programs that never pull in CVACT01Y cannot be
+   affected and are correctly absent from the ground truth, not listed as
+   unaffected. Near miss: `CUST-ADDR-ZIP` (CVCUS01Y, a distinct declared
+   customer-address field, also `PIC X(10)`), found via the same 21-program
+   search — not assumed to exist, confirmed present in 6 programs including
+   both narrow-field FIELD-AWARE programs.
+2. **Wide — `ACCT-ID`** (CVACT01Y) / **`CARD-ACCT-ID`** (CVACT02Y) /
+   **`XREF-ACCT-ID`** (CVACT03Y), all `PIC 9(11)`, confirmed as one logical
+   value by `CBTRN01C.cbl:175` (`MOVE XREF-ACCT-ID TO ACCT-ID`) and
+   `CBTRN01C.cbl:237` (`DISPLAY 'ACCOUNT ID : ' XREF-ACCT-ID`).
+
+Full machine-readable ground truth: **`docs/ground_truth/ACCT-ID.json`** and
+**`docs/ground_truth/ACCT-ADDR-ZIP.json`**. Each records, per affected
+program: core/optional module, tier (FIELD-AWARE vs STRUCTURALLY-AFFECTED —
+see each file's `tier_definitions`), every line hit with access kind and a
+note, and (for STRUCTURALLY-AFFECTED programs) the group-level I/O evidence
+that justifies the tier instead of the field name itself. Regenerate with
+`python3 scripts/ground_truth_build.py`, which combines
+`scripts/ground_truth_extract.py`'s deterministic tokenizing pass (COBOL
+column-7-aware, string-literal-aware) with hand-verified classification data
+embedded in the build script.
+
+**Wide field**: 15 FIELD-AWARE + 5 STRUCTURALLY-AFFECTED (20 of 21 tiered).
+Near misses: 31 distinct locally-declared shadow/commarea variables (e.g.
+`CDEMO-ACCT-ID`, `CC-ACCT-ID`, `WS-CARD-RID-ACCT-ID`) contain one of the
+three alias names as a substring without being that field — 271 lines total
+that a naive grep would misattribute.
+
+**Narrow field**: 2 FIELD-AWARE + 11 STRUCTURALLY-AFFECTED (13 of 14
+tiered). Near miss `CUST-ADDR-ZIP`: 7 exact hits across 6 programs.
+
+**UNCERTAIN (2 entries, both fully reasoned in the JSON, not guessed):**
+`COTRTLIC.cbl` COPYs CVACT02Y but never references `CARD-RECORD` or any
+account-id field anywhere — no group-level I/O either, so even
+STRUCTURALLY-AFFECTED may overstate it (wide field). `COTRN02C.cbl` COPYs
+CVACT01Y but never references `ACCOUNT-RECORD` or any `ACCT-*` field from it
+— same dead-copy pattern, relevant only to the narrow field since this
+program is genuinely FIELD-AWARE for the wide field via a different
+copybook (CVACT03Y/`XREF-ACCT-ID`).
+
+**Correction, 2026-08-28**: an earlier version of this document and the
+initial survey report stated "20 programs, 16 core" for the slice. Re-
+verification during ground-truth construction found the correct count is
+**21 programs, 17 core** — the original enumerated table was actually
+complete; only the summary arithmetic was wrong. See `git log` on this file
+for the prior (incorrect) figure.

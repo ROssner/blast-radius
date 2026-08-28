@@ -1,0 +1,1494 @@
+{
+  "field": "ACCT-ID (wide)",
+  "aliases": {
+    "ACCT-ID": {
+      "copybook": "CVACT01Y",
+      "record": "ACCOUNT-RECORD",
+      "pic": "9(11)"
+    },
+    "CARD-ACCT-ID": {
+      "copybook": "CVACT02Y",
+      "record": "CARD-RECORD",
+      "pic": "9(11)"
+    },
+    "XREF-ACCT-ID": {
+      "copybook": "CVACT03Y",
+      "record": "CARD-XREF-RECORD",
+      "pic": "9(11)"
+    }
+  },
+  "tier_definitions": {
+    "FIELD-AWARE": "names at least one of the three exact field tokens (ACCT-ID / CARD-ACCT-ID / XREF-ACCT-ID) somewhere in its own code, outside of string literals",
+    "STRUCTURALLY-AFFECTED": "COPYs a copybook containing one of the aliases and performs whole-group I/O (READ/WRITE/DISPLAY/MOVE) on the record, but never names the field itself"
+  },
+  "methodology": "scripts/ground_truth_extract.py tokenizes each program's non-comment text (COBOL column 7 checked per line) and flags exact token matches against the three alias names, excluding matches inside quoted string literals. Tier and access-kind classification for every hit below was then verified by hand against the actual source (see notes per hit); re-run scripts/ground_truth_build.py to regenerate this file from that classification data plus a fresh extraction pass.",
+  "programs": [
+    {
+      "path": "cbl/CBACT01C.cbl",
+      "module": "core",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {
+          "alias": "ACCT-ID",
+          "line": 201,
+          "access_kind": "DISPLAY",
+          "source_line": "DISPLAY 'ACCT-ID                 :'   ACCT-ID",
+          "note": "the leading 'ACCT-ID :' text on this line is a report-label string literal, not a field reference -- the trailing bare ACCT-ID token is the real DISPLAY operand"
+        },
+        {
+          "alias": "ACCT-ID",
+          "line": 216,
+          "access_kind": "MOVE-SOURCE",
+          "source_line": "MOVE   ACCT-ID                 TO   OUT-ACCT-ID.",
+          "note": "copied into OUT-ACCT-ID, a sequential-file output record field"
+        },
+        {
+          "alias": "ACCT-ID",
+          "line": 254,
+          "access_kind": "MOVE-SOURCE",
+          "source_line": "MOVE   ACCT-ID         TO   ARR-ACCT-ID.",
+          "note": "copied into ARR-ACCT-ID, an array/report output record field"
+        },
+        {
+          "alias": "ACCT-ID",
+          "line": 277,
+          "access_kind": "MOVE-SOURCE",
+          "source_line": "MOVE   ACCT-ID            TO VB1-ACCT-ID",
+          "note": "copied into VB1-ACCT-ID, a variable-block output record field"
+        }
+      ],
+      "also_structural": []
+    },
+    {
+      "path": "cbl/CBACT02C.cbl",
+      "module": "core",
+      "tier": "STRUCTURALLY-AFFECTED",
+      "hits": [],
+      "structural_evidence": [
+        {
+          "alias": "CARD-ACCT-ID",
+          "copybook": "CVACT02Y",
+          "record": "CARD-RECORD",
+          "evidence": [
+            {
+              "line": 78,
+              "source_line": "DISPLAY CARD-RECORD"
+            },
+            {
+              "line": 93,
+              "source_line": "READ CARDFILE-FILE INTO CARD-RECORD."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "cbl/CBACT03C.cbl",
+      "module": "core",
+      "tier": "STRUCTURALLY-AFFECTED",
+      "hits": [],
+      "structural_evidence": [
+        {
+          "alias": "XREF-ACCT-ID",
+          "copybook": "CVACT03Y",
+          "record": "CARD-XREF-RECORD",
+          "evidence": [
+            {
+              "line": 78,
+              "source_line": "DISPLAY CARD-XREF-RECORD"
+            },
+            {
+              "line": 93,
+              "source_line": "READ XREFFILE-FILE INTO CARD-XREF-RECORD."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "cbl/CBACT04C.cbl",
+      "module": "core",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {
+          "alias": "ACCT-ID",
+          "line": 486,
+          "access_kind": "MOVE-SOURCE",
+          "source_line": "ACCT-ID",
+          "note": "concatenated via STRING into TRAN-DESC (an interest-transaction description) -- data flow is out of ACCT-ID same as a MOVE source"
+        }
+      ],
+      "also_structural": []
+    },
+    {
+      "path": "cbl/CBEXPORT.cbl",
+      "module": "core",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {
+          "alias": "ACCT-ID",
+          "line": 44,
+          "access_kind": "READ",
+          "source_line": "RECORD KEY IS ACCT-ID",
+          "note": "RECORD KEY IS ACCT-ID in FILE-CONTROL: ACCT-ID is the VSAM record key for ACCTFILE-FILE, so every keyed read/write against this file is keyed on this exact field"
+        },
+        {
+          "alias": "ACCT-ID",
+          "line": 351,
+          "access_kind": "MOVE-SOURCE",
+          "source_line": "MOVE ACCT-ID TO EXP-ACCT-ID",
+          "note": "copied into EXP-ACCT-ID, the branch-migration export record (CVEXPORT.cpy) -- this is how the value crosses into CBIMPORT.cbl via the export file"
+        },
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 417,
+          "access_kind": "MOVE-SOURCE",
+          "source_line": "MOVE XREF-ACCT-ID TO EXP-XREF-ACCT-ID",
+          "note": "copied into EXP-XREF-ACCT-ID (export record)"
+        },
+        {
+          "alias": "CARD-ACCT-ID",
+          "line": 536,
+          "access_kind": "MOVE-SOURCE",
+          "source_line": "MOVE CARD-ACCT-ID TO EXP-CARD-ACCT-ID",
+          "note": "copied into EXP-CARD-ACCT-ID (export record)"
+        }
+      ],
+      "also_structural": []
+    },
+    {
+      "path": "cbl/CBIMPORT.cbl",
+      "module": "core",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {
+          "alias": "ACCT-ID",
+          "line": 328,
+          "access_kind": "MOVE-TARGET",
+          "source_line": "MOVE EXP-ACCT-ID TO ACCT-ID",
+          "note": "received from EXP-ACCT-ID -- reverse of CBEXPORT.cbl:351"
+        },
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 359,
+          "access_kind": "MOVE-TARGET",
+          "source_line": "MOVE EXP-XREF-ACCT-ID TO XREF-ACCT-ID",
+          "note": "received from EXP-XREF-ACCT-ID"
+        },
+        {
+          "alias": "CARD-ACCT-ID",
+          "line": 408,
+          "access_kind": "MOVE-TARGET",
+          "source_line": "MOVE EXP-CARD-ACCT-ID TO CARD-ACCT-ID",
+          "note": "received from EXP-CARD-ACCT-ID"
+        }
+      ],
+      "also_structural": []
+    },
+    {
+      "path": "cbl/CBSTM03A.CBL",
+      "module": "core",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 396,
+          "access_kind": "MOVE-SOURCE",
+          "source_line": "MOVE XREF-ACCT-ID TO WS-M03B-KEY.",
+          "note": "copied into WS-M03B-KEY, used as a statement-lookup key"
+        },
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 398,
+          "access_kind": "READ",
+          "source_line": "COMPUTE WS-M03B-KEY-LN = LENGTH OF XREF-ACCT-ID.",
+          "note": "referenced via LENGTH OF (its byte length, not its value) to size WS-M03B-KEY-LN"
+        },
+        {
+          "alias": "ACCT-ID",
+          "line": 483,
+          "access_kind": "MOVE-SOURCE",
+          "source_line": "MOVE ACCT-ID TO ST-ACCT-ID.",
+          "note": "copied into ST-ACCT-ID (statement print line)"
+        },
+        {
+          "alias": "ACCT-ID",
+          "line": 529,
+          "access_kind": "MOVE-SOURCE",
+          "source_line": "MOVE ACCT-ID TO L11-ACCT.",
+          "note": "copied into L11-ACCT (statement print line)"
+        }
+      ],
+      "also_structural": []
+    },
+    {
+      "path": "cbl/CBTRN01C.cbl",
+      "module": "core",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 175,
+          "access_kind": "MOVE-SOURCE",
+          "source_line": "MOVE XREF-ACCT-ID TO ACCT-ID",
+          "note": "bridges the XREF-ACCT-ID and ACCT-ID aliases directly: confirms both names denote the same logical value"
+        },
+        {
+          "alias": "ACCT-ID",
+          "line": 175,
+          "access_kind": "MOVE-TARGET",
+          "source_line": "MOVE XREF-ACCT-ID TO ACCT-ID",
+          "note": "receives the value carried by XREF-ACCT-ID on the same line"
+        },
+        {
+          "alias": "ACCT-ID",
+          "line": 178,
+          "access_kind": "DISPLAY",
+          "source_line": "DISPLAY 'ACCOUNT ' ACCT-ID ' NOT FOUND'",
+          "note": "error message: 'ACCOUNT <id> NOT FOUND'"
+        },
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 237,
+          "access_kind": "DISPLAY",
+          "source_line": "DISPLAY 'ACCOUNT ID : ' XREF-ACCT-ID",
+          "note": "DISPLAY 'ACCOUNT ID : ' XREF-ACCT-ID -- the human-facing label 'ACCOUNT ID' is mapped directly onto the XREF-ACCT-ID code name, the concrete alias evidence for this field"
+        },
+        {
+          "alias": "ACCT-ID",
+          "line": 242,
+          "access_kind": "MOVE-SOURCE",
+          "source_line": "MOVE ACCT-ID TO FD-ACCT-ID",
+          "note": "copied into FD-ACCT-ID, a file-record field"
+        }
+      ],
+      "also_structural": []
+    },
+    {
+      "path": "cbl/CBTRN02C.cbl",
+      "module": "core",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 394,
+          "access_kind": "MOVE-SOURCE",
+          "source_line": "MOVE XREF-ACCT-ID TO FD-ACCT-ID",
+          "note": "copied into FD-ACCT-ID, a file-record field"
+        },
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 469,
+          "access_kind": "MOVE-SOURCE",
+          "source_line": "MOVE XREF-ACCT-ID TO FD-TRANCAT-ACCT-ID",
+          "note": "copied into FD-TRANCAT-ACCT-ID, a transaction-category file-record field"
+        },
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 505,
+          "access_kind": "MOVE-SOURCE",
+          "source_line": "MOVE XREF-ACCT-ID TO TRANCAT-ACCT-ID",
+          "note": "copied into TRANCAT-ACCT-ID"
+        }
+      ],
+      "also_structural": []
+    },
+    {
+      "path": "cbl/CBTRN03C.cbl",
+      "module": "core",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 364,
+          "access_kind": "MOVE-SOURCE",
+          "source_line": "MOVE XREF-ACCT-ID TO TRAN-REPORT-ACCOUNT-ID",
+          "note": "copied into TRAN-REPORT-ACCOUNT-ID, a print-report line field"
+        }
+      ],
+      "also_structural": []
+    },
+    {
+      "path": "cbl/COACTUPC.cbl",
+      "module": "core",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {
+          "alias": "ACCT-ID",
+          "line": 3805,
+          "access_kind": "MOVE-SOURCE",
+          "source_line": "MOVE ACCT-ID                   TO CDEMO-ACCT-ID",
+          "note": "copied into CDEMO-ACCT-ID, a field of CARDDEMO-COMMAREA (COCOM01Y.cpy); this program XCTLs onward with COMMAREA(CARDDEMO-COMMAREA) at line 956, so this value is passed to another program"
+        },
+        {
+          "alias": "ACCT-ID",
+          "line": 3817,
+          "access_kind": "MOVE-SOURCE",
+          "source_line": "MOVE ACCT-ID                  TO ACUP-OLD-ACCT-ID",
+          "note": "copied into ACUP-OLD-ACCT-ID, a before-image working field used later to detect whether the account id changed"
+        }
+      ],
+      "also_structural": []
+    },
+    {
+      "path": "cbl/COACTVWC.cbl",
+      "module": "core",
+      "tier": "STRUCTURALLY-AFFECTED",
+      "hits": [],
+      "structural_evidence": [
+        {
+          "alias": "ACCT-ID",
+          "copybook": "CVACT01Y",
+          "record": "ACCOUNT-RECORD",
+          "evidence": [
+            {
+              "line": 780,
+              "source_line": "INTO      (ACCOUNT-RECORD)"
+            },
+            {
+              "line": 781,
+              "source_line": "LENGTH    (LENGTH OF ACCOUNT-RECORD)"
+            }
+          ]
+        },
+        {
+          "alias": "XREF-ACCT-ID",
+          "copybook": "CVACT03Y",
+          "record": "CARD-XREF-RECORD",
+          "evidence": [
+            {
+              "line": 731,
+              "source_line": "INTO      (CARD-XREF-RECORD)"
+            },
+            {
+              "line": 732,
+              "source_line": "LENGTH    (LENGTH OF CARD-XREF-RECORD)"
+            }
+          ]
+        },
+        {
+          "alias": "CARD-ACCT-ID",
+          "copybook": "CVACT02Y",
+          "record": "CARD-RECORD",
+          "dead_copy": true,
+          "evidence": [],
+          "note": "COPY CVACT02Y is active (line 248) but CARD-RECORD is never referenced anywhere else in this file -- not read, not written, not displayed. This alias is effectively unaffected in this program despite the COPY being present."
+        }
+      ]
+    },
+    {
+      "path": "cbl/COBIL00C.cbl",
+      "module": "core",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {
+          "alias": "ACCT-ID",
+          "line": 170,
+          "access_kind": "MOVE-TARGET",
+          "source_line": "MOVE ACTIDINI  OF COBIL0AI TO ACCT-ID",
+          "note": "receives screen input ACTIDINI OF COBIL0AI (statement spans lines 170-171, moves to two targets)"
+        },
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 171,
+          "access_kind": "MOVE-TARGET",
+          "source_line": "XREF-ACCT-ID",
+          "note": "second receiving field of the same MOVE started at line 170"
+        },
+        {
+          "alias": "ACCT-ID",
+          "line": 349,
+          "access_kind": "READ",
+          "source_line": "RIDFLD    (ACCT-ID)",
+          "note": "RIDFLD(ACCT-ID) -- used as the VSAM record-key field for a CICS keyed READ"
+        },
+        {
+          "alias": "ACCT-ID",
+          "line": 350,
+          "access_kind": "READ",
+          "source_line": "KEYLENGTH (LENGTH OF ACCT-ID)",
+          "note": "KEYLENGTH(LENGTH OF ACCT-ID) -- supports the keyed read above"
+        },
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 414,
+          "access_kind": "READ",
+          "source_line": "RIDFLD    (XREF-ACCT-ID)",
+          "note": "RIDFLD(XREF-ACCT-ID) -- keyed CICS READ of the cross-reference file"
+        },
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 415,
+          "access_kind": "READ",
+          "source_line": "KEYLENGTH (LENGTH OF XREF-ACCT-ID)",
+          "note": "KEYLENGTH(LENGTH OF XREF-ACCT-ID)"
+        }
+      ],
+      "also_structural": []
+    },
+    {
+      "path": "cbl/COCRDLIC.cbl",
+      "module": "core",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {
+          "alias": "CARD-ACCT-ID",
+          "line": 1167,
+          "access_kind": "MOVE-SOURCE",
+          "source_line": "MOVE CARD-ACCT-ID TO",
+          "note": "copied into WS-ROW-ACCTNO(WS-SCRN-COUNTER), a screen-row display table entry (statement spans lines 1167-1168)"
+        },
+        {
+          "alias": "CARD-ACCT-ID",
+          "line": 1174,
+          "access_kind": "MOVE-SOURCE",
+          "source_line": "MOVE CARD-ACCT-ID",
+          "note": "copied into WS-CA-FIRST-CARD-ACCT-ID, tracks the first card shown on this screen page (statement spans lines 1174-1175)"
+        },
+        {
+          "alias": "CARD-ACCT-ID",
+          "line": 1194,
+          "access_kind": "MOVE-SOURCE",
+          "source_line": "MOVE CARD-ACCT-ID     TO WS-CA-LAST-CARD-ACCT-ID",
+          "note": "copied into WS-CA-LAST-CARD-ACCT-ID, tracks the last card shown on this screen page"
+        },
+        {
+          "alias": "CARD-ACCT-ID",
+          "line": 1212,
+          "access_kind": "MOVE-SOURCE",
+          "source_line": "MOVE CARD-ACCT-ID TO",
+          "note": "copied into WS-CA-LAST-CARD-ACCT-ID (statement spans lines 1212-1213)"
+        },
+        {
+          "alias": "CARD-ACCT-ID",
+          "line": 1236,
+          "access_kind": "MOVE-SOURCE",
+          "source_line": "MOVE CARD-ACCT-ID     TO WS-CA-LAST-CARD-ACCT-ID",
+          "note": "copied into WS-CA-LAST-CARD-ACCT-ID"
+        },
+        {
+          "alias": "CARD-ACCT-ID",
+          "line": 1340,
+          "access_kind": "MOVE-SOURCE",
+          "source_line": "MOVE CARD-ACCT-ID",
+          "note": "copied into WS-ROW-ACCTNO(WS-SCRN-COUNTER) (statement spans lines 1340-1341)"
+        },
+        {
+          "alias": "CARD-ACCT-ID",
+          "line": 1350,
+          "access_kind": "MOVE-SOURCE",
+          "source_line": "MOVE CARD-ACCT-ID",
+          "note": "copied into WS-CA-FIRST-CARD-ACCT-ID (statement spans lines 1350-1351)"
+        },
+        {
+          "alias": "CARD-ACCT-ID",
+          "line": 1386,
+          "access_kind": "COMPARE",
+          "source_line": "IF  CARD-ACCT-ID = CC-ACCT-ID",
+          "note": "IF CARD-ACCT-ID = CC-ACCT-ID -- compared against the commarea's filter value"
+        }
+      ],
+      "also_structural": []
+    },
+    {
+      "path": "cbl/COCRDSLC.cbl",
+      "module": "core",
+      "tier": "STRUCTURALLY-AFFECTED",
+      "hits": [],
+      "structural_evidence": [
+        {
+          "alias": "CARD-ACCT-ID",
+          "copybook": "CVACT02Y",
+          "record": "CARD-RECORD",
+          "evidence": [
+            {
+              "line": 746,
+              "source_line": "INTO      (CARD-RECORD)"
+            },
+            {
+              "line": 747,
+              "source_line": "LENGTH    (LENGTH OF CARD-RECORD)"
+            },
+            {
+              "line": 787,
+              "source_line": "INTO      (CARD-RECORD)"
+            },
+            {
+              "line": 788,
+              "source_line": "LENGTH    (LENGTH OF CARD-RECORD)"
+            }
+          ],
+          "note": "This program declares CARD-ACCT-ID-X/CARD-ACCT-ID-N (CICS-OUTPUT-EDIT-VARS, lines 73-74) and WS-CARD-RID-ACCT-ID (lines 99-101), which look like aliases but are NOT populated from the copybook's CARD-ACCT-ID field -- CARD-ACCT-ID-X/-N are declared but never referenced again anywhere in the file (dead fields), and WS-CARD-RID-ACCT-ID's only assignment (line 739, 'MOVE CC-ACCT-ID-N TO WS-CARD-RID-ACCT-ID') is commented out (indicator column 7 = '*'). Verified via `grep -n WS-CARD-RID-ACCT-ID` plus manual column-7 check."
+        }
+      ]
+    },
+    {
+      "path": "cbl/COCRDUPC.cbl",
+      "module": "core",
+      "tier": "STRUCTURALLY-AFFECTED",
+      "hits": [],
+      "structural_evidence": [
+        {
+          "alias": "CARD-ACCT-ID",
+          "copybook": "CVACT02Y",
+          "record": "CARD-RECORD",
+          "evidence": [
+            {
+              "line": 1386,
+              "source_line": "INTO      (CARD-RECORD)"
+            },
+            {
+              "line": 1387,
+              "source_line": "LENGTH    (LENGTH OF CARD-RECORD)"
+            },
+            {
+              "line": 1432,
+              "source_line": "INTO      (CARD-RECORD)"
+            },
+            {
+              "line": 1433,
+              "source_line": "LENGTH    (LENGTH OF CARD-RECORD)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "cbl/COTRN02C.cbl",
+      "module": "core",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 206,
+          "access_kind": "MOVE-TARGET",
+          "source_line": "MOVE WS-ACCT-ID-N            TO XREF-ACCT-ID",
+          "note": "receives WS-ACCT-ID-N (a numeric-edited copy of screen input)"
+        },
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 223,
+          "access_kind": "MOVE-SOURCE",
+          "source_line": "MOVE XREF-ACCT-ID         TO ACTIDINI OF COTRN2AI",
+          "note": "copied out to the screen field ACTIDINI OF COTRN2AI"
+        },
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 582,
+          "access_kind": "READ",
+          "source_line": "RIDFLD    (XREF-ACCT-ID)",
+          "note": "RIDFLD(XREF-ACCT-ID) -- keyed CICS READ"
+        },
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 583,
+          "access_kind": "READ",
+          "source_line": "KEYLENGTH (LENGTH OF XREF-ACCT-ID)",
+          "note": "KEYLENGTH(LENGTH OF XREF-ACCT-ID)"
+        }
+      ],
+      "also_structural": []
+    },
+    {
+      "path": "app-authorization-ims-db2-mq/cbl/COPAUA0C.cbl",
+      "module": "optional",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 523,
+          "access_kind": "MOVE-SOURCE",
+          "source_line": "MOVE XREF-ACCT-ID          TO WS-CARD-RID-ACCT-ID",
+          "note": "copied into WS-CARD-RID-ACCT-ID"
+        },
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 619,
+          "access_kind": "MOVE-SOURCE",
+          "source_line": "MOVE XREF-ACCT-ID                    TO PA-ACCT-ID",
+          "note": "copied into PA-ACCT-ID (authorization-decision working record)"
+        },
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 805,
+          "access_kind": "MOVE-SOURCE",
+          "source_line": "MOVE XREF-ACCT-ID             TO PA-ACCT-ID",
+          "note": "copied into PA-ACCT-ID"
+        },
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 911,
+          "access_kind": "MOVE-SOURCE",
+          "source_line": "MOVE XREF-ACCT-ID                TO PA-ACCT-ID",
+          "note": "copied into PA-ACCT-ID"
+        }
+      ],
+      "also_structural": []
+    },
+    {
+      "path": "app-authorization-ims-db2-mq/cbl/COPAUS0C.cbl",
+      "module": "optional",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 868,
+          "access_kind": "MOVE-SOURCE",
+          "source_line": "MOVE XREF-ACCT-ID            TO WS-CARD-RID-ACCT-ID",
+          "note": "copied into WS-CARD-RID-ACCT-ID, a VSAM alternate-index key work field"
+        }
+      ],
+      "also_structural": []
+    },
+    {
+      "path": "app-vsam-mq/cbl/COACCT01.cbl",
+      "module": "optional",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {
+          "alias": "ACCT-ID",
+          "line": 408,
+          "access_kind": "MOVE-SOURCE",
+          "source_line": "MOVE ACCT-ID          TO WS-ACCT-ID                 03701510",
+          "note": "copied into WS-ACCT-ID, staged for the MQ reply message"
+        }
+      ],
+      "also_structural": []
+    }
+  ],
+  "near_misses": {
+    "summary": "271 lines across 31 distinct locally-declared identifiers contain ACCT-ID, CARD-ACCT-ID, or XREF-ACCT-ID as a substring without being that exact field -- these are working-storage shadow/edit/commarea variables (e.g. CDEMO-ACCT-ID, CC-ACCT-ID, WS-CARD-RID-ACCT-ID) that a naive substring grep for 'ACCT-ID' would wrongly attribute to the copybook field. None of these are false positives in the sense of being irrelevant to the real-world account-id value -- most are genuinely downstream copies of it -- but they are not the field itself and a precision metric should not credit a tool for finding them as if it had found ACCT-ID/CARD-ACCT-ID/XREF-ACCT-ID.",
+    "distinct_identifiers": [
+      {
+        "identifier": "CC-ACCT-ID",
+        "total_occurrences": 40,
+        "programs": [
+          {
+            "path": "cbl/COACTUPC.cbl",
+            "lines": [
+              1053,
+              1056,
+              1787,
+              1788,
+              1801,
+              1802,
+              1815,
+              2707,
+              3614,
+              3892
+            ]
+          },
+          {
+            "path": "cbl/COACTVWC.cbl",
+            "lines": [
+              468,
+              630,
+              632,
+              653,
+              654,
+              666,
+              667,
+              678
+            ]
+          },
+          {
+            "path": "cbl/COCRDLIC.cbl",
+            "lines": [
+              847,
+              969,
+              1007,
+              1008,
+              1017,
+              1027,
+              1386
+            ]
+          },
+          {
+            "path": "cbl/COCRDSLC.cbl",
+            "lines": [
+              465,
+              617,
+              619,
+              651,
+              652,
+              665,
+              676
+            ]
+          },
+          {
+            "path": "cbl/COCRDUPC.cbl",
+            "lines": [
+              591,
+              594,
+              725,
+              726,
+              740,
+              752,
+              1090,
+              1346
+            ]
+          }
+        ]
+      },
+      {
+        "identifier": "WS-CARD-RID-ACCT-ID-X",
+        "total_occurrences": 36,
+        "programs": [
+          {
+            "path": "app-authorization-ims-db2-mq/cbl/COPAUA0C.cbl",
+            "lines": [
+              78,
+              527,
+              528,
+              546,
+              559
+            ]
+          },
+          {
+            "path": "app-authorization-ims-db2-mq/cbl/COPAUS0C.cbl",
+            "lines": [
+              71,
+              817,
+              820,
+              821,
+              853,
+              871,
+              872,
+              888,
+              903
+            ]
+          },
+          {
+            "path": "app-vsam-mq/cbl/COACCT01.cbl",
+            "lines": [
+              127,
+              398,
+              399
+            ]
+          },
+          {
+            "path": "cbl/COACTUPC.cbl",
+            "lines": [
+              382,
+              3656,
+              3657,
+              3676,
+              3705,
+              3706,
+              3725,
+              3897,
+              3898
+            ]
+          },
+          {
+            "path": "cbl/COACTVWC.cbl",
+            "lines": [
+              79,
+              729,
+              730,
+              749,
+              778,
+              779,
+              798
+            ]
+          },
+          {
+            "path": "cbl/COCRDLIC.cbl",
+            "lines": [
+              140
+            ]
+          },
+          {
+            "path": "cbl/COCRDSLC.cbl",
+            "lines": [
+              100
+            ]
+          },
+          {
+            "path": "cbl/COCRDUPC.cbl",
+            "lines": [
+              131
+            ]
+          }
+        ]
+      },
+      {
+        "identifier": "CDEMO-ACCT-ID",
+        "total_occurrences": 34,
+        "programs": [
+          {
+            "path": "app-authorization-ims-db2-mq/cbl/COPAUS0C.cbl",
+            "lines": [
+              207,
+              208,
+              284,
+              971
+            ]
+          },
+          {
+            "path": "cbl/COACTUPC.cbl",
+            "lines": [
+              983,
+              1794,
+              1812,
+              1815,
+              2629,
+              3805
+            ]
+          },
+          {
+            "path": "cbl/COACTVWC.cbl",
+            "lines": [
+              660,
+              675,
+              678,
+              691
+            ]
+          },
+          {
+            "path": "cbl/COCRDLIC.cbl",
+            "lines": [
+              532,
+              560,
+              849,
+              852,
+              1011,
+              1024,
+              1027
+            ]
+          },
+          {
+            "path": "cbl/COCRDSLC.cbl",
+            "lines": [
+              342,
+              462,
+              659,
+              673,
+              676
+            ]
+          },
+          {
+            "path": "cbl/COCRDUPC.cbl",
+            "lines": [
+              460,
+              490,
+              521,
+              671,
+              733,
+              748,
+              752,
+              1015
+            ]
+          }
+        ]
+      },
+      {
+        "identifier": "WS-CARD-RID-ACCT-ID",
+        "total_occurrences": 24,
+        "programs": [
+          {
+            "path": "app-authorization-ims-db2-mq/cbl/COPAUA0C.cbl",
+            "lines": [
+              77,
+              79,
+              523
+            ]
+          },
+          {
+            "path": "app-authorization-ims-db2-mq/cbl/COPAUS0C.cbl",
+            "lines": [
+              70,
+              72,
+              868
+            ]
+          },
+          {
+            "path": "app-vsam-mq/cbl/COACCT01.cbl",
+            "lines": [
+              126,
+              128,
+              394
+            ]
+          },
+          {
+            "path": "cbl/COACTUPC.cbl",
+            "lines": [
+              381,
+              383,
+              3615,
+              3892
+            ]
+          },
+          {
+            "path": "cbl/COACTVWC.cbl",
+            "lines": [
+              78,
+              80,
+              691
+            ]
+          },
+          {
+            "path": "cbl/COCRDLIC.cbl",
+            "lines": [
+              139,
+              141
+            ]
+          },
+          {
+            "path": "cbl/COCRDSLC.cbl",
+            "lines": [
+              99,
+              101,
+              785,
+              786
+            ]
+          },
+          {
+            "path": "cbl/COCRDUPC.cbl",
+            "lines": [
+              130,
+              132
+            ]
+          }
+        ]
+      },
+      {
+        "identifier": "FD-ACCT-ID",
+        "total_occurrences": 13,
+        "programs": [
+          {
+            "path": "cbl/CBACT01C.cbl",
+            "lines": [
+              32,
+              54
+            ]
+          },
+          {
+            "path": "cbl/CBACT04C.cbl",
+            "lines": [
+              44,
+              86,
+              202,
+              375
+            ]
+          },
+          {
+            "path": "cbl/CBTRN01C.cbl",
+            "lines": [
+              55,
+              88,
+              242,
+              244
+            ]
+          },
+          {
+            "path": "cbl/CBTRN02C.cbl",
+            "lines": [
+              54,
+              88,
+              394
+            ]
+          }
+        ]
+      },
+      {
+        "identifier": "WS-ACCT-ID",
+        "total_occurrences": 13,
+        "programs": [
+          {
+            "path": "app-authorization-ims-db2-mq/cbl/COPAUS0C.cbl",
+            "lines": [
+              44,
+              208,
+              212,
+              228,
+              231,
+              265,
+              274,
+              283,
+              349,
+              817,
+              838
+            ]
+          },
+          {
+            "path": "app-vsam-mq/cbl/COACCT01.cbl",
+            "lines": [
+              134,
+              408
+            ]
+          }
+        ]
+      },
+      {
+        "identifier": "CARD-ACCT-ID-X",
+        "total_occurrences": 12,
+        "programs": [
+          {
+            "path": "cbl/COCRDLIC.cbl",
+            "lines": [
+              99,
+              99,
+              100,
+              100
+            ]
+          },
+          {
+            "path": "cbl/COCRDSLC.cbl",
+            "lines": [
+              73,
+              73,
+              74,
+              74
+            ]
+          },
+          {
+            "path": "cbl/COCRDUPC.cbl",
+            "lines": [
+              104,
+              104,
+              105,
+              105
+            ]
+          }
+        ]
+      },
+      {
+        "identifier": "FD-XREF-ACCT-ID",
+        "total_occurrences": 10,
+        "programs": [
+          {
+            "path": "cbl/CBACT04C.cbl",
+            "lines": [
+              38,
+              38,
+              73,
+              73,
+              204,
+              204,
+              395,
+              395,
+              397,
+              397
+            ]
+          }
+        ]
+      },
+      {
+        "identifier": "CC-ACCT-ID-N",
+        "total_occurrences": 10,
+        "programs": [
+          {
+            "path": "cbl/COACTUPC.cbl",
+            "lines": [
+              1803,
+              2703,
+              2712
+            ]
+          },
+          {
+            "path": "cbl/COCRDLIC.cbl",
+            "lines": [
+              1009
+            ]
+          },
+          {
+            "path": "cbl/COCRDSLC.cbl",
+            "lines": [
+              342,
+              653
+            ]
+          },
+          {
+            "path": "cbl/COCRDUPC.cbl",
+            "lines": [
+              490,
+              727,
+              1087,
+              1463
+            ]
+          }
+        ]
+      },
+      {
+        "identifier": "WS-CA-LAST-CARD-ACCT-ID",
+        "total_occurrences": 8,
+        "programs": [
+          {
+            "path": "cbl/COCRDLIC.cbl",
+            "lines": [
+              232,
+              232,
+              1194,
+              1194,
+              1213,
+              1213,
+              1236,
+              1236
+            ]
+          }
+        ]
+      },
+      {
+        "identifier": "PA-ACCT-ID",
+        "total_occurrences": 7,
+        "programs": [
+          {
+            "path": "app-authorization-ims-db2-mq/cbl/COPAUA0C.cbl",
+            "lines": [
+              619,
+              623,
+              805,
+              911,
+              915
+            ]
+          },
+          {
+            "path": "app-authorization-ims-db2-mq/cbl/COPAUS0C.cbl",
+            "lines": [
+              971,
+              976
+            ]
+          }
+        ]
+      },
+      {
+        "identifier": "CARD-ACCT-ID-N",
+        "total_occurrences": 6,
+        "programs": [
+          {
+            "path": "cbl/COCRDLIC.cbl",
+            "lines": [
+              100,
+              100
+            ]
+          },
+          {
+            "path": "cbl/COCRDSLC.cbl",
+            "lines": [
+              74,
+              74
+            ]
+          },
+          {
+            "path": "cbl/COCRDUPC.cbl",
+            "lines": [
+              105,
+              105
+            ]
+          }
+        ]
+      },
+      {
+        "identifier": "WS-CA-FIRST-CARD-ACCT-ID",
+        "total_occurrences": 6,
+        "programs": [
+          {
+            "path": "cbl/COCRDLIC.cbl",
+            "lines": [
+              235,
+              235,
+              1175,
+              1175,
+              1351,
+              1351
+            ]
+          }
+        ]
+      },
+      {
+        "identifier": "TRANCAT-ACCT-ID",
+        "total_occurrences": 5,
+        "programs": [
+          {
+            "path": "cbl/CBACT04C.cbl",
+            "lines": [
+              194,
+              201,
+              202,
+              204
+            ]
+          },
+          {
+            "path": "cbl/CBTRN02C.cbl",
+            "lines": [
+              505
+            ]
+          }
+        ]
+      },
+      {
+        "identifier": "ACUP-NEW-ACCT-ID-X",
+        "total_occurrences": 5,
+        "programs": [
+          {
+            "path": "cbl/COACTUPC.cbl",
+            "lines": [
+              759,
+              761,
+              1054,
+              1057,
+              1684
+            ]
+          }
+        ]
+      },
+      {
+        "identifier": "EXP-XREF-ACCT-ID",
+        "total_occurrences": 4,
+        "programs": [
+          {
+            "path": "cbl/CBEXPORT.cbl",
+            "lines": [
+              417,
+              417
+            ]
+          },
+          {
+            "path": "cbl/CBIMPORT.cbl",
+            "lines": [
+              359,
+              359
+            ]
+          }
+        ]
+      },
+      {
+        "identifier": "EXP-CARD-ACCT-ID",
+        "total_occurrences": 4,
+        "programs": [
+          {
+            "path": "cbl/CBEXPORT.cbl",
+            "lines": [
+              536,
+              536
+            ]
+          },
+          {
+            "path": "cbl/CBIMPORT.cbl",
+            "lines": [
+              408,
+              408
+            ]
+          }
+        ]
+      },
+      {
+        "identifier": "ACUP-NEW-ACCT-ID",
+        "total_occurrences": 4,
+        "programs": [
+          {
+            "path": "cbl/COACTUPC.cbl",
+            "lines": [
+              760,
+              1795,
+              1801,
+              3960
+            ]
+          }
+        ]
+      },
+      {
+        "identifier": "FD-TRANCAT-ACCT-ID",
+        "total_occurrences": 3,
+        "programs": [
+          {
+            "path": "cbl/CBACT04C.cbl",
+            "lines": [
+              64
+            ]
+          },
+          {
+            "path": "cbl/CBTRN02C.cbl",
+            "lines": [
+              94,
+              469
+            ]
+          }
+        ]
+      },
+      {
+        "identifier": "ST-ACCT-ID",
+        "total_occurrences": 3,
+        "programs": [
+          {
+            "path": "cbl/CBSTM03A.CBL",
+            "lines": [
+              109,
+              483,
+              615
+            ]
+          }
+        ]
+      },
+      {
+        "identifier": "ACUP-OLD-ACCT-ID-X",
+        "total_occurrences": 3,
+        "programs": [
+          {
+            "path": "cbl/COACTUPC.cbl",
+            "lines": [
+              671,
+              673,
+              1684
+            ]
+          }
+        ]
+      },
+      {
+        "identifier": "ACUP-OLD-ACCT-ID",
+        "total_occurrences": 3,
+        "programs": [
+          {
+            "path": "cbl/COACTUPC.cbl",
+            "lines": [
+              672,
+              3614,
+              3817
+            ]
+          }
+        ]
+      },
+      {
+        "identifier": "WS-ACCT-ID-N",
+        "total_occurrences": 3,
+        "programs": [
+          {
+            "path": "cbl/COTRN02C.cbl",
+            "lines": [
+              55,
+              204,
+              206
+            ]
+          }
+        ]
+      },
+      {
+        "identifier": "OUT-ACCT-ID",
+        "total_occurrences": 2,
+        "programs": [
+          {
+            "path": "cbl/CBACT01C.cbl",
+            "lines": [
+              58,
+              216
+            ]
+          }
+        ]
+      },
+      {
+        "identifier": "ARR-ACCT-ID",
+        "total_occurrences": 2,
+        "programs": [
+          {
+            "path": "cbl/CBACT01C.cbl",
+            "lines": [
+              73,
+              254
+            ]
+          }
+        ]
+      },
+      {
+        "identifier": "VB1-ACCT-ID",
+        "total_occurrences": 2,
+        "programs": [
+          {
+            "path": "cbl/CBACT01C.cbl",
+            "lines": [
+              124,
+              277
+            ]
+          }
+        ]
+      },
+      {
+        "identifier": "VB2-ACCT-ID",
+        "total_occurrences": 2,
+        "programs": [
+          {
+            "path": "cbl/CBACT01C.cbl",
+            "lines": [
+              127,
+              278
+            ]
+          }
+        ]
+      },
+      {
+        "identifier": "EXP-ACCT-ID",
+        "total_occurrences": 2,
+        "programs": [
+          {
+            "path": "cbl/CBEXPORT.cbl",
+            "lines": [
+              351
+            ]
+          },
+          {
+            "path": "cbl/CBIMPORT.cbl",
+            "lines": [
+              328
+            ]
+          }
+        ]
+      },
+      {
+        "identifier": "CUST-ACCT-ID-X",
+        "total_occurrences": 2,
+        "programs": [
+          {
+            "path": "cbl/COACTUPC.cbl",
+            "lines": [
+              358,
+              359
+            ]
+          }
+        ]
+      },
+      {
+        "identifier": "CARD-UPDATE-ACCT-ID",
+        "total_occurrences": 2,
+        "programs": [
+          {
+            "path": "cbl/COCRDUPC.cbl",
+            "lines": [
+              316,
+              1463
+            ]
+          }
+        ]
+      },
+      {
+        "identifier": "CUST-ACCT-ID-N",
+        "total_occurrences": 1,
+        "programs": [
+          {
+            "path": "cbl/COACTUPC.cbl",
+            "lines": [
+              359
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "uncertain": [
+    {
+      "path": "app-transaction-type-db2/cbl/COTRTLIC.cbl",
+      "module": "optional",
+      "alias": "CARD-ACCT-ID",
+      "copybook": "CVACT02Y",
+      "issue": "dead_copy",
+      "reasoning": "COTRTLIC.cbl has an active `COPY CVACT02Y.` (line 490) but CARD-RECORD never appears anywhere else in the file (grep for CARD-RECORD returns nothing), and there are zero exact or substring hits for any of the three account-id aliases anywhere in this program. Unlike the COCRDSLC/COCRDUPC/COACTVWC cases, there isn't even group-level I/O to point to as structural evidence -- the COPY appears to be entirely vestigial in this program. Recommend excluding it from the STRUCTURALLY-AFFECTED list rather than counting it, but flagging here instead of silently doing so, since 'COPYs the copybook' is the literal definition given for that tier and this technically satisfies it."
+    },
+    {
+      "path": "cbl/COTRN02C.cbl",
+      "module": "core",
+      "alias": "ACCT-ID",
+      "copybook": "CVACT01Y",
+      "issue": "dead_copy",
+      "reasoning": "COTRN02C.cbl has an active `COPY CVACT01Y.` (line 89) but ACCOUNT-RECORD never appears anywhere else in the file, and no ACCT-* field from CVACT01Y (checked all 12: ACCT-ID, ACCT-ACTIVE-STATUS, ACCT-CURR-BAL, ACCT-CREDIT-LIMIT, ACCT-CASH-CREDIT-LIMIT, ACCT-OPEN-DATE, ACCT-EXPIRAION-DATE, ACCT-REISSUE-DATE, ACCT-CURR-CYC-CREDIT, ACCT-CURR-CYC-DEBIT, ACCT-ADDR-ZIP, ACCT-GROUP-ID) is referenced anywhere in the file. This program IS field-aware for XREF-ACCT-ID (CVACT03Y, listed under FIELD-AWARE), so its overall program tier for the wide field is FIELD-AWARE regardless -- this entry only concerns the ACCT-ID alias specifically, which this program does not touch at all despite the COPY being present."
+    }
+  ]
+}
