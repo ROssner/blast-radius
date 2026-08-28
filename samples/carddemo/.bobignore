@@ -1,0 +1,7 @@
+# Canonical source for samples/carddemo/.bobignore (deployed there by
+# scripts/bob_sync_push.sh -- edit this copy, not the deployed one).
+# Keeps Bob's INVENTORY pass from wasting tool calls and tokens on binary
+# sample data it never needs to read.
+app/data/
+*.dat
+*.DAT

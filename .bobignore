@@ -1,0 +1,6 @@
+# Defense in depth: the ground truth answer key must never be visible to
+# Bob. The primary protection is running Bob with samples/carddemo/ opened
+# as its own workspace root (docs/ground_truth/ lives outside that tree
+# entirely). This file is the second layer, in case Bob is ever opened on
+# this parent folder instead. See docs/SCOPE.md and bob-package/README.md.
+docs/ground_truth/
