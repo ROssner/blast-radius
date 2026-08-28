@@ -169,47 +169,50 @@ WIDE_STRUCTURAL = {
     ],
 }
 
-WIDE_UNCERTAIN = [
-    {
-        "path": "app-transaction-type-db2/cbl/COTRTLIC.cbl",
-        "module": "optional",
-        "alias": "CARD-ACCT-ID",
-        "copybook": "CVACT02Y",
-        "issue": "dead_copy",
-        "reasoning": (
-            "COTRTLIC.cbl has an active `COPY CVACT02Y.` (line 490) but CARD-RECORD "
-            "never appears anywhere else in the file (grep for CARD-RECORD returns "
-            "nothing), and there are zero exact or substring hits for any of the "
-            "three account-id aliases anywhere in this program. Unlike the "
-            "COCRDSLC/COCRDUPC/COACTVWC cases, there isn't even group-level I/O to "
-            "point to as structural evidence -- the COPY appears to be entirely "
-            "vestigial in this program. Recommend excluding it from the "
-            "STRUCTURALLY-AFFECTED list rather than counting it, but flagging here "
-            "instead of silently doing so, since 'COPYs the copybook' is the literal "
-            "definition given for that tier and this technically satisfies it."
-        ),
-    },
-    {
-        "path": "cbl/COTRN02C.cbl",
-        "module": "core",
-        "alias": "ACCT-ID",
-        "copybook": "CVACT01Y",
-        "issue": "dead_copy",
-        "reasoning": (
-            "COTRN02C.cbl has an active `COPY CVACT01Y.` (line 89) but ACCOUNT-RECORD "
-            "never appears anywhere else in the file, and no ACCT-* field from "
-            "CVACT01Y (checked all 12: ACCT-ID, ACCT-ACTIVE-STATUS, ACCT-CURR-BAL, "
-            "ACCT-CREDIT-LIMIT, ACCT-CASH-CREDIT-LIMIT, ACCT-OPEN-DATE, "
-            "ACCT-EXPIRAION-DATE, ACCT-REISSUE-DATE, ACCT-CURR-CYC-CREDIT, "
-            "ACCT-CURR-CYC-DEBIT, ACCT-ADDR-ZIP, ACCT-GROUP-ID) is referenced anywhere "
-            "in the file. This program IS field-aware for XREF-ACCT-ID (CVACT03Y, "
-            "listed under FIELD-AWARE), so its overall program tier for the wide "
-            "field is FIELD-AWARE regardless -- this entry only concerns the ACCT-ID "
-            "alias specifically, which this program does not touch at all despite "
-            "the COPY being present."
-        ),
-    },
-]
+# Programs whose relationship to the field is a pure DEAD COPY: the
+# copybook is actively COPY'd, but the corresponding record is never
+# touched anywhere else in the file -- not by field name, not even at
+# group level (no READ/WRITE/DISPLAY/MOVE of the whole record either).
+# This is its own tier, not a variant of STRUCTURALLY-AFFECTED, because
+# STRUCTURALLY-AFFECTED requires real group-level I/O as evidence.
+WIDE_DEAD_COPY = {
+    "app-transaction-type-db2/cbl/COTRTLIC.cbl": [
+        {"alias": "CARD-ACCT-ID", "copybook": "CVACT02Y", "record": "CARD-RECORD",
+         "copy_line": 490,
+         "note": (
+             "Active `COPY CVACT02Y.` at line 490, but CARD-RECORD never appears "
+             "anywhere else in the file (grep for CARD-RECORD returns nothing), and "
+             "there are zero exact or substring hits for any of the three "
+             "account-id aliases anywhere in this program. Unlike COCRDSLC/COCRDUPC/"
+             "COACTVWC there is no group-level I/O either -- the COPY is entirely "
+             "vestigial. A field-width change to CARD-ACCT-ID has zero effect on "
+             "this program's behavior."
+         )},
+    ],
+}
+
+# Per-alias dead-copy footnotes on programs that are otherwise tiered via a
+# DIFFERENT alias/copybook (so the program's overall tier is unaffected).
+WIDE_DEAD_COPY_FOOTNOTES = {
+    "cbl/COTRN02C.cbl": [
+        {"alias": "ACCT-ID", "copybook": "CVACT01Y", "record": "ACCOUNT-RECORD",
+         "copy_line": 89,
+         "note": (
+             "Active `COPY CVACT01Y.` at line 89, but ACCOUNT-RECORD never appears "
+             "anywhere else in the file, and none of the 12 ACCT-* fields declared "
+             "in CVACT01Y (ACCT-ID, ACCT-ACTIVE-STATUS, ACCT-CURR-BAL, "
+             "ACCT-CREDIT-LIMIT, ACCT-CASH-CREDIT-LIMIT, ACCT-OPEN-DATE, "
+             "ACCT-EXPIRAION-DATE, ACCT-REISSUE-DATE, ACCT-CURR-CYC-CREDIT, "
+             "ACCT-CURR-CYC-DEBIT, ACCT-ADDR-ZIP, ACCT-GROUP-ID) is referenced "
+             "anywhere in the file. This program's overall tier for the wide field "
+             "stays FIELD-AWARE (it genuinely uses XREF-ACCT-ID from CVACT03Y) -- "
+             "this footnote covers the ACCT-ID/CVACT01Y relationship specifically, "
+             "which is a dead copy."
+         )},
+    ],
+}
+
+WIDE_UNCERTAIN = []
 
 
 def build_wide():
@@ -242,6 +245,7 @@ def build_wide():
                 "tier": "FIELD-AWARE",
                 "hits": hit_entries,
                 "also_structural": WIDE_STRUCTURAL.get(path, []),
+                "dead_copy_footnotes": WIDE_DEAD_COPY_FOOTNOTES.get(path, []),
             })
 
     for path, entries in WIDE_STRUCTURAL.items():
@@ -253,6 +257,17 @@ def build_wide():
             "tier": "STRUCTURALLY-AFFECTED",
             "hits": [],
             "structural_evidence": entries,
+        })
+
+    for path, entries in WIDE_DEAD_COPY.items():
+        if path in field_aware_paths or path in WIDE_STRUCTURAL:
+            continue
+        programs_out.append({
+            "path": path,
+            "module": data[path]["module"],
+            "tier": "DEAD-COPY",
+            "hits": [],
+            "dead_copy_evidence": entries,
         })
 
     # near misses: distinct locally-derived identifiers, not the true aliases
@@ -287,6 +302,7 @@ def build_wide():
         "tier_definitions": {
             "FIELD-AWARE": "names at least one of the three exact field tokens (ACCT-ID / CARD-ACCT-ID / XREF-ACCT-ID) somewhere in its own code, outside of string literals",
             "STRUCTURALLY-AFFECTED": "COPYs a copybook containing one of the aliases and performs whole-group I/O (READ/WRITE/DISPLAY/MOVE) on the record, but never names the field itself",
+            "DEAD-COPY": "COPYs a copybook containing one of the aliases, but never touches the resulting record at all -- not by field name, not even at group level. Real technical debt the tool surfaces for free.",
         },
         "methodology": (
             "scripts/ground_truth_extract.py tokenizes each program's non-comment "
@@ -368,24 +384,24 @@ ZIP_MODULE = {
     "app-authorization-ims-db2-mq/cbl/COPAUS0C.cbl": "optional",
     "app-authorization-ims-db2-mq/cbl/COPAUA0C.cbl": "optional",
     "app-vsam-mq/cbl/COACCT01.cbl": "optional",
+    "cbl/COTRN02C.cbl": "core",
 }
 
-ZIP_UNCERTAIN = [
-    {
-        "path": "cbl/COTRN02C.cbl",
-        "module": "core",
-        "issue": "dead_copy",
-        "reasoning": (
-            "Same finding as recorded for the wide field: COTRN02C.cbl has an "
-            "active COPY CVACT01Y but never references ACCOUNT-RECORD or any "
-            "ACCT-* field anywhere else in the file. For ACCT-ADDR-ZIP specifically "
-            "this means the program is arguably NOT AFFECTED AT ALL (not even "
-            "structurally), unlike its wide-field tier which is FIELD-AWARE via "
-            "XREF-ACCT-ID from a different copybook. Excluded from both tiers below; "
-            "flagged here rather than silently dropped."
+ZIP_DEAD_COPY = {
+    "cbl/COTRN02C.cbl": {
+        "copybook": "CVACT01Y", "record": "ACCOUNT-RECORD", "copy_line": 89,
+        "note": (
+            "Same underlying finding as recorded for the wide field: COTRN02C.cbl "
+            "has an active COPY CVACT01Y but never references ACCOUNT-RECORD or any "
+            "ACCT-* field anywhere else in the file. For ACCT-ADDR-ZIP specifically, "
+            "this program has no other copybook that could make it relevant, so its "
+            "whole relationship to this field is DEAD-COPY (unlike the wide field, "
+            "where this program is FIELD-AWARE via a different copybook)."
         ),
     },
-]
+}
+
+ZIP_UNCERTAIN = []
 
 
 def build_zip():
@@ -428,6 +444,17 @@ def build_zip():
             "structural_evidence": [{"copybook": "CVACT01Y", "record": "ACCOUNT-RECORD", "evidence": evidence}],
         })
 
+    for path, entry in ZIP_DEAD_COPY.items():
+        if path in field_aware_paths or path in ZIP_STRUCTURAL:
+            continue
+        programs_out.append({
+            "path": path,
+            "module": ZIP_MODULE[path],
+            "tier": "DEAD-COPY",
+            "hits": [],
+            "dead_copy_evidence": [entry],
+        })
+
     # near misses: every CUST-ADDR-ZIP hit (exact only -- this is a real,
     # distinct, declared field, not a derived shadow variable, so no
     # substring-vs-exact split is needed the way it was for the wide field)
@@ -465,6 +492,7 @@ def build_zip():
         "tier_definitions": {
             "FIELD-AWARE": "names the exact token ACCT-ADDR-ZIP somewhere in its own code, outside of string literals",
             "STRUCTURALLY-AFFECTED": "COPYs CVACT01Y and performs whole-group I/O on ACCOUNT-RECORD, but never names ACCT-ADDR-ZIP itself",
+            "DEAD-COPY": "COPYs CVACT01Y but never touches ACCOUNT-RECORD at all -- not by field name, not even at group level. Real technical debt the tool surfaces for free.",
         },
         "methodology": (
             "Same extraction method as the wide field (scripts/ground_truth_extract.py), "
@@ -513,13 +541,19 @@ def main():
 
     fa = sum(1 for p in wide["programs"] if p["tier"] == "FIELD-AWARE")
     sa = sum(1 for p in wide["programs"] if p["tier"] == "STRUCTURALLY-AFFECTED")
-    print(f"ACCT-ID (wide): FIELD-AWARE={fa} STRUCTURALLY-AFFECTED={sa} UNCERTAIN={len(wide['uncertain'])}")
+    dc = sum(1 for p in wide["programs"] if p["tier"] == "DEAD-COPY")
+    footnotes = sum(1 for p in wide["programs"] if p.get("dead_copy_footnotes"))
+    print(f"ACCT-ID (wide): FIELD-AWARE={fa} STRUCTURALLY-AFFECTED={sa} DEAD-COPY={dc} "
+          f"(+{footnotes} dead-copy footnote(s) on otherwise-tiered programs) "
+          f"UNCERTAIN={len(wide['uncertain'])} TOTAL={fa+sa+dc}")
     print(f"  near-miss distinct identifiers={len(wide['near_misses']['distinct_identifiers'])} "
           f"total lines={sum(n['total_occurrences'] for n in wide['near_misses']['distinct_identifiers'])}")
 
     fa2 = sum(1 for p in zip_["programs"] if p["tier"] == "FIELD-AWARE")
     sa2 = sum(1 for p in zip_["programs"] if p["tier"] == "STRUCTURALLY-AFFECTED")
-    print(f"ACCT-ADDR-ZIP (narrow): FIELD-AWARE={fa2} STRUCTURALLY-AFFECTED={sa2} UNCERTAIN={len(zip_['uncertain'])}")
+    dc2 = sum(1 for p in zip_["programs"] if p["tier"] == "DEAD-COPY")
+    print(f"ACCT-ADDR-ZIP (narrow): FIELD-AWARE={fa2} STRUCTURALLY-AFFECTED={sa2} DEAD-COPY={dc2} "
+          f"UNCERTAIN={len(zip_['uncertain'])} TOTAL={fa2+sa2+dc2}")
     print(f"  near-miss CUST-ADDR-ZIP exact hits={len(zip_['near_misses']['primary']['hits'])}")
 
 

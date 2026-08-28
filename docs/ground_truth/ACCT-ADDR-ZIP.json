@@ -7,7 +7,8 @@
   },
   "tier_definitions": {
     "FIELD-AWARE": "names the exact token ACCT-ADDR-ZIP somewhere in its own code, outside of string literals",
-    "STRUCTURALLY-AFFECTED": "COPYs CVACT01Y and performs whole-group I/O on ACCOUNT-RECORD, but never names ACCT-ADDR-ZIP itself"
+    "STRUCTURALLY-AFFECTED": "COPYs CVACT01Y and performs whole-group I/O on ACCOUNT-RECORD, but never names ACCT-ADDR-ZIP itself",
+    "DEAD-COPY": "COPYs CVACT01Y but never touches ACCOUNT-RECORD at all -- not by field name, not even at group level. Real technical debt the tool surfaces for free."
   },
   "methodology": "Same extraction method as the wide field (scripts/ground_truth_extract.py), scoped to the 14 programs that actively COPY CVACT01Y (the only copybook declaring ACCT-ADDR-ZIP) among the 21-program slice. Programs that never COPY CVACT01Y are correctly absent from this file -- they cannot be affected by this field at all.",
   "programs": [
@@ -220,6 +221,20 @@
       ]
     },
     {
+      "path": "cbl/COTRN02C.cbl",
+      "module": "core",
+      "tier": "DEAD-COPY",
+      "hits": [],
+      "dead_copy_evidence": [
+        {
+          "copybook": "CVACT01Y",
+          "record": "ACCOUNT-RECORD",
+          "copy_line": 89,
+          "note": "Same underlying finding as recorded for the wide field: COTRN02C.cbl has an active COPY CVACT01Y but never references ACCOUNT-RECORD or any ACCT-* field anywhere else in the file. For ACCT-ADDR-ZIP specifically, this program has no other copybook that could make it relevant, so its whole relationship to this field is DEAD-COPY (unlike the wide field, where this program is FIELD-AWARE via a different copybook)."
+        }
+      ]
+    },
+    {
       "path": "app-authorization-ims-db2-mq/cbl/COPAUA0C.cbl",
       "module": "optional",
       "tier": "STRUCTURALLY-AFFECTED",
@@ -412,12 +427,5 @@
       }
     ]
   },
-  "uncertain": [
-    {
-      "path": "cbl/COTRN02C.cbl",
-      "module": "core",
-      "issue": "dead_copy",
-      "reasoning": "Same finding as recorded for the wide field: COTRN02C.cbl has an active COPY CVACT01Y but never references ACCOUNT-RECORD or any ACCT-* field anywhere else in the file. For ACCT-ADDR-ZIP specifically this means the program is arguably NOT AFFECTED AT ALL (not even structurally), unlike its wide-field tier which is FIELD-AWARE via XREF-ACCT-ID from a different copybook. Excluded from both tiers below; flagged here rather than silently dropped."
-    }
-  ]
+  "uncertain": []
 }

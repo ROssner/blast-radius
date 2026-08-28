@@ -100,23 +100,30 @@ that justifies the tier instead of the field name itself. Regenerate with
 column-7-aware, string-literal-aware) with hand-verified classification data
 embedded in the build script.
 
-**Wide field**: 15 FIELD-AWARE + 5 STRUCTURALLY-AFFECTED (20 of 21 tiered).
-Near misses: 31 distinct locally-declared shadow/commarea variables (e.g.
-`CDEMO-ACCT-ID`, `CC-ACCT-ID`, `WS-CARD-RID-ACCT-ID`) contain one of the
-three alias names as a substring without being that field — 271 lines total
-that a naive grep would misattribute.
+Tiers are **FIELD-AWARE**, **STRUCTURALLY-AFFECTED**, and **DEAD-COPY**
+(promoted from an initial UNCERTAIN bucket to a full third tier: a program
+that COPYs the copybook but never touches the resulting record at all — not
+by field name, not even at group level — is real technical debt worth
+surfacing, not an edge case to argue away).
 
-**Narrow field**: 2 FIELD-AWARE + 11 STRUCTURALLY-AFFECTED (13 of 14
-tiered). Near miss `CUST-ADDR-ZIP`: 7 exact hits across 6 programs.
+**Wide field**: 15 FIELD-AWARE + 5 STRUCTURALLY-AFFECTED + 1 DEAD-COPY = 21
+of 21 tiered. `COTRTLIC.cbl` COPYs CVACT02Y but never references
+`CARD-RECORD` anywhere, with no group-level I/O either. One additional
+dead-copy relationship is recorded as a *footnote* rather than a top-level
+tier: `COTRN02C.cbl`'s COPY of CVACT01Y is dead, but the program's overall
+wide-field tier stays FIELD-AWARE because it genuinely uses `XREF-ACCT-ID`
+from a different copybook (CVACT03Y) — a program can be dead-copy on one
+alias and field-aware on another. Near misses: 31 distinct locally-declared
+shadow/commarea variables (e.g. `CDEMO-ACCT-ID`, `CC-ACCT-ID`,
+`WS-CARD-RID-ACCT-ID`) contain one of the three alias names as a substring
+without being that field — 271 lines total that a naive grep would
+misattribute.
 
-**UNCERTAIN (2 entries, both fully reasoned in the JSON, not guessed):**
-`COTRTLIC.cbl` COPYs CVACT02Y but never references `CARD-RECORD` or any
-account-id field anywhere — no group-level I/O either, so even
-STRUCTURALLY-AFFECTED may overstate it (wide field). `COTRN02C.cbl` COPYs
-CVACT01Y but never references `ACCOUNT-RECORD` or any `ACCT-*` field from it
-— same dead-copy pattern, relevant only to the narrow field since this
-program is genuinely FIELD-AWARE for the wide field via a different
-copybook (CVACT03Y/`XREF-ACCT-ID`).
+**Narrow field**: 2 FIELD-AWARE + 11 STRUCTURALLY-AFFECTED + 1 DEAD-COPY =
+14 of 14 tiered. `COTRN02C.cbl` is DEAD-COPY outright here (unlike the wide
+field, it has no other copybook to be field-aware through for
+ACCT-ADDR-ZIP specifically). Near miss `CUST-ADDR-ZIP`: 7 exact hits across
+6 programs.
 
 **Correction, 2026-08-28**: an earlier version of this document and the
 initial survey report stated "20 programs, 16 core" for the slice. Re-

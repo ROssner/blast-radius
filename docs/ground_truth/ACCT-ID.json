@@ -19,7 +19,8 @@
   },
   "tier_definitions": {
     "FIELD-AWARE": "names at least one of the three exact field tokens (ACCT-ID / CARD-ACCT-ID / XREF-ACCT-ID) somewhere in its own code, outside of string literals",
-    "STRUCTURALLY-AFFECTED": "COPYs a copybook containing one of the aliases and performs whole-group I/O (READ/WRITE/DISPLAY/MOVE) on the record, but never names the field itself"
+    "STRUCTURALLY-AFFECTED": "COPYs a copybook containing one of the aliases and performs whole-group I/O (READ/WRITE/DISPLAY/MOVE) on the record, but never names the field itself",
+    "DEAD-COPY": "COPYs a copybook containing one of the aliases, but never touches the resulting record at all -- not by field name, not even at group level. Real technical debt the tool surfaces for free."
   },
   "methodology": "scripts/ground_truth_extract.py tokenizes each program's non-comment text (COBOL column 7 checked per line) and flags exact token matches against the three alias names, excluding matches inside quoted string literals. Tier and access-kind classification for every hit below was then verified by hand against the actual source (see notes per hit); re-run scripts/ground_truth_build.py to regenerate this file from that classification data plus a fresh extraction pass.",
   "programs": [
@@ -57,7 +58,8 @@
           "note": "copied into VB1-ACCT-ID, a variable-block output record field"
         }
       ],
-      "also_structural": []
+      "also_structural": [],
+      "dead_copy_footnotes": []
     },
     {
       "path": "cbl/CBACT02C.cbl",
@@ -118,7 +120,8 @@
           "note": "concatenated via STRING into TRAN-DESC (an interest-transaction description) -- data flow is out of ACCT-ID same as a MOVE source"
         }
       ],
-      "also_structural": []
+      "also_structural": [],
+      "dead_copy_footnotes": []
     },
     {
       "path": "cbl/CBEXPORT.cbl",
@@ -154,7 +157,8 @@
           "note": "copied into EXP-CARD-ACCT-ID (export record)"
         }
       ],
-      "also_structural": []
+      "also_structural": [],
+      "dead_copy_footnotes": []
     },
     {
       "path": "cbl/CBIMPORT.cbl",
@@ -183,7 +187,8 @@
           "note": "received from EXP-CARD-ACCT-ID"
         }
       ],
-      "also_structural": []
+      "also_structural": [],
+      "dead_copy_footnotes": []
     },
     {
       "path": "cbl/CBSTM03A.CBL",
@@ -219,7 +224,8 @@
           "note": "copied into L11-ACCT (statement print line)"
         }
       ],
-      "also_structural": []
+      "also_structural": [],
+      "dead_copy_footnotes": []
     },
     {
       "path": "cbl/CBTRN01C.cbl",
@@ -262,7 +268,8 @@
           "note": "copied into FD-ACCT-ID, a file-record field"
         }
       ],
-      "also_structural": []
+      "also_structural": [],
+      "dead_copy_footnotes": []
     },
     {
       "path": "cbl/CBTRN02C.cbl",
@@ -291,7 +298,8 @@
           "note": "copied into TRANCAT-ACCT-ID"
         }
       ],
-      "also_structural": []
+      "also_structural": [],
+      "dead_copy_footnotes": []
     },
     {
       "path": "cbl/CBTRN03C.cbl",
@@ -306,7 +314,8 @@
           "note": "copied into TRAN-REPORT-ACCOUNT-ID, a print-report line field"
         }
       ],
-      "also_structural": []
+      "also_structural": [],
+      "dead_copy_footnotes": []
     },
     {
       "path": "cbl/COACTUPC.cbl",
@@ -328,7 +337,8 @@
           "note": "copied into ACUP-OLD-ACCT-ID, a before-image working field used later to detect whether the account id changed"
         }
       ],
-      "also_structural": []
+      "also_structural": [],
+      "dead_copy_footnotes": []
     },
     {
       "path": "cbl/COACTVWC.cbl",
@@ -424,7 +434,8 @@
           "note": "KEYLENGTH(LENGTH OF XREF-ACCT-ID)"
         }
       ],
-      "also_structural": []
+      "also_structural": [],
+      "dead_copy_footnotes": []
     },
     {
       "path": "cbl/COCRDLIC.cbl",
@@ -488,7 +499,8 @@
           "note": "IF CARD-ACCT-ID = CC-ACCT-ID -- compared against the commarea's filter value"
         }
       ],
-      "also_structural": []
+      "also_structural": [],
+      "dead_copy_footnotes": []
     },
     {
       "path": "cbl/COCRDSLC.cbl",
@@ -587,7 +599,16 @@
           "note": "KEYLENGTH(LENGTH OF XREF-ACCT-ID)"
         }
       ],
-      "also_structural": []
+      "also_structural": [],
+      "dead_copy_footnotes": [
+        {
+          "alias": "ACCT-ID",
+          "copybook": "CVACT01Y",
+          "record": "ACCOUNT-RECORD",
+          "copy_line": 89,
+          "note": "Active `COPY CVACT01Y.` at line 89, but ACCOUNT-RECORD never appears anywhere else in the file, and none of the 12 ACCT-* fields declared in CVACT01Y (ACCT-ID, ACCT-ACTIVE-STATUS, ACCT-CURR-BAL, ACCT-CREDIT-LIMIT, ACCT-CASH-CREDIT-LIMIT, ACCT-OPEN-DATE, ACCT-EXPIRAION-DATE, ACCT-REISSUE-DATE, ACCT-CURR-CYC-CREDIT, ACCT-CURR-CYC-DEBIT, ACCT-ADDR-ZIP, ACCT-GROUP-ID) is referenced anywhere in the file. This program's overall tier for the wide field stays FIELD-AWARE (it genuinely uses XREF-ACCT-ID from CVACT03Y) -- this footnote covers the ACCT-ID/CVACT01Y relationship specifically, which is a dead copy."
+        }
+      ]
     },
     {
       "path": "app-authorization-ims-db2-mq/cbl/COPAUA0C.cbl",
@@ -623,7 +644,8 @@
           "note": "copied into PA-ACCT-ID"
         }
       ],
-      "also_structural": []
+      "also_structural": [],
+      "dead_copy_footnotes": []
     },
     {
       "path": "app-authorization-ims-db2-mq/cbl/COPAUS0C.cbl",
@@ -638,7 +660,23 @@
           "note": "copied into WS-CARD-RID-ACCT-ID, a VSAM alternate-index key work field"
         }
       ],
-      "also_structural": []
+      "also_structural": [],
+      "dead_copy_footnotes": []
+    },
+    {
+      "path": "app-transaction-type-db2/cbl/COTRTLIC.cbl",
+      "module": "optional",
+      "tier": "DEAD-COPY",
+      "hits": [],
+      "dead_copy_evidence": [
+        {
+          "alias": "CARD-ACCT-ID",
+          "copybook": "CVACT02Y",
+          "record": "CARD-RECORD",
+          "copy_line": 490,
+          "note": "Active `COPY CVACT02Y.` at line 490, but CARD-RECORD never appears anywhere else in the file (grep for CARD-RECORD returns nothing), and there are zero exact or substring hits for any of the three account-id aliases anywhere in this program. Unlike COCRDSLC/COCRDUPC/COACTVWC there is no group-level I/O either -- the COPY is entirely vestigial. A field-width change to CARD-ACCT-ID has zero effect on this program's behavior."
+        }
+      ]
     },
     {
       "path": "app-vsam-mq/cbl/COACCT01.cbl",
@@ -653,7 +691,8 @@
           "note": "copied into WS-ACCT-ID, staged for the MQ reply message"
         }
       ],
-      "also_structural": []
+      "also_structural": [],
+      "dead_copy_footnotes": []
     }
   ],
   "near_misses": {
@@ -1473,22 +1512,5 @@
       }
     ]
   },
-  "uncertain": [
-    {
-      "path": "app-transaction-type-db2/cbl/COTRTLIC.cbl",
-      "module": "optional",
-      "alias": "CARD-ACCT-ID",
-      "copybook": "CVACT02Y",
-      "issue": "dead_copy",
-      "reasoning": "COTRTLIC.cbl has an active `COPY CVACT02Y.` (line 490) but CARD-RECORD never appears anywhere else in the file (grep for CARD-RECORD returns nothing), and there are zero exact or substring hits for any of the three account-id aliases anywhere in this program. Unlike the COCRDSLC/COCRDUPC/COACTVWC cases, there isn't even group-level I/O to point to as structural evidence -- the COPY appears to be entirely vestigial in this program. Recommend excluding it from the STRUCTURALLY-AFFECTED list rather than counting it, but flagging here instead of silently doing so, since 'COPYs the copybook' is the literal definition given for that tier and this technically satisfies it."
-    },
-    {
-      "path": "cbl/COTRN02C.cbl",
-      "module": "core",
-      "alias": "ACCT-ID",
-      "copybook": "CVACT01Y",
-      "issue": "dead_copy",
-      "reasoning": "COTRN02C.cbl has an active `COPY CVACT01Y.` (line 89) but ACCOUNT-RECORD never appears anywhere else in the file, and no ACCT-* field from CVACT01Y (checked all 12: ACCT-ID, ACCT-ACTIVE-STATUS, ACCT-CURR-BAL, ACCT-CREDIT-LIMIT, ACCT-CASH-CREDIT-LIMIT, ACCT-OPEN-DATE, ACCT-EXPIRAION-DATE, ACCT-REISSUE-DATE, ACCT-CURR-CYC-CREDIT, ACCT-CURR-CYC-DEBIT, ACCT-ADDR-ZIP, ACCT-GROUP-ID) is referenced anywhere in the file. This program IS field-aware for XREF-ACCT-ID (CVACT03Y, listed under FIELD-AWARE), so its overall program tier for the wide field is FIELD-AWARE regardless -- this entry only concerns the ACCT-ID alias specifically, which this program does not touch at all despite the COPY being present."
-    }
-  ]
+  "uncertain": []
 }
