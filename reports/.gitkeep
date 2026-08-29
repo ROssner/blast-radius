@@ -1,0 +1,2 @@
+Impact reports land here after running `scripts/bob_sync_pull.sh` following
+a Bob pipeline run. Empty until the first run completes.
