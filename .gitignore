@@ -1,0 +1,4 @@
+# Bob's scratch working directory inside the isolated workspace. The
+# canonical, versioned copy of run output lives in bob-package/run-artifacts/
+# and reports/, both populated via scripts/bob_sync_pull.sh.
+samples/carddemo/.blast-radius/
