@@ -4,9 +4,12 @@ This scores a real end-to-end Bob run (SPEC → TRACE → VERIFY, SYNTHESIS
 report generated from it) — not the SPEC-only measurement in the earlier
 version of `docs/FINDINGS.md`. Raw transcript:
 [`bob_sessions/blastradius_task02_full_pipeline.json`](../bob_sessions/blastradius_task02_full_pipeline.json).
-Bob's own output: `samples/carddemo/.blast-radius/artifacts/verified-acct-id.json`
+Bob's own output: [`bob-package/run-artifacts/latest/artifacts/verified-acct-id.json`](../bob-package/run-artifacts/latest/artifacts/verified-acct-id.json)
 (the file every number below is computed from) and the rest of that
-directory. Report: `samples/carddemo/.blast-radius/reports/impact-acct-id.html`.
+directory — pulled via `scripts/bob_sync_pull.sh` from the ephemeral,
+gitignored `samples/carddemo/.blast-radius/artifacts/` where Bob actually
+wrote it, since that path doesn't survive a fresh clone. Report:
+[`reports/impact-acct-id.html`](../reports/impact-acct-id.html).
 
 **Headline: this run is dramatically better than the SPEC-only measurement,
 and it is verified, not assumed.** Every number below either comes directly
@@ -224,7 +227,7 @@ is the first actual evidence for that argument, not just its restatement.
 ## Reproducing this
 
 `python3 scripts/score_run.py` reproduces every number in sections 1, 2,
-3, 5, and 6 directly from `samples/carddemo/.blast-radius/artifacts/verified-acct-id.json`
+3, 5, and 6 directly from `bob-package/run-artifacts/latest/artifacts/verified-acct-id.json`
 against `docs/ground_truth/ACCT-ID.json`, filtered to `module == "core"`
 on both sides. It does not re-verify the 7 "beyond ground truth" alias
 findings in §3 or the hit-level spot-check sample in §6 against source —

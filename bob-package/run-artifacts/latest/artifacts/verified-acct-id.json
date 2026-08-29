@@ -1,0 +1,691 @@
+{
+  "verdicts": [
+    {
+      "program": "app/cbl/CBACT01C.cbl",
+      "verdict": "ACCEPTED",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {"alias": "ACCT-ID", "line": 201, "access_kind": "DISPLAY", "verdict": "ACCEPTED", "reason": "col7=space; DISPLAY 'ACCT-ID :' ACCT-ID — second token is the data-name outside the literal"},
+        {"alias": "ACCT-ID", "line": 216, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE ACCT-ID TO OUT-ACCT-ID"},
+        {"alias": "ACCT-ID", "line": 254, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE ACCT-ID TO ARR-ACCT-ID"},
+        {"alias": "ACCT-ID", "line": 277, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE ACCT-ID TO VB1-ACCT-ID VB2-ACCT-ID (statement spans 277-278)"},
+        {"alias": "ACCT-ID", "line": 278, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; continuation of MOVE on line 277, VB2-ACCT-ID is second target on line 278"}
+      ]
+    },
+    {
+      "program": "app/cbl/CBACT02C.cbl",
+      "verdict": "ACCEPTED",
+      "tier": "STRUCTURALLY-AFFECTED",
+      "hits": [
+        {"alias": "CARD-RECORD", "line": 78, "access_kind": "DISPLAY", "verdict": "ACCEPTED", "reason": "col7=space; DISPLAY CARD-RECORD — whole record display; CARD-RECORD contains CARD-ACCT-ID"},
+        {"alias": "CARD-RECORD", "line": 93, "access_kind": "READ", "verdict": "ACCEPTED", "reason": "col7=space; READ CARDFILE-FILE INTO CARD-RECORD — whole-record READ, CARD-RECORD contains CARD-ACCT-ID"},
+        {"alias": "CARD-RECORD", "line": 96, "access_kind": "DISPLAY", "verdict": "REJECTED", "reason": "col7=* at line 96; line is commented out: '*        DISPLAY CARD-RECORD'"}
+      ]
+    },
+    {
+      "program": "app/cbl/CBACT03C.cbl",
+      "verdict": "ACCEPTED",
+      "tier": "STRUCTURALLY-AFFECTED",
+      "hits": [
+        {"alias": "CARD-XREF-RECORD", "line": 78, "access_kind": "DISPLAY", "verdict": "ACCEPTED", "reason": "col7=space; DISPLAY CARD-XREF-RECORD — whole record display; CARD-XREF-RECORD contains XREF-ACCT-ID"},
+        {"alias": "CARD-XREF-RECORD", "line": 93, "access_kind": "READ", "verdict": "ACCEPTED", "reason": "col7=space; READ XREFFILE-FILE INTO CARD-XREF-RECORD"},
+        {"alias": "CARD-XREF-RECORD", "line": 96, "access_kind": "DISPLAY", "verdict": "ACCEPTED", "reason": "col7=space; DISPLAY CARD-XREF-RECORD inside IF block (not commented)"}
+      ]
+    },
+    {
+      "program": "app/cbl/CBACT04C.cbl",
+      "verdict": "ACCEPTED",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {"alias": "TRANCAT-ACCT-ID", "line": 194, "access_kind": "COMPARE", "verdict": "ACCEPTED", "reason": "col7=space; IF TRANCAT-ACCT-ID NOT= WS-LAST-ACCT-NUM"},
+        {"alias": "TRANCAT-ACCT-ID", "line": 201, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE TRANCAT-ACCT-ID TO WS-LAST-ACCT-NUM"},
+        {"alias": "TRANCAT-ACCT-ID", "line": 202, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE TRANCAT-ACCT-ID TO FD-ACCT-ID"},
+        {"alias": "TRANCAT-ACCT-ID", "line": 204, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE TRANCAT-ACCT-ID TO FD-XREF-ACCT-ID"},
+        {"alias": "ACCT-ID", "line": 486, "access_kind": "DISPLAY", "verdict": "ACCEPTED", "corrected_access_kind": "MOVE-SOURCE", "reason": "col7=space; ACCT-ID is STRING source operand (STRING 'Int. for a/c', ACCT-ID DELIMITED BY SIZE INTO TRAN-DESC); access kind is MOVE-SOURCE not READ"},
+        {"alias": "FD-ACCT-ID", "line": 375, "access_kind": "DISPLAY", "verdict": "ACCEPTED", "reason": "col7=space; DISPLAY 'ACCOUNT NOT FOUND: ' FD-ACCT-ID"},
+        {"alias": "FD-XREF-ACCT-ID", "line": 395, "access_kind": "READ", "verdict": "ACCEPTED", "reason": "col7=space; KEY IS FD-XREF-ACCT-ID in READ XREF-FILE"},
+        {"alias": "FD-XREF-ACCT-ID", "line": 397, "access_kind": "DISPLAY", "verdict": "ACCEPTED", "reason": "col7=space; DISPLAY 'ACCOUNT NOT FOUND: ' FD-XREF-ACCT-ID"}
+      ]
+    },
+    {
+      "program": "app/cbl/CBEXPORT.cbl",
+      "verdict": "ACCEPTED",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {"alias": "ACCT-ID", "line": 44, "access_kind": "READ", "verdict": "ACCEPTED", "reason": "col7=space; RECORD KEY IS ACCT-ID in SELECT statement — used as VSAM key"},
+        {"alias": "ACCT-ID", "line": 351, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE ACCT-ID TO EXP-ACCT-ID"},
+        {"alias": "XREF-ACCT-ID", "line": 417, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE XREF-ACCT-ID TO EXP-XREF-ACCT-ID"},
+        {"alias": "CARD-ACCT-ID", "line": 536, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE CARD-ACCT-ID TO EXP-CARD-ACCT-ID"}
+      ]
+    },
+    {
+      "program": "app/cbl/CBIMPORT.cbl",
+      "verdict": "ACCEPTED",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {"alias": "ACCT-ID", "line": 328, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; MOVE EXP-ACCT-ID TO ACCT-ID"},
+        {"alias": "XREF-ACCT-ID", "line": 359, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; MOVE EXP-XREF-ACCT-ID TO XREF-ACCT-ID"},
+        {"alias": "CARD-ACCT-ID", "line": 408, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; MOVE EXP-CARD-ACCT-ID TO CARD-ACCT-ID"}
+      ]
+    },
+    {
+      "program": "app/cbl/CBSTM03A.CBL",
+      "verdict": "ACCEPTED",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {"alias": "XREF-ACCT-ID", "line": 396, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE XREF-ACCT-ID TO WS-M03B-KEY"},
+        {"alias": "XREF-ACCT-ID", "line": 398, "access_kind": "READ", "verdict": "ACCEPTED", "corrected_access_kind": "COMPARE", "reason": "col7=space; COMPUTE WS-M03B-KEY-LN = LENGTH OF XREF-ACCT-ID — reads the length of the field; corrected to READ (intrinsic function operand)"},
+        {"alias": "ACCT-ID", "line": 483, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE ACCT-ID TO ST-ACCT-ID"},
+        {"alias": "ACCT-ID", "line": 529, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE ACCT-ID TO L11-ACCT"}
+      ]
+    },
+    {
+      "program": "app/cbl/CBTRN01C.cbl",
+      "verdict": "ACCEPTED",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {"alias": "XREF-ACCT-ID", "line": 175, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE XREF-ACCT-ID TO ACCT-ID — XREF-ACCT-ID is source, ACCT-ID is target"},
+        {"alias": "ACCT-ID", "line": 175, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; ACCT-ID is the MOVE target on this line"},
+        {"alias": "XREF-ACCT-ID", "line": 237, "access_kind": "DISPLAY", "verdict": "ACCEPTED", "reason": "col7=space; DISPLAY 'ACCOUNT ID : ' XREF-ACCT-ID"},
+        {"alias": "ACCT-ID", "line": 178, "access_kind": "DISPLAY", "verdict": "ACCEPTED", "reason": "col7=space; DISPLAY 'ACCOUNT ' ACCT-ID ' NOT FOUND'"},
+        {"alias": "ACCT-ID", "line": 242, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE ACCT-ID TO FD-ACCT-ID"}
+      ]
+    },
+    {
+      "program": "app/cbl/CBTRN02C.cbl",
+      "verdict": "ACCEPTED",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {"alias": "XREF-ACCT-ID", "line": 394, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE XREF-ACCT-ID TO FD-ACCT-ID"},
+        {"alias": "XREF-ACCT-ID", "line": 469, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE XREF-ACCT-ID TO FD-TRANCAT-ACCT-ID"},
+        {"alias": "XREF-ACCT-ID", "line": 505, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE XREF-ACCT-ID TO TRANCAT-ACCT-ID — also makes TRANCAT-ACCT-ID a MOVE-TARGET"}
+      ]
+    },
+    {
+      "program": "app/cbl/CBTRN03C.cbl",
+      "verdict": "ACCEPTED",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {"alias": "XREF-ACCT-ID", "line": 364, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE XREF-ACCT-ID TO TRAN-REPORT-ACCOUNT-ID"}
+      ]
+    },
+    {
+      "program": "app/cbl/COACTUPC.cbl",
+      "verdict": "ACCEPTED",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {"alias": "CC-ACCT-ID", "line": 1053, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; MOVE LOW-VALUES TO CC-ACCT-ID ACUP-NEW-ACCT-ID-X"},
+        {"alias": "CC-ACCT-ID", "line": 1056, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; MOVE ACCTSIDI OF CACTUPAI TO CC-ACCT-ID ACUP-NEW-ACCT-ID-X"},
+        {"alias": "CC-ACCT-ID", "line": 1787, "access_kind": "COMPARE", "verdict": "ACCEPTED", "reason": "col7=space; IF CC-ACCT-ID EQUAL LOW-VALUES"},
+        {"alias": "CC-ACCT-ID", "line": 1788, "access_kind": "COMPARE", "verdict": "ACCEPTED", "reason": "col7=space; OR CC-ACCT-ID EQUAL SPACES"},
+        {"alias": "CC-ACCT-ID", "line": 1801, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE CC-ACCT-ID TO ACUP-NEW-ACCT-ID"},
+        {"alias": "CC-ACCT-ID", "line": 1802, "access_kind": "COMPARE", "verdict": "ACCEPTED", "reason": "col7=space; IF CC-ACCT-ID IS NOT NUMERIC"},
+        {"alias": "CC-ACCT-ID-N", "line": 1803, "access_kind": "COMPARE", "verdict": "ACCEPTED", "reason": "col7=space; OR CC-ACCT-ID-N EQUAL ZEROS"},
+        {"alias": "CDEMO-ACCT-ID", "line": 983, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; INITIALIZE ... CDEMO-ACCT-ID (INITIALIZE sets to zero/spaces)"},
+        {"alias": "CDEMO-ACCT-ID", "line": 1794, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; MOVE ZEROES TO CDEMO-ACCT-ID"},
+        {"alias": "CDEMO-ACCT-ID", "line": 1812, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; MOVE ZEROES TO CDEMO-ACCT-ID"},
+        {"alias": "CC-ACCT-ID", "line": 1815, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE CC-ACCT-ID TO CDEMO-ACCT-ID"},
+        {"alias": "CDEMO-ACCT-ID", "line": 1815, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; CDEMO-ACCT-ID is MOVE target of CC-ACCT-ID"},
+        {"alias": "CDEMO-ACCT-ID", "line": 2629, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; MOVE ZEROES TO CDEMO-ACCT-ID"},
+        {"alias": "CC-ACCT-ID-N", "line": 2703, "access_kind": "COMPARE", "verdict": "ACCEPTED", "reason": "col7=space; IF CC-ACCT-ID-N = 0"},
+        {"alias": "CC-ACCT-ID", "line": 2707, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE CC-ACCT-ID TO ACCTSIDO OF CACTUPAO"},
+        {"alias": "CC-ACCT-ID-N", "line": 2712, "access_kind": "COMPARE", "verdict": "ACCEPTED", "reason": "col7=space; WHEN CC-ACCT-ID-N = 0"},
+        {"alias": "CC-ACCT-ID", "line": 3614, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE CC-ACCT-ID TO ACUP-OLD-ACCT-ID WS-CARD-RID-ACCT-ID"},
+        {"alias": "CC-ACCT-ID", "line": 3892, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE CC-ACCT-ID TO WS-CARD-RID-ACCT-ID"},
+        {"alias": "ACCT-ID", "line": 3805, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE ACCT-ID TO CDEMO-ACCT-ID"},
+        {"alias": "ACCT-ID", "line": 3817, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE ACCT-ID TO ACUP-OLD-ACCT-ID"}
+      ]
+    },
+    {
+      "program": "app/cbl/COACTVWC.cbl",
+      "verdict": "ACCEPTED",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {"alias": "CC-ACCT-ID", "line": 468, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE CC-ACCT-ID TO ACCTSIDO OF CACTVWAO"},
+        {"alias": "CC-ACCT-ID", "line": 630, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; MOVE LOW-VALUES TO CC-ACCT-ID"},
+        {"alias": "CC-ACCT-ID", "line": 632, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; MOVE ACCTSIDI OF CACTVWAI TO CC-ACCT-ID"},
+        {"alias": "CC-ACCT-ID", "line": 653, "access_kind": "COMPARE", "verdict": "ACCEPTED", "reason": "col7=space; IF CC-ACCT-ID EQUAL LOW-VALUES"},
+        {"alias": "CC-ACCT-ID", "line": 654, "access_kind": "COMPARE", "verdict": "ACCEPTED", "reason": "col7=space; OR CC-ACCT-ID EQUAL SPACES"},
+        {"alias": "CC-ACCT-ID", "line": 666, "access_kind": "COMPARE", "verdict": "ACCEPTED", "reason": "col7=space; IF CC-ACCT-ID IS NOT NUMERIC"},
+        {"alias": "CC-ACCT-ID", "line": 678, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE CC-ACCT-ID TO CDEMO-ACCT-ID"},
+        {"alias": "CDEMO-ACCT-ID", "line": 660, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; MOVE ZEROES TO CDEMO-ACCT-ID"},
+        {"alias": "CDEMO-ACCT-ID", "line": 675, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; MOVE ZERO TO CDEMO-ACCT-ID"},
+        {"alias": "CDEMO-ACCT-ID", "line": 678, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; MOVE CC-ACCT-ID TO CDEMO-ACCT-ID — CDEMO-ACCT-ID is target"},
+        {"alias": "CDEMO-ACCT-ID", "line": 691, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE CDEMO-ACCT-ID TO WS-CARD-RID-ACCT-ID"}
+      ]
+    },
+    {
+      "program": "app/cbl/COADM01C.cbl",
+      "verdict": "ACCEPTED",
+      "tier": "STRUCTURALLY-AFFECTED",
+      "hits": [
+        {"alias": "CARDDEMO-COMMAREA", "line": 90, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; MOVE DFHCOMMAREA(1:EIBCALEN) TO CARDDEMO-COMMAREA"},
+        {"alias": "CARDDEMO-COMMAREA", "line": 113, "access_kind": "PASSED-TO-PROGRAM", "verdict": "ACCEPTED", "reason": "col7=space; EXEC CICS RETURN COMMAREA(CARDDEMO-COMMAREA)"},
+        {"alias": "CARDDEMO-COMMAREA", "line": 147, "access_kind": "PASSED-TO-PROGRAM", "verdict": "ACCEPTED", "reason": "col7=space; EXEC CICS XCTL COMMAREA(CARDDEMO-COMMAREA)"},
+        {"alias": "CARDDEMO-COMMAREA", "line": 282, "access_kind": "PASSED-TO-PROGRAM", "verdict": "ACCEPTED", "reason": "col7=space; EXEC CICS RETURN COMMAREA(CARDDEMO-COMMAREA)"}
+      ]
+    },
+    {
+      "program": "app/cbl/COBIL00C.cbl",
+      "verdict": "ACCEPTED",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {"alias": "ACCT-ID", "line": 170, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; MOVE ACTIDINI OF COBIL0AI TO ACCT-ID XREF-ACCT-ID"},
+        {"alias": "XREF-ACCT-ID", "line": 171, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; continuation — XREF-ACCT-ID is second target of MOVE on lines 170-171"},
+        {"alias": "ACCT-ID", "line": 349, "access_kind": "READ", "verdict": "ACCEPTED", "reason": "col7=space; RIDFLD(ACCT-ID) in EXEC CICS READ"},
+        {"alias": "ACCT-ID", "line": 350, "access_kind": "READ", "verdict": "ACCEPTED", "reason": "col7=space; KEYLENGTH(LENGTH OF ACCT-ID) — part of same CICS READ"},
+        {"alias": "XREF-ACCT-ID", "line": 414, "access_kind": "READ", "verdict": "ACCEPTED", "reason": "col7=space; RIDFLD(XREF-ACCT-ID) in EXEC CICS READ"},
+        {"alias": "XREF-ACCT-ID", "line": 415, "access_kind": "READ", "verdict": "ACCEPTED", "reason": "col7=space; KEYLENGTH(LENGTH OF XREF-ACCT-ID) — part of same CICS READ"}
+      ]
+    },
+    {
+      "program": "app/cbl/COCRDLIC.cbl",
+      "verdict": "ACCEPTED",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {"alias": "CC-ACCT-ID", "line": 969, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; MOVE ACCTSIDI OF CCRDLIAI TO CC-ACCT-ID"},
+        {"alias": "CC-ACCT-ID", "line": 1007, "access_kind": "COMPARE", "verdict": "ACCEPTED", "reason": "col7=space; IF CC-ACCT-ID EQUAL LOW-VALUES"},
+        {"alias": "CC-ACCT-ID", "line": 1008, "access_kind": "COMPARE", "verdict": "ACCEPTED", "reason": "col7=space; OR CC-ACCT-ID EQUAL SPACES"},
+        {"alias": "CC-ACCT-ID-N", "line": 1009, "access_kind": "COMPARE", "verdict": "ACCEPTED", "reason": "col7=space; OR CC-ACCT-ID-N EQUAL ZEROS"},
+        {"alias": "CDEMO-ACCT-ID", "line": 1011, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; MOVE ZEROES TO CDEMO-ACCT-ID"},
+        {"alias": "CC-ACCT-ID", "line": 1017, "access_kind": "COMPARE", "verdict": "ACCEPTED", "reason": "col7=space; IF CC-ACCT-ID IS NOT NUMERIC"},
+        {"alias": "CDEMO-ACCT-ID", "line": 1024, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; MOVE ZERO TO CDEMO-ACCT-ID"},
+        {"alias": "CC-ACCT-ID", "line": 1027, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE CC-ACCT-ID TO CDEMO-ACCT-ID"},
+        {"alias": "CC-ACCT-ID", "line": 847, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE CC-ACCT-ID TO ACCTSIDO OF CCRDLIAO"},
+        {"alias": "CDEMO-ACCT-ID", "line": 849, "access_kind": "COMPARE", "verdict": "ACCEPTED", "reason": "col7=space; WHEN CDEMO-ACCT-ID = 0"},
+        {"alias": "CDEMO-ACCT-ID", "line": 852, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE CDEMO-ACCT-ID TO ACCTSIDO OF CCRDLIAO"},
+        {"alias": "CDEMO-ACCT-ID", "line": 532, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; MOVE WS-ROW-ACCTNO(I-SELECTED) TO CDEMO-ACCT-ID"},
+        {"alias": "CDEMO-ACCT-ID", "line": 560, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; MOVE WS-ROW-ACCTNO(I-SELECTED) TO CDEMO-ACCT-ID"},
+        {"alias": "CARD-ACCT-ID", "line": 1167, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE CARD-ACCT-ID TO WS-ROW-ACCTNO(WS-SCRN-COUNTER)"},
+        {"alias": "CARD-ACCT-ID", "line": 1174, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE CARD-ACCT-ID TO WS-CA-FIRST-CARD-ACCT-ID"},
+        {"alias": "CARD-ACCT-ID", "line": 1194, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE CARD-ACCT-ID TO WS-CA-LAST-CARD-ACCT-ID"},
+        {"alias": "CARD-ACCT-ID", "line": 1212, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE CARD-ACCT-ID TO WS-CA-LAST-CARD-ACCT-ID"},
+        {"alias": "CARD-ACCT-ID", "line": 1236, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE CARD-ACCT-ID TO WS-CA-LAST-CARD-ACCT-ID"},
+        {"alias": "CARD-ACCT-ID", "line": 1340, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE CARD-ACCT-ID TO WS-ROW-ACCTNO(WS-SCRN-COUNTER)"},
+        {"alias": "CARD-ACCT-ID", "line": 1350, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE CARD-ACCT-ID TO WS-CA-FIRST-CARD-ACCT-ID"},
+        {"alias": "CARD-ACCT-ID", "line": 1386, "access_kind": "COMPARE", "verdict": "ACCEPTED", "reason": "col7=space; IF CARD-ACCT-ID = CC-ACCT-ID in 9500-FILTER-RECORDS"}
+      ]
+    },
+    {
+      "program": "app/cbl/COCRDSLC.cbl",
+      "verdict": "ACCEPTED",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {"alias": "CC-ACCT-ID-N", "line": 342, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; MOVE CDEMO-ACCT-ID TO CC-ACCT-ID-N"},
+        {"alias": "CC-ACCT-ID", "line": 462, "access_kind": "COMPARE", "verdict": "ACCEPTED", "reason": "col7=space; IF CDEMO-ACCT-ID = 0 (guards next line)"},
+        {"alias": "CC-ACCT-ID", "line": 465, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE CC-ACCT-ID TO ACCTSIDO OF CCRDSLAO"},
+        {"alias": "CC-ACCT-ID", "line": 617, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; MOVE LOW-VALUES TO CC-ACCT-ID"},
+        {"alias": "CC-ACCT-ID", "line": 619, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; MOVE ACCTSIDI OF CCRDSLAI TO CC-ACCT-ID"},
+        {"alias": "CC-ACCT-ID", "line": 651, "access_kind": "COMPARE", "verdict": "ACCEPTED", "reason": "col7=space; IF CC-ACCT-ID EQUAL LOW-VALUES"},
+        {"alias": "CC-ACCT-ID", "line": 652, "access_kind": "COMPARE", "verdict": "ACCEPTED", "reason": "col7=space; OR CC-ACCT-ID EQUAL SPACES"},
+        {"alias": "CC-ACCT-ID-N", "line": 653, "access_kind": "COMPARE", "verdict": "ACCEPTED", "reason": "col7=space; OR CC-ACCT-ID-N EQUAL ZEROS"},
+        {"alias": "CDEMO-ACCT-ID", "line": 659, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; MOVE ZEROES TO CDEMO-ACCT-ID"},
+        {"alias": "CC-ACCT-ID", "line": 665, "access_kind": "COMPARE", "verdict": "ACCEPTED", "reason": "col7=space; IF CC-ACCT-ID IS NOT NUMERIC"},
+        {"alias": "CDEMO-ACCT-ID", "line": 673, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; MOVE ZERO TO CDEMO-ACCT-ID"},
+        {"alias": "CC-ACCT-ID", "line": 676, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE CC-ACCT-ID TO CDEMO-ACCT-ID"}
+      ]
+    },
+    {
+      "program": "app/cbl/COCRDUPC.cbl",
+      "verdict": "ACCEPTED",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {"alias": "CDEMO-ACCT-ID", "line": 460, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; MOVE ZEROS TO CDEMO-ACCT-ID"},
+        {"alias": "CC-ACCT-ID-N", "line": 490, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; MOVE CDEMO-ACCT-ID TO CC-ACCT-ID-N"},
+        {"alias": "CC-ACCT-ID", "line": 521, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; INITIALIZE ... CDEMO-ACCT-ID (at line 521)"},
+        {"alias": "CDEMO-ACCT-ID", "line": 521, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; INITIALIZE ... CDEMO-ACCT-ID CDEMO-CARD-NUM"},
+        {"alias": "CC-ACCT-ID", "line": 591, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; MOVE LOW-VALUES TO CC-ACCT-ID CCUP-NEW-ACCTID"},
+        {"alias": "CC-ACCT-ID", "line": 594, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; MOVE ACCTSIDI OF CCRDUPAI TO CC-ACCT-ID CCUP-NEW-ACCTID"},
+        {"alias": "CDEMO-ACCT-ID", "line": 671, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; MOVE CCUP-OLD-ACCTID TO CDEMO-ACCT-ID"},
+        {"alias": "CC-ACCT-ID", "line": 725, "access_kind": "COMPARE", "verdict": "ACCEPTED", "reason": "col7=space; IF CC-ACCT-ID EQUAL LOW-VALUES"},
+        {"alias": "CC-ACCT-ID", "line": 726, "access_kind": "COMPARE", "verdict": "ACCEPTED", "reason": "col7=space; OR CC-ACCT-ID EQUAL SPACES"},
+        {"alias": "CC-ACCT-ID-N", "line": 727, "access_kind": "COMPARE", "verdict": "ACCEPTED", "reason": "col7=space; OR CC-ACCT-ID-N EQUAL ZEROS"},
+        {"alias": "CDEMO-ACCT-ID", "line": 733, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; MOVE ZEROES TO CDEMO-ACCT-ID"},
+        {"alias": "CC-ACCT-ID", "line": 740, "access_kind": "COMPARE", "verdict": "ACCEPTED", "reason": "col7=space; IF CC-ACCT-ID IS NOT NUMERIC"},
+        {"alias": "CDEMO-ACCT-ID", "line": 748, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; MOVE ZERO TO CDEMO-ACCT-ID"},
+        {"alias": "CC-ACCT-ID", "line": 752, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE CC-ACCT-ID TO CDEMO-ACCT-ID CCUP-NEW-ACCTID"},
+        {"alias": "CDEMO-ACCT-ID", "line": 1015, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; MOVE ZEROES TO CDEMO-ACCT-ID"},
+        {"alias": "CC-ACCT-ID-N", "line": 1087, "access_kind": "COMPARE", "verdict": "ACCEPTED", "reason": "col7=space; IF CC-ACCT-ID-N = 0"},
+        {"alias": "CC-ACCT-ID", "line": 1090, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE CC-ACCT-ID TO ACCTSIDO OF CCRDUPAO"},
+        {"alias": "CC-ACCT-ID", "line": 1346, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE CC-ACCT-ID TO CCUP-OLD-ACCTID"},
+        {"alias": "CC-ACCT-ID-N", "line": 1463, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE CC-ACCT-ID-N TO CARD-UPDATE-ACCT-ID"}
+      ]
+    },
+    {
+      "program": "app/cbl/COMEN01C.cbl",
+      "verdict": "ACCEPTED",
+      "tier": "STRUCTURALLY-AFFECTED",
+      "hits": [
+        {"alias": "CARDDEMO-COMMAREA", "line": null, "access_kind": "PASSED-TO-PROGRAM", "verdict": "ACCEPTED", "reason": "COPY COCOM01Y confirmed; CARDDEMO-COMMAREA passed in EXEC CICS RETURN/XCTL COMMAREA clauses; CDEMO-ACCT-ID structurally included"}
+      ]
+    },
+    {
+      "program": "app/cbl/CORPT00C.cbl",
+      "verdict": "ACCEPTED",
+      "tier": "STRUCTURALLY-AFFECTED",
+      "hits": [
+        {"alias": "CARDDEMO-COMMAREA", "line": null, "access_kind": "PASSED-TO-PROGRAM", "verdict": "ACCEPTED", "reason": "COPY COCOM01Y confirmed; CARDDEMO-COMMAREA used in EXEC CICS RETURN/XCTL COMMAREA clauses"}
+      ]
+    },
+    {
+      "program": "app/cbl/COSGN00C.cbl",
+      "verdict": "ACCEPTED",
+      "tier": "STRUCTURALLY-AFFECTED",
+      "hits": [
+        {"alias": "CARDDEMO-COMMAREA", "line": null, "access_kind": "PASSED-TO-PROGRAM", "verdict": "ACCEPTED", "reason": "COPY COCOM01Y confirmed; CARDDEMO-COMMAREA used in EXEC CICS RETURN COMMAREA clauses"}
+      ]
+    },
+    {
+      "program": "app/cbl/COTRN00C.cbl",
+      "verdict": "ACCEPTED",
+      "tier": "STRUCTURALLY-AFFECTED",
+      "hits": [
+        {"alias": "CARDDEMO-COMMAREA", "line": null, "access_kind": "PASSED-TO-PROGRAM", "verdict": "ACCEPTED", "reason": "COPY COCOM01Y confirmed; CARDDEMO-COMMAREA used in EXEC CICS RETURN/XCTL COMMAREA clauses"}
+      ]
+    },
+    {
+      "program": "app/cbl/COTRN01C.cbl",
+      "verdict": "ACCEPTED",
+      "tier": "STRUCTURALLY-AFFECTED",
+      "hits": [
+        {"alias": "CARDDEMO-COMMAREA", "line": null, "access_kind": "PASSED-TO-PROGRAM", "verdict": "ACCEPTED", "reason": "COPY COCOM01Y confirmed; CARDDEMO-COMMAREA used in EXEC CICS RETURN/XCTL COMMAREA clauses"}
+      ]
+    },
+    {
+      "program": "app/cbl/COTRN02C.cbl",
+      "verdict": "ACCEPTED",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {"alias": "XREF-ACCT-ID", "line": 206, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; MOVE WS-ACCT-ID-N TO XREF-ACCT-ID"},
+        {"alias": "XREF-ACCT-ID", "line": 207, "access_kind": "MOVE-TARGET", "verdict": "ACCEPTED", "reason": "col7=space; continuation target ACTIDINI OF COTRN2AI on same MOVE"},
+        {"alias": "XREF-ACCT-ID", "line": 223, "access_kind": "MOVE-SOURCE", "verdict": "ACCEPTED", "reason": "col7=space; MOVE XREF-ACCT-ID TO ACTIDINI OF COTRN2AI"},
+        {"alias": "XREF-ACCT-ID", "line": 582, "access_kind": "READ", "verdict": "ACCEPTED", "reason": "col7=space; RIDFLD(XREF-ACCT-ID) in EXEC CICS READ"},
+        {"alias": "XREF-ACCT-ID", "line": 583, "access_kind": "READ", "verdict": "ACCEPTED", "reason": "col7=space; KEYLENGTH(LENGTH OF XREF-ACCT-ID) — part of same CICS READ"},
+        {"alias": "ACCT-ID", "line": null, "access_kind": null, "verdict": "REJECTED", "reason": "CVACT01Y COPYed at line 89 but ACCT-ID and ACCOUNT-RECORD never referenced in procedure division — dead copy for ACCT-ID path"}
+      ]
+    },
+    {
+      "program": "app/cbl/COUSR00C.cbl",
+      "verdict": "ACCEPTED",
+      "tier": "STRUCTURALLY-AFFECTED",
+      "hits": [
+        {"alias": "CARDDEMO-COMMAREA", "line": null, "access_kind": "PASSED-TO-PROGRAM", "verdict": "ACCEPTED", "reason": "COPY COCOM01Y confirmed; CARDDEMO-COMMAREA used in EXEC CICS RETURN/XCTL COMMAREA clauses"}
+      ]
+    },
+    {
+      "program": "app/cbl/COUSR01C.cbl",
+      "verdict": "ACCEPTED",
+      "tier": "STRUCTURALLY-AFFECTED",
+      "hits": [
+        {"alias": "CARDDEMO-COMMAREA", "line": null, "access_kind": "PASSED-TO-PROGRAM", "verdict": "ACCEPTED", "reason": "COPY COCOM01Y confirmed; CARDDEMO-COMMAREA used in EXEC CICS RETURN/XCTL COMMAREA clauses"}
+      ]
+    },
+    {
+      "program": "app/cbl/COUSR02C.cbl",
+      "verdict": "ACCEPTED",
+      "tier": "STRUCTURALLY-AFFECTED",
+      "hits": [
+        {"alias": "CARDDEMO-COMMAREA", "line": null, "access_kind": "PASSED-TO-PROGRAM", "verdict": "ACCEPTED", "reason": "COPY COCOM01Y confirmed; CARDDEMO-COMMAREA used in EXEC CICS RETURN/XCTL COMMAREA clauses"}
+      ]
+    },
+    {
+      "program": "app/cbl/COUSR03C.cbl",
+      "verdict": "ACCEPTED",
+      "tier": "STRUCTURALLY-AFFECTED",
+      "hits": [
+        {"alias": "CARDDEMO-COMMAREA", "line": null, "access_kind": "PASSED-TO-PROGRAM", "verdict": "ACCEPTED", "reason": "COPY COCOM01Y confirmed; CARDDEMO-COMMAREA used in EXEC CICS RETURN/XCTL COMMAREA clauses"}
+      ]
+    }
+  ],
+  "alias_verdicts": [
+    {
+      "name": "FD-ACCT-ID",
+      "program": "app/cbl/CBACT01C.cbl",
+      "verdict": "ACCEPTED",
+      "pic": "9(11)",
+      "evidence_line": 54,
+      "reason": "Declared at line 54 PIC 9(11) in FD ACCTFILE-FILE. Fed by MOVE ACCT-ID TO OUT-ACCT-ID path; FD-ACCT-ID is the 01-level sub-field of FD-ACCTFILE-REC which maps to ACCOUNT-RECORD via READ/WRITE. ACCT-ID is RECORD KEY for ACCTFILE-FILE (same file) — FD-ACCT-ID is the on-disk representation of ACCT-ID."
+    },
+    {
+      "name": "OUT-ACCT-ID",
+      "program": "app/cbl/CBACT01C.cbl",
+      "verdict": "ACCEPTED",
+      "pic": "9(11)",
+      "evidence_line": 58,
+      "reason": "Declared at line 58 PIC 9(11) in FD OUT-FILE. Fed by MOVE ACCT-ID TO OUT-ACCT-ID at line 216 — ACCT-ID (confirmed) is the MOVE source."
+    },
+    {
+      "name": "ARR-ACCT-ID",
+      "program": "app/cbl/CBACT01C.cbl",
+      "verdict": "ACCEPTED",
+      "pic": "9(11)",
+      "evidence_line": 73,
+      "reason": "Declared at line 73 PIC 9(11) in FD ARRY-FILE. Fed by MOVE ACCT-ID TO ARR-ACCT-ID at line 254."
+    },
+    {
+      "name": "VB1-ACCT-ID",
+      "program": "app/cbl/CBACT01C.cbl",
+      "verdict": "ACCEPTED",
+      "pic": "9(11)",
+      "evidence_line": 124,
+      "reason": "Declared at line 124 PIC 9(11) in WS 01 VBRC-REC1. Fed by MOVE ACCT-ID TO VB1-ACCT-ID VB2-ACCT-ID at lines 277-278."
+    },
+    {
+      "name": "VB2-ACCT-ID",
+      "program": "app/cbl/CBACT01C.cbl",
+      "verdict": "ACCEPTED",
+      "pic": "9(11)",
+      "evidence_line": 127,
+      "reason": "Declared at line 127 PIC 9(11) in WS 01 VBRC-REC2. Fed by MOVE ACCT-ID TO VB1-ACCT-ID VB2-ACCT-ID at lines 277-278."
+    },
+    {
+      "name": "WS-LAST-ACCT-NUM",
+      "program": "app/cbl/CBACT04C.cbl",
+      "verdict": "ACCEPTED",
+      "pic": "X(11)",
+      "evidence_line": 167,
+      "reason": "Declared at line 167 PIC X(11). Fed by MOVE TRANCAT-ACCT-ID TO WS-LAST-ACCT-NUM at line 201 (TRANCAT-ACCT-ID is a confirmed alias of ACCT-ID)."
+    },
+    {
+      "name": "FD-ACCT-ID",
+      "program": "app/cbl/CBACT04C.cbl",
+      "verdict": "ACCEPTED",
+      "pic": "9(11)",
+      "evidence_line": 86,
+      "reason": "Declared at line 86 PIC 9(11) in FD ACCOUNT-FILE. Fed by MOVE TRANCAT-ACCT-ID TO FD-ACCT-ID at line 202; used as READ key at line 373 (READ ACCOUNT-FILE INTO ACCOUNT-RECORD with implicit key FD-ACCT-ID)."
+    },
+    {
+      "name": "FD-XREF-ACCT-ID",
+      "program": "app/cbl/CBACT04C.cbl",
+      "verdict": "ACCEPTED",
+      "pic": "9(11)",
+      "evidence_line": 73,
+      "reason": "Declared at line 73 PIC 9(11) in FD XREF-FILE. Fed by MOVE TRANCAT-ACCT-ID TO FD-XREF-ACCT-ID at line 204; used as KEY IS FD-XREF-ACCT-ID at line 395."
+    },
+    {
+      "name": "FD-TRANCAT-ACCT-ID",
+      "program": "app/cbl/CBACT04C.cbl",
+      "verdict": "ACCEPTED",
+      "pic": "9(11)",
+      "evidence_line": 64,
+      "reason": "Declared at line 64 PIC 9(11) in FD TCATBAL-FILE. This is the on-disk representation of TRANCAT-ACCT-ID (which is confirmed alias). TRAN-CAT-BAL-RECORD is read INTO and the copybook field TRANCAT-ACCT-ID is in the same record."
+    },
+    {
+      "name": "EXP-ACCT-ID",
+      "program": "app/cpy/CVEXPORT.cpy",
+      "verdict": "ACCEPTED",
+      "pic": "9(11)",
+      "evidence_line": 48,
+      "reason": "Declared in CVEXPORT.cpy line 48 PIC 9(11) under EXPORT-ACCOUNT-DATA. Fed by MOVE ACCT-ID TO EXP-ACCT-ID at CBEXPORT.cbl line 351; consumed by MOVE EXP-ACCT-ID TO ACCT-ID at CBIMPORT.cbl line 328."
+    },
+    {
+      "name": "EXP-XREF-ACCT-ID",
+      "program": "app/cpy/CVEXPORT.cpy",
+      "verdict": "ACCEPTED",
+      "pic": "9(11) COMP",
+      "evidence_line": 87,
+      "reason": "Declared in CVEXPORT.cpy line 87 PIC 9(11) COMP under EXPORT-CARD-XREF-DATA. Fed by MOVE XREF-ACCT-ID TO EXP-XREF-ACCT-ID at CBEXPORT.cbl line 417; consumed by MOVE EXP-XREF-ACCT-ID TO XREF-ACCT-ID at CBIMPORT.cbl line 359."
+    },
+    {
+      "name": "EXP-CARD-ACCT-ID",
+      "program": "app/cpy/CVEXPORT.cpy",
+      "verdict": "ACCEPTED",
+      "pic": "9(11) COMP",
+      "evidence_line": 95,
+      "reason": "Declared in CVEXPORT.cpy line 95 PIC 9(11) COMP under EXPORT-CARD-DATA. Fed by MOVE CARD-ACCT-ID TO EXP-CARD-ACCT-ID at CBEXPORT.cbl line 536; consumed by MOVE EXP-CARD-ACCT-ID TO CARD-ACCT-ID at CBIMPORT.cbl line 408."
+    },
+    {
+      "name": "ST-ACCT-ID",
+      "program": "app/cbl/CBSTM03A.CBL",
+      "verdict": "ACCEPTED",
+      "pic": "X(20)",
+      "evidence_line": 109,
+      "reason": "Declared at line 109 PIC X(20) in WS print-line structure ST-LINE7. Fed by MOVE ACCT-ID TO ST-ACCT-ID at line 483."
+    },
+    {
+      "name": "L11-ACCT",
+      "program": "app/cbl/CBSTM03A.CBL",
+      "verdict": "ACCEPTED",
+      "pic": "X(20)",
+      "evidence_line": 215,
+      "reason": "Declared at line 215 PIC X(20) in WS HTML-L11 structure. Fed by MOVE ACCT-ID TO L11-ACCT at line 529."
+    },
+    {
+      "name": "FD-ACCT-ID",
+      "program": "app/cbl/CBTRN01C.cbl",
+      "verdict": "ACCEPTED",
+      "pic": "9(11)",
+      "evidence_line": 88,
+      "reason": "Declared at line 88 PIC 9(11) in FD ACCOUNT-FILE. Fed by MOVE ACCT-ID TO FD-ACCT-ID at line 242; used as KEY IS FD-ACCT-ID in READ ACCOUNT-FILE at line 244."
+    },
+    {
+      "name": "FD-ACCT-ID",
+      "program": "app/cbl/CBTRN02C.cbl",
+      "verdict": "ACCEPTED",
+      "pic": "9(11)",
+      "evidence_line": 88,
+      "reason": "Declared at line 88 PIC 9(11) in FD ACCOUNT-FILE. Fed by MOVE XREF-ACCT-ID TO FD-ACCT-ID at line 394 (XREF-ACCT-ID is a confirmed alias)."
+    },
+    {
+      "name": "FD-TRANCAT-ACCT-ID",
+      "program": "app/cbl/CBTRN02C.cbl",
+      "verdict": "ACCEPTED",
+      "pic": "9(11)",
+      "evidence_line": 94,
+      "reason": "Declared at line 94 PIC 9(11) in FD TCATBAL-FILE. Fed by MOVE XREF-ACCT-ID TO FD-TRANCAT-ACCT-ID at line 469."
+    },
+    {
+      "name": "TRAN-REPORT-ACCOUNT-ID",
+      "program": "app/cbl/CBTRN03C.cbl",
+      "verdict": "ACCEPTED",
+      "pic": "X(11)",
+      "evidence_line": 18,
+      "reason": "Declared in CVTRA07Y.cpy (COPYed at line 113) PIC X(11) in TRANSACTION-DETAIL-REPORT. Fed by MOVE XREF-ACCT-ID TO TRAN-REPORT-ACCOUNT-ID at CBTRN03C.cbl line 364."
+    },
+    {
+      "name": "ACUP-OLD-ACCT-ID",
+      "program": "app/cbl/COACTUPC.cbl",
+      "verdict": "ACCEPTED",
+      "pic": "9(11)",
+      "evidence_line": 672,
+      "reason": "Declared at line 672-673 PIC 9(11) REDEFINES ACUP-OLD-ACCT-ID-X. Fed by MOVE CC-ACCT-ID TO ACUP-OLD-ACCT-ID WS-CARD-RID-ACCT-ID at line 3614, and MOVE ACCT-ID TO ACUP-OLD-ACCT-ID at line 3817."
+    },
+    {
+      "name": "ACUP-OLD-ACCT-ID-X",
+      "program": "app/cbl/COACTUPC.cbl",
+      "verdict": "ACCEPTED",
+      "pic": "X(11)",
+      "evidence_line": 671,
+      "reason": "Declared at line 671 PIC X(11); ACUP-OLD-ACCT-ID (numeric view) REDEFINES it and is fed by CC-ACCT-ID / ACCT-ID. ACUP-OLD-ACCT-ID-X is the same storage. Used in comparison at line 1684 (IF ACUP-NEW-ACCT-ID-X = ACUP-OLD-ACCT-ID-X)."
+    },
+    {
+      "name": "ACUP-NEW-ACCT-ID",
+      "program": "app/cbl/COACTUPC.cbl",
+      "verdict": "ACCEPTED",
+      "pic": "9(11)",
+      "evidence_line": 760,
+      "reason": "Declared at line 760-761 PIC 9(11) REDEFINES ACUP-NEW-ACCT-ID-X. Fed by MOVE CC-ACCT-ID TO ACUP-NEW-ACCT-ID at line 1801."
+    },
+    {
+      "name": "ACUP-NEW-ACCT-ID-X",
+      "program": "app/cbl/COACTUPC.cbl",
+      "verdict": "ACCEPTED",
+      "pic": "X(11)",
+      "evidence_line": 759,
+      "reason": "Declared at line 759 PIC X(11); ACUP-NEW-ACCT-ID (numeric, confirmed alias) REDEFINES it. Fed at lines 1054/1057 by MOVE to CC-ACCT-ID and ACUP-NEW-ACCT-ID-X simultaneously."
+    },
+    {
+      "name": "WS-CARD-RID-ACCT-ID",
+      "program": "app/cbl/COACTUPC.cbl",
+      "verdict": "ACCEPTED",
+      "pic": "9(11)",
+      "evidence_line": 381,
+      "reason": "Declared at line 381 PIC 9(11). Fed by MOVE CC-ACCT-ID TO ACUP-OLD-ACCT-ID WS-CARD-RID-ACCT-ID at line 3614, and MOVE CC-ACCT-ID TO WS-CARD-RID-ACCT-ID at line 3892. Used as RIDFLD via WS-CARD-RID-ACCT-ID-X at line 3897."
+    },
+    {
+      "name": "WS-CARD-RID-ACCT-ID-X",
+      "program": "app/cbl/COACTUPC.cbl",
+      "verdict": "ACCEPTED",
+      "pic": "X(11)",
+      "evidence_line": 382,
+      "reason": "Declared at line 382-383 PIC X(11) REDEFINES WS-CARD-RID-ACCT-ID. WS-CARD-RID-ACCT-ID (confirmed) is the same storage; WS-CARD-RID-ACCT-ID-X used as RIDFLD at line 3897."
+    },
+    {
+      "name": "ACCT-UPDATE-ID",
+      "program": "app/cbl/COACTUPC.cbl",
+      "verdict": "ACCEPTED",
+      "pic": "9(11)",
+      "evidence_line": 422,
+      "reason": "Declared at line 422 PIC 9(11) in ACCT-UPDATE-RECORD. Fed by MOVE ACUP-NEW-ACCT-ID TO ACCT-UPDATE-ID at line 3960 (ACUP-NEW-ACCT-ID is a confirmed alias). ACCT-UPDATE-RECORD is written via EXEC CICS REWRITE FROM(ACCT-UPDATE-RECORD) at line 4067."
+    },
+    {
+      "name": "WS-CARD-RID-ACCT-ID",
+      "program": "app/cbl/COACTVWC.cbl",
+      "verdict": "ACCEPTED",
+      "pic": "9(11)",
+      "evidence_line": 78,
+      "reason": "Declared at line 78 PIC 9(11). Fed by MOVE CDEMO-ACCT-ID TO WS-CARD-RID-ACCT-ID at line 691 (CDEMO-ACCT-ID is a confirmed alias)."
+    },
+    {
+      "name": "WS-CARD-RID-ACCT-ID-X",
+      "program": "app/cbl/COACTVWC.cbl",
+      "verdict": "ACCEPTED",
+      "pic": "X(11)",
+      "evidence_line": 79,
+      "reason": "Declared at line 79-80 PIC X(11) REDEFINES WS-CARD-RID-ACCT-ID. WS-CARD-RID-ACCT-ID (confirmed) is same storage."
+    },
+    {
+      "name": "WS-ROW-ACCTNO",
+      "program": "app/cbl/COCRDLIC.cbl",
+      "verdict": "ACCEPTED",
+      "pic": "X(11)",
+      "evidence_line": 258,
+      "reason": "Declared at line 258 PIC X(11) OCCURS 7 TIMES. Fed by MOVE CARD-ACCT-ID TO WS-ROW-ACCTNO(WS-SCRN-COUNTER) at lines 1168 and 1341 (CARD-ACCT-ID is a confirmed alias). Value then moved to CDEMO-ACCT-ID at lines 532/560."
+    },
+    {
+      "name": "WS-CA-FIRST-CARD-ACCT-ID",
+      "program": "app/cbl/COCRDLIC.cbl",
+      "verdict": "ACCEPTED",
+      "pic": "9(11)",
+      "evidence_line": 235,
+      "reason": "Declared at line 235 PIC 9(11). Fed by MOVE CARD-ACCT-ID TO WS-CA-FIRST-CARD-ACCT-ID at lines 1175 and 1351 (CARD-ACCT-ID is a confirmed alias)."
+    },
+    {
+      "name": "WS-CA-LAST-CARD-ACCT-ID",
+      "program": "app/cbl/COCRDLIC.cbl",
+      "verdict": "ACCEPTED",
+      "pic": "9(11)",
+      "evidence_line": 232,
+      "reason": "Declared at line 232 PIC 9(11). Fed by MOVE CARD-ACCT-ID TO WS-CA-LAST-CARD-ACCT-ID at lines 1194, 1213, and 1236 (CARD-ACCT-ID is a confirmed alias)."
+    },
+    {
+      "name": "WS-CARD-RID-ACCT-ID",
+      "program": "app/cbl/COCRDSLC.cbl",
+      "verdict": "REJECTED",
+      "pic": "9(11)",
+      "evidence_line": 99,
+      "reason": "Declared at line 99 PIC 9(11). The only MOVE that would feed it (line 739) is commented out: '*    MOVE CC-ACCT-ID-N TO WS-CARD-RID-ACCT-ID'. It is used as RIDFLD at line 785 but with no live feed from any alias — the field is never populated from target/alias data in executable code. Confirm UNCERTAIN per original claim; marking REJECTED as dead-never-fed."
+    },
+    {
+      "name": "CCUP-OLD-ACCTID",
+      "program": "app/cbl/COCRDUPC.cbl",
+      "verdict": "ACCEPTED",
+      "pic": "X(11)",
+      "evidence_line": 292,
+      "reason": "Declared at line 292 PIC X(11). Fed by MOVE CC-ACCT-ID TO CCUP-OLD-ACCTID at line 1346 (CC-ACCT-ID is a confirmed alias). Also moved TO CDEMO-ACCT-ID at line 671."
+    },
+    {
+      "name": "CCUP-NEW-ACCTID",
+      "program": "app/cbl/COCRDUPC.cbl",
+      "verdict": "ACCEPTED",
+      "pic": "X(11)",
+      "evidence_line": 304,
+      "reason": "Declared at line 304 PIC X(11). Fed by MOVE CC-ACCT-ID TO ... CCUP-NEW-ACCTID at lines 592/595 and MOVE CC-ACCT-ID TO CDEMO-ACCT-ID CCUP-NEW-ACCTID at line 753 (CC-ACCT-ID is a confirmed alias)."
+    },
+    {
+      "name": "CARD-UPDATE-ACCT-ID",
+      "program": "app/cbl/COCRDUPC.cbl",
+      "verdict": "ACCEPTED",
+      "pic": "9(11)",
+      "evidence_line": 316,
+      "reason": "Declared at line 316 PIC 9(11) in CARD-UPDATE-RECORD. Fed by MOVE CC-ACCT-ID-N TO CARD-UPDATE-ACCT-ID at line 1463 (CC-ACCT-ID-N is a confirmed alias). CARD-UPDATE-RECORD then written via EXEC CICS REWRITE."
+    },
+    {
+      "name": "WS-ACCT-ID-N",
+      "program": "app/cbl/COTRN02C.cbl",
+      "verdict": "ACCEPTED",
+      "pic": "9(11)",
+      "evidence_line": 55,
+      "reason": "Declared at line 55 PIC 9(11). COMPUTE WS-ACCT-ID-N = FUNCTION NUMVAL(ACTIDINI) at line 204 then MOVE WS-ACCT-ID-N TO XREF-ACCT-ID at line 206 — WS-ACCT-ID-N is the numeric conversion of the screen input that flows into XREF-ACCT-ID (a confirmed alias)."
+    }
+  ],
+  "near_misses": [
+    {
+      "identifier": "CUST-ACCT-ID-X",
+      "program": "app/cbl/COACTUPC.cbl",
+      "line": 358,
+      "reason": "dead-never-fed: declared at line 358 PIC X(11) in CICS-OUTPUT-EDIT-VARS group; no MOVE from any confirmed alias or target field found anywhere in COACTUPC.cbl procedure division. Only declaration found; CUST-ACCT-ID-N at line 359-360 REDEFINES it but is equally unfed."
+    },
+    {
+      "identifier": "CARD-ACCT-ID-X",
+      "program": "app/cbl/COCRDLIC.cbl",
+      "line": 99,
+      "reason": "dead-never-fed: declared at line 99 PIC X(11) in CICS-OUTPUT-EDIT-VARS; no MOVE into CARD-ACCT-ID-X from any alias found in procedure division. CARD-ACCT-ID-N (REDEFINES it) only used in comparison at line 1009 reading its value — but that value is never loaded from any ACCT-ID alias."
+    },
+    {
+      "identifier": "CARD-ACCT-ID-X",
+      "program": "app/cbl/COCRDSLC.cbl",
+      "line": 73,
+      "reason": "dead-never-fed: declared at line 73 PIC X(11) in CICS-OUTPUT-EDIT-VARS; no MOVE from any confirmed alias into CARD-ACCT-ID-X. CARD-ACCT-ID-N (REDEFINES) appears in compare at line 653 but is never populated from alias data."
+    },
+    {
+      "identifier": "CARD-ACCT-ID-N",
+      "program": "app/cbl/COCRDSLC.cbl",
+      "line": 74,
+      "reason": "dead-never-fed: REDEFINES CARD-ACCT-ID-X at line 73-74; base field never fed from any alias. Used in COMPARE at line 653 but value is undefined (never loaded from alias)."
+    },
+    {
+      "identifier": "CARD-ACCT-ID-X",
+      "program": "app/cbl/COCRDUPC.cbl",
+      "line": 104,
+      "reason": "dead-never-fed: declared at line 104 PIC X(11) in CICS-OUTPUT-EDIT-VARS; no MOVE from any confirmed alias into CARD-ACCT-ID-X found in procedure division."
+    },
+    {
+      "identifier": "CARD-ACCT-ID-N",
+      "program": "app/cbl/COCRDUPC.cbl",
+      "line": 105,
+      "reason": "dead-never-fed: REDEFINES CARD-ACCT-ID-X at lines 105-106; base field never fed from alias. CC-ACCT-ID-N (a different field, confirmed alias) is the one actually used in the program logic."
+    }
+  ],
+  "summary": {
+    "total_programs_checked": 27,
+    "field_aware": 14,
+    "structurally_affected": 13,
+    "dead_copy": 0,
+    "not_affected": 0,
+    "total_hits_accepted": 107,
+    "total_hits_rejected": 2,
+    "total_aliases_accepted": 34,
+    "total_aliases_rejected": 1,
+    "near_misses_total": 6,
+    "rejection_reasons": {
+      "comment": 1,
+      "string_literal": 0,
+      "different_entity": 0,
+      "dead_never_fed": 1,
+      "tier_miscall": 0,
+      "alias_claim_unsupported": 1,
+      "other": 0
+    },
+    "notes": [
+      "CBACT04C line 486: access_kind corrected from READ to MOVE-SOURCE (STRING operand, not READ verb)",
+      "CBACT02C line 96: REJECTED — column 7 is '*' (commented out)",
+      "COTRN02C: ACCT-ID/ACCOUNT-RECORD hit REJECTED — CVACT01Y COPYed but those names never appear in the procedure division (dead copy for ACCT-ID path only; XREF-ACCT-ID hits via CVACT03Y are valid)",
+      "COCRDSLC WS-CARD-RID-ACCT-ID: REJECTED — the only feeding MOVE (line 739) is commented out with '*'",
+      "EXP-ACCT-ID/EXP-XREF-ACCT-ID/EXP-CARD-ACCT-ID verified in CVEXPORT.cpy; PICs are 9(11), 9(11) COMP, 9(11) COMP respectively",
+      "ACUP-OLD-ACCT-ID and ACUP-NEW-ACCT-ID: claim had lines 672/760 as PIC 9(11) REDEFINES — confirmed correct; the -X variant is line 671/759 PIC X(11) and -N numeric REDEFINES it",
+      "COTRN02C tier corrected to FIELD-AWARE (uses XREF-ACCT-ID directly); CVACT01Y copy is dead for ACCT-ID but program does reference XREF-ACCT-ID",
+      "CBSTM03A line 398 COMPUTE LENGTH OF XREF-ACCT-ID: access_kind corrected to READ (reads value length, not a COMPARE or MOVE-SOURCE in the traditional sense)"
+    ]
+  }
+}

@@ -1,0 +1,734 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blast Radius — ACCT-ID Impact Report</title>
+<style>
+  :root {
+    --bg: #0b0f14;
+    --bg-elevated: #12181f;
+    --bg-card: #161d26;
+    --border: #232c38;
+    --text: #e6edf3;
+    --text-dim: #8b96a5;
+    --text-faint: #5b6472;
+    --accent: #4fa8ff;
+    --accent-dim: #1c4d7a;
+    --risk-high: #ff5c6c;
+    --risk-high-bg: #3a1a1f;
+    --risk-med: #f5a623;
+    --risk-med-bg: #3a2c14;
+    --risk-low: #6ee7a8;
+    --risk-low-bg: #123322;
+    --tier-field-aware: #ff5c6c;
+    --tier-structural: #f5a623;
+    --tier-dead: #6b7684;
+    --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    line-height: 1.5;
+    padding: 0 0 80px 0;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 32px; }
+
+  header.hero {
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, var(--bg-elevated) 0%, var(--bg) 100%);
+    padding: 48px 0 36px 0;
+  }
+  .eyebrow {
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin: 0 0 10px 0;
+  }
+  h1 {
+    font-size: 34px;
+    font-weight: 700;
+    margin: 0 0 6px 0;
+    letter-spacing: -0.01em;
+  }
+  .field-badges { margin: 14px 0 18px 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 13px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--accent);
+  }
+  .change-request {
+    color: var(--text-dim);
+    font-size: 15px;
+    max-width: 760px;
+    margin: 0 0 4px 0;
+  }
+  .meta-line {
+    color: var(--text-faint);
+    font-size: 13px;
+    margin-top: 14px;
+  }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+    margin: 32px 0 40px 0;
+  }
+  .stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 16px;
+  }
+  .stat-value { font-size: 30px; font-weight: 700; line-height: 1; }
+  .stat-label {
+    color: var(--text-dim);
+    font-size: 12.5px;
+    margin-top: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .stat-card.accent-field-aware .stat-value { color: var(--tier-field-aware); }
+  .stat-card.accent-structural .stat-value { color: var(--tier-structural); }
+  .stat-card.accent-dead .stat-value { color: var(--tier-dead); }
+  .stat-card.accent-precision .stat-value { color: var(--risk-low); }
+
+  section { margin: 48px 0; }
+  h2 {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 0 4px 0;
+  }
+  .section-sub { color: var(--text-dim); font-size: 14px; margin: 0 0 20px 0; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    font-size: 14px;
+  }
+  thead th {
+    text-align: left;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-dim);
+    background: var(--bg-elevated);
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  tbody td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--bg-elevated); }
+  td.mono, .mono-cell { font-family: var(--mono); font-size: 13px; }
+
+  .tier-pill {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .tier-pill.field-aware { background: var(--risk-high-bg); color: var(--tier-field-aware); }
+  .tier-pill.structural { background: var(--risk-med-bg); color: var(--tier-structural); }
+  .tier-pill.dead-copy { background: #1c2129; color: var(--tier-dead); }
+
+  .risk-bar-track {
+    width: 90px;
+    height: 6px;
+    background: var(--bg-elevated);
+    border-radius: 4px;
+    overflow: hidden;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+  .risk-bar-fill { height: 100%; border-radius: 4px; }
+  .module-tag {
+    font-size: 11.5px;
+    color: var(--text-faint);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 1px 6px;
+  }
+
+  .diagram-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    overflow-x: auto;
+  }
+
+  .precision-note {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--risk-low);
+    border-radius: 8px;
+    padding: 16px 18px;
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-bottom: 20px;
+  }
+  .precision-note b { color: var(--text); }
+
+  footer {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    color: var(--text-faint);
+    font-size: 12.5px;
+  }
+
+  @media (max-width: 900px) {
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Blast Radius · Change Impact Report</p>
+    <h1>ACCT-ID</h1>
+    <div class="field-badges">
+      <span class="badge">ACCT-ID</span>
+      <span class="badge">CARD-ACCT-ID</span>
+      <span class="badge">XREF-ACCT-ID</span>
+      <span class="badge">CDEMO-ACCT-ID</span>
+      <span class="badge">CC-ACCT-ID</span>
+      <span class="badge">CC-ACCT-ID-N</span>
+      <span class="badge">TRANCAT-ACCT-ID</span>
+      <span class="badge">FD-ACCT-ID</span>
+      <span class="badge">EXP-ACCT-ID</span>
+      <span class="badge">EXP-XREF-ACCT-ID</span>
+      <span class="badge">EXP-CARD-ACCT-ID</span>
+      <span class="badge">TRAN-REPORT-ACCOUNT-ID</span>
+      <span class="badge">ACUP-OLD-ACCT-ID</span>
+      <span class="badge">ACUP-NEW-ACCT-ID</span>
+      <span class="badge">WS-CARD-RID-ACCT-ID</span>
+      <span class="badge">ACCT-UPDATE-ID</span>
+      <span class="badge">CCUP-OLD-ACCTID</span>
+      <span class="badge">CCUP-NEW-ACCTID</span>
+      <span class="badge">CARD-UPDATE-ACCT-ID</span>
+      <span class="badge">WS-ROW-ACCTNO</span>
+      <span class="badge">WS-ACCT-ID-N</span>
+    </div>
+    <p class="change-request">&ldquo;We need to extend the account identifier field to support longer account numbers for the new branch integration.&rdquo;</p>
+    <p class="meta-line">Generated 2026-08-29T22:14:43Z &middot; Scope: app/cbl/, app/cpy/, app/bms/, app/jcl/ (core modules only; app/app-*/ optional integration modules excluded per request — 11 optional programs not traced) &middot; 31 core programs inventoried, 27 candidates, 7 copybook aliases resolved</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="stats-row">
+    <div class="stat-card accent-field-aware">
+      <div class="stat-value">15</div>
+      <div class="stat-label">Field-aware programs</div>
+    </div>
+    <div class="stat-card accent-structural">
+      <div class="stat-value">12</div>
+      <div class="stat-label">Structurally affected</div>
+    </div>
+    <div class="stat-card accent-dead">
+      <div class="stat-value">0</div>
+      <div class="stat-label">Dead copies found</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">27</div>
+      <div class="stat-label">Total affected programs</div>
+    </div>
+    <div class="stat-card accent-precision">
+      <div class="stat-value">6</div>
+      <div class="stat-label">Near misses rejected</div>
+    </div>
+  </div>
+
+  <section>
+    <h2>Affected programs, ranked by risk</h2>
+    <p class="section-sub">Risk score combines tier, the kinds of access found (a WRITE ranks above a DISPLAY), and whether the program is part of the core application or an optional integration module. See methodology below for the exact formula.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Program</th>
+          <th>Module</th>
+          <th>Tier</th>
+          <th>Risk</th>
+          <th>Access kinds</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td class="mono-cell">COACTUPC.cbl</td>
+          <td><span class="module-tag">core</span></td>
+          <td><span class="tier-pill field-aware">FIELD-AWARE</span></td>
+          <td><span class="risk-bar-track"><span class="risk-bar-fill" style="width:100%;background:var(--risk-high)"></span></span>132</td>
+          <td>WRITE, MOVE-TARGET, MOVE-SOURCE, COMPARE</td>
+          <td>Account Update screen. Reads CC-ACCT-ID from BMS, validates, populates ACCT-ID via READ, stages into ACUP-OLD/NEW-ACCT-ID and ACCT-UPDATE-ID; ACCT-UPDATE-ID written to ACCTDAT via CICS REWRITE. 7 local aliases confirmed.</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td class="mono-cell">COCRDUPC.cbl</td>
+          <td><span class="module-tag">core</span></td>
+          <td><span class="tier-pill field-aware">FIELD-AWARE</span></td>
+          <td><span class="risk-bar-track"><span class="risk-bar-fill" style="width:99%;background:var(--risk-high)"></span></span>131</td>
+          <td>MOVE-TARGET, COMPARE, MOVE-SOURCE</td>
+          <td>Card Update screen. 19 hits on CC-ACCT-ID/CC-ACCT-ID-N/CDEMO-ACCT-ID. CARD-UPDATE-ACCT-ID written to VSAM via CICS REWRITE. CCUP-OLD-ACCTID persists ID across pseudo-conversational turns.</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td class="mono-cell">COCRDLIC.cbl</td>
+          <td><span class="module-tag">core</span></td>
+          <td><span class="tier-pill field-aware">FIELD-AWARE</span></td>
+          <td><span class="risk-bar-track"><span class="risk-bar-fill" style="width:98%;background:var(--risk-high)"></span></span>130</td>
+          <td>MOVE-TARGET, COMPARE, MOVE-SOURCE</td>
+          <td>Card List screen. 22 hits. CARD-ACCT-ID used for forward/backward browse pagination (WS-CA-FIRST/LAST-CARD-ACCT-ID). WS-ROW-ACCTNO screen array feeds CDEMO-ACCT-ID on row selection for XCTL.</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td class="mono-cell">COCRDSLC.cbl</td>
+          <td><span class="module-tag">core</span></td>
+          <td><span class="tier-pill field-aware">FIELD-AWARE</span></td>
+          <td><span class="risk-bar-track"><span class="risk-bar-fill" style="width:70%;background:var(--risk-high)"></span></span>93</td>
+          <td>MOVE-TARGET, COMPARE, MOVE-SOURCE</td>
+          <td>Card Search screen. 13 hits. CDEMO-ACCT-ID &harr; CC-ACCT-ID-N pathway. Note: CVACT01Y and CVACT03Y are commented-out COPYs (not active). WS-CARD-RID-ACCT-ID feed is commented out — latent bug (RIDFLD never populated).</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td class="mono-cell">COACTVWC.cbl</td>
+          <td><span class="module-tag">core</span></td>
+          <td><span class="tier-pill field-aware">FIELD-AWARE</span></td>
+          <td><span class="risk-bar-track"><span class="risk-bar-fill" style="width:66%;background:var(--risk-high)"></span></span>87</td>
+          <td>MOVE-TARGET, COMPARE, MOVE-SOURCE</td>
+          <td>Account View screen. 11 hits. CC-ACCT-ID received from BMS, validated, moved to CDEMO-ACCT-ID and WS-CARD-RID-ACCT-ID used as CICS RIDFLD for ACCTDAT and CXACAIX reads.</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td class="mono-cell">CBACT04C.cbl</td>
+          <td><span class="module-tag">core</span></td>
+          <td><span class="tier-pill field-aware">FIELD-AWARE</span></td>
+          <td><span class="risk-bar-track"><span class="risk-bar-fill" style="width:42%;background:var(--risk-med)"></span></span>56</td>
+          <td>COMPARE, MOVE-SOURCE, DISPLAY, READ</td>
+          <td>Interest calculation batch. TRANCAT-ACCT-ID drives account-boundary detection; propagates to FD-ACCT-ID and FD-XREF-ACCT-ID for random reads. ACCT-ID used in STRING for transaction description. ACCOUNT-FILE REWRITEn after balance updates.</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td class="mono-cell">COBIL00C.cbl</td>
+          <td><span class="module-tag">core</span></td>
+          <td><span class="tier-pill field-aware">FIELD-AWARE</span></td>
+          <td><span class="risk-bar-track"><span class="risk-bar-fill" style="width:41%;background:var(--risk-med)"></span></span>54</td>
+          <td>MOVE-TARGET, READ</td>
+          <td>Bill Payment screen. ACCT-ID and XREF-ACCT-ID both loaded from same BMS field ACTIDINI. ACCT-ID used as RIDFLD for ACCTDAT READ with UPDATE lock; XREF-ACCT-ID as RIDFLD for CXACAIX. ACCOUNT-RECORD REWRITEn after balance update.</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td class="mono-cell">COTRN02C.cbl</td>
+          <td><span class="module-tag">core</span></td>
+          <td><span class="tier-pill field-aware">FIELD-AWARE</span></td>
+          <td><span class="risk-bar-track"><span class="risk-bar-fill" style="width:39%;background:var(--risk-med)"></span></span>52</td>
+          <td>MOVE-TARGET, MOVE-SOURCE, READ</td>
+          <td>Transaction detail screen. XREF-ACCT-ID used as CICS RIDFLD for CXACAIX read and also received from/sent to screen. Note: CVACT01Y copied but ACCT-ID/ACCOUNT-RECORD never referenced — dead copy for that alias.</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td class="mono-cell">CBIMPORT.cbl</td>
+          <td><span class="module-tag">core</span></td>
+          <td><span class="tier-pill field-aware">FIELD-AWARE</span></td>
+          <td><span class="risk-bar-track"><span class="risk-bar-fill" style="width:36%;background:var(--risk-med)"></span></span>48</td>
+          <td>MOVE-TARGET</td>
+          <td>Branch import batch. Receives EXP-ACCT-ID, EXP-XREF-ACCT-ID, EXP-CARD-ACCT-ID from CVEXPORT record and MOVEs them into ACCT-ID, XREF-ACCT-ID, CARD-ACCT-ID respectively before writing to ACCOUNT-OUTPUT, XREF-OUTPUT, CARD-OUTPUT files.</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td class="mono-cell">CBTRN02C.cbl</td>
+          <td><span class="module-tag">core</span></td>
+          <td><span class="tier-pill field-aware">FIELD-AWARE</span></td>
+          <td><span class="risk-bar-track"><span class="risk-bar-fill" style="width:36%;background:var(--risk-med)"></span></span>48</td>
+          <td>MOVE-SOURCE, MOVE-TARGET</td>
+          <td>Daily transaction posting batch (I-O). XREF-ACCT-ID drives account lookup (FD-ACCT-ID) and category balance key (FD-TRANCAT-ACCT-ID). ACCOUNT-FILE and TRAN-CAT-BAL-RECORD both opened I-O and REWRITEn.</td>
+        </tr>
+        <tr>
+          <td>11</td>
+          <td class="mono-cell">CBACT01C.cbl</td>
+          <td><span class="module-tag">core</span></td>
+          <td><span class="tier-pill field-aware">FIELD-AWARE</span></td>
+          <td><span class="risk-bar-track"><span class="risk-bar-fill" style="width:36%;background:var(--risk-med)"></span></span>47</td>
+          <td>DISPLAY, MOVE-SOURCE</td>
+          <td>Account file reader. DISPLAYs ACCT-ID, then fans it into 4 output records: OUT-ACCT-ID (flat), ARR-ACCT-ID (array), VB1-ACCT-ID, VB2-ACCT-ID (variable-length). All 4 FD aliases confirmed.</td>
+        </tr>
+        <tr>
+          <td>12</td>
+          <td class="mono-cell">CBTRN01C.cbl</td>
+          <td><span class="module-tag">core</span></td>
+          <td><span class="tier-pill field-aware">FIELD-AWARE</span></td>
+          <td><span class="risk-bar-track"><span class="risk-bar-fill" style="width:35%;background:var(--risk-med)"></span></span>46</td>
+          <td>MOVE-SOURCE, MOVE-TARGET, DISPLAY</td>
+          <td>Transaction validation batch. XREF-ACCT-ID moved to ACCT-ID to drive account lookup (FD-ACCT-ID). DISPLAY on not-found error. ACCOUNT-FILE opened INPUT only.</td>
+        </tr>
+        <tr>
+          <td>13</td>
+          <td class="mono-cell">CBSTM03A.CBL</td>
+          <td><span class="module-tag">core</span></td>
+          <td><span class="tier-pill field-aware">FIELD-AWARE</span></td>
+          <td><span class="risk-bar-track"><span class="risk-bar-fill" style="width:34%;background:var(--risk-med)"></span></span>45</td>
+          <td>MOVE-SOURCE, READ</td>
+          <td>Statement generation main. XREF-ACCT-ID used as key for subroutine CBSTM03B ACCTFILE lookup. ACCT-ID moved into ST-ACCT-ID (plain-text statement) and L11-ACCT (HTML statement). Calls CBSTM03B which has its own FD-ACCT-ID (9(11)).</td>
+        </tr>
+        <tr>
+          <td>14</td>
+          <td class="mono-cell">CBEXPORT.cbl</td>
+          <td><span class="module-tag">core</span></td>
+          <td><span class="tier-pill field-aware">FIELD-AWARE</span></td>
+          <td><span class="risk-bar-track"><span class="risk-bar-fill" style="width:34%;background:var(--risk-med)"></span></span>45</td>
+          <td>READ, MOVE-SOURCE</td>
+          <td>Branch export batch. ACCT-ID declared as VSAM RECORD KEY. Moves ACCT-ID→EXP-ACCT-ID, XREF-ACCT-ID→EXP-XREF-ACCT-ID, CARD-ACCT-ID→EXP-CARD-ACCT-ID. EXP-XREF-ACCT-ID and EXP-CARD-ACCT-ID use COMP encoding — downstream readers of the export file must account for binary format change if field width changes.</td>
+        </tr>
+        <tr>
+          <td>15</td>
+          <td class="mono-cell">CBTRN03C.cbl</td>
+          <td><span class="module-tag">core</span></td>
+          <td><span class="tier-pill field-aware">FIELD-AWARE</span></td>
+          <td><span class="risk-bar-track"><span class="risk-bar-fill" style="width:26%;background:var(--risk-med)"></span></span>34</td>
+          <td>MOVE-SOURCE</td>
+          <td>Daily transaction report batch. XREF-ACCT-ID moved to TRAN-REPORT-ACCOUNT-ID (PIC X(11) in CVTRA07Y) for report output. Display field width must match the extended ID.</td>
+        </tr>
+        <tr>
+          <td>16</td>
+          <td class="mono-cell">COUSR00C.cbl</td>
+          <td><span class="module-tag">core</span></td>
+          <td><span class="tier-pill structural">STRUCTURALLY-AFFECTED</span></td>
+          <td><span class="risk-bar-track"><span class="risk-bar-fill" style="width:8%;background:var(--risk-low)"></span></span>10</td>
+          <td>—</td>
+          <td>User list screen. COPYs COCOM01Y; CARDDEMO-COMMAREA passed opaquely in 5 XCTL/RETURN calls. CDEMO-ACCT-ID never individually referenced.</td>
+        </tr>
+        <tr>
+          <td>17</td>
+          <td class="mono-cell">CBACT02C.cbl</td>
+          <td><span class="module-tag">core</span></td>
+          <td><span class="tier-pill structural">STRUCTURALLY-AFFECTED</span></td>
+          <td><span class="risk-bar-track"><span class="risk-bar-fill" style="width:8%;background:var(--risk-low)"></span></span>10</td>
+          <td>—</td>
+          <td>Card file reader. COPYs CVACT02Y; CARD-RECORD read sequentially into CARD-RECORD (whole-record), DISPLAYed as whole block. CARD-ACCT-ID never individually named.</td>
+        </tr>
+        <tr>
+          <td>18</td>
+          <td class="mono-cell">CBACT03C.cbl</td>
+          <td><span class="module-tag">core</span></td>
+          <td><span class="tier-pill structural">STRUCTURALLY-AFFECTED</span></td>
+          <td><span class="risk-bar-track"><span class="risk-bar-fill" style="width:8%;background:var(--risk-low)"></span></span>10</td>
+          <td>—</td>
+          <td>Card xref file reader. COPYs CVACT03Y; CARD-XREF-RECORD read sequentially INTO and DISPLAYed as whole block twice. XREF-ACCT-ID never individually named.</td>
+        </tr>
+        <tr>
+          <td>19</td>
+          <td class="mono-cell">COADM01C.cbl</td>
+          <td><span class="module-tag">core</span></td>
+          <td><span class="tier-pill structural">STRUCTURALLY-AFFECTED</span></td>
+          <td><span class="risk-bar-track"><span class="risk-bar-fill" style="width:8%;background:var(--risk-low)"></span></span>10</td>
+          <td>—</td>
+          <td>Admin menu. COPYs COCOM01Y; CARDDEMO-COMMAREA loaded from DFHCOMMAREA and passed whole in 3 XCTL/RETURN calls. CDEMO-ACCT-ID never inspected.</td>
+        </tr>
+        <tr>
+          <td>20</td>
+          <td class="mono-cell">COMEN01C.cbl</td>
+          <td><span class="module-tag">core</span></td>
+          <td><span class="tier-pill structural">STRUCTURALLY-AFFECTED</span></td>
+          <td><span class="risk-bar-track"><span class="risk-bar-fill" style="width:8%;background:var(--risk-low)"></span></span>10</td>
+          <td>—</td>
+          <td>Main menu dispatcher. COPYs COCOM01Y; CARDDEMO-COMMAREA passed whole in 4 XCTL/RETURN calls. CDEMO-ACCT-ID never inspected.</td>
+        </tr>
+        <tr>
+          <td>21</td>
+          <td class="mono-cell">CORPT00C.cbl</td>
+          <td><span class="module-tag">core</span></td>
+          <td><span class="tier-pill structural">STRUCTURALLY-AFFECTED</span></td>
+          <td><span class="risk-bar-track"><span class="risk-bar-fill" style="width:8%;background:var(--risk-low)"></span></span>10</td>
+          <td>—</td>
+          <td>Report submission screen. COPYs COCOM01Y; CARDDEMO-COMMAREA passed whole in 4 XCTL/RETURN calls. CDEMO-ACCT-ID never inspected.</td>
+        </tr>
+        <tr>
+          <td>22</td>
+          <td class="mono-cell">COSGN00C.cbl</td>
+          <td><span class="module-tag">core</span></td>
+          <td><span class="tier-pill structural">STRUCTURALLY-AFFECTED</span></td>
+          <td><span class="risk-bar-track"><span class="risk-bar-fill" style="width:8%;background:var(--risk-low)"></span></span>10</td>
+          <td>—</td>
+          <td>Sign-on screen. COPYs COCOM01Y; CARDDEMO-COMMAREA passed whole to COADM01C or COMEN01C on successful login. CDEMO-ACCT-ID never touched (starts zero, stays zero at signon).</td>
+        </tr>
+        <tr>
+          <td>23</td>
+          <td class="mono-cell">COTRN00C.cbl</td>
+          <td><span class="module-tag">core</span></td>
+          <td><span class="tier-pill structural">STRUCTURALLY-AFFECTED</span></td>
+          <td><span class="risk-bar-track"><span class="risk-bar-fill" style="width:8%;background:var(--risk-low)"></span></span>10</td>
+          <td>—</td>
+          <td>Transaction list screen. COPYs COCOM01Y; CARDDEMO-COMMAREA passed whole in 4 XCTL/RETURN calls. CDEMO-ACCT-ID never inspected.</td>
+        </tr>
+        <tr>
+          <td>24</td>
+          <td class="mono-cell">COTRN01C.cbl</td>
+          <td><span class="module-tag">core</span></td>
+          <td><span class="tier-pill structural">STRUCTURALLY-AFFECTED</span></td>
+          <td><span class="risk-bar-track"><span class="risk-bar-fill" style="width:8%;background:var(--risk-low)"></span></span>10</td>
+          <td>—</td>
+          <td>Transaction add screen. COPYs COCOM01Y; CARDDEMO-COMMAREA passed whole in 3 XCTL/RETURN calls. CDEMO-ACCT-ID never inspected.</td>
+        </tr>
+        <tr>
+          <td>25</td>
+          <td class="mono-cell">COUSR01C.cbl</td>
+          <td><span class="module-tag">core</span></td>
+          <td><span class="tier-pill structural">STRUCTURALLY-AFFECTED</span></td>
+          <td><span class="risk-bar-track"><span class="risk-bar-fill" style="width:8%;background:var(--risk-low)"></span></span>10</td>
+          <td>—</td>
+          <td>User add screen. COPYs COCOM01Y; CARDDEMO-COMMAREA passed whole in 3 XCTL/RETURN calls. CDEMO-ACCT-ID never referenced.</td>
+        </tr>
+        <tr>
+          <td>26</td>
+          <td class="mono-cell">COUSR02C.cbl</td>
+          <td><span class="module-tag">core</span></td>
+          <td><span class="tier-pill structural">STRUCTURALLY-AFFECTED</span></td>
+          <td><span class="risk-bar-track"><span class="risk-bar-fill" style="width:8%;background:var(--risk-low)"></span></span>10</td>
+          <td>—</td>
+          <td>User update screen. COPYs COCOM01Y; CARDDEMO-COMMAREA passed whole in 3 XCTL/RETURN calls. CDEMO-ACCT-ID never referenced.</td>
+        </tr>
+        <tr>
+          <td>27</td>
+          <td class="mono-cell">COUSR03C.cbl</td>
+          <td><span class="module-tag">core</span></td>
+          <td><span class="tier-pill structural">STRUCTURALLY-AFFECTED</span></td>
+          <td><span class="risk-bar-track"><span class="risk-bar-fill" style="width:8%;background:var(--risk-low)"></span></span>10</td>
+          <td>—</td>
+          <td>User delete screen. COPYs COCOM01Y; CARDDEMO-COMMAREA passed whole in 3 XCTL/RETURN calls. CDEMO-ACCT-ID never referenced.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>Dependency graph</h2>
+    <p class="section-sub">ACCT-ID and its confirmed aliases, and every affected program that touches them, colored by tier.</p>
+    <div class="diagram-card">
+      <pre class="mermaid">
+graph LR
+  ACCT_ID["ACCT-ID\nPIC 9(11)\nCVACT01Y"]:::target
+  CARD_ACCT_ID["CARD-ACCT-ID\nCVACT02Y"]:::alias
+  XREF_ACCT_ID["XREF-ACCT-ID\nCVACT03Y"]:::alias
+  CDEMO_ACCT_ID["CDEMO-ACCT-ID\nCOCOM01Y"]:::alias
+  CC_ACCT_ID["CC-ACCT-ID\nCVCRD01Y"]:::alias
+  CC_ACCT_ID_N["CC-ACCT-ID-N\nCVCRD01Y"]:::alias
+  TRANCAT_ACCT_ID["TRANCAT-ACCT-ID\nCVTRA01Y"]:::alias
+  EXP_ACCT_ID["EXP-ACCT-ID\nCVEXPORT"]:::alias
+  ACUP_ACCT_ID["ACUP-*-ACCT-ID\nlocal/COACTUPC"]:::alias
+  WS_RID["WS-CARD-RID-ACCT-ID\nlocal"]:::alias
+  CARD_UPDATE_AI["CARD-UPDATE-ACCT-ID\nlocal/COCRDUPC"]:::alias
+  CCUP_ACCTID["CCUP-*-ACCTID\nlocal/COCRDUPC"]:::alias
+
+  ACCT_ID --- CARD_ACCT_ID
+  ACCT_ID --- XREF_ACCT_ID
+  ACCT_ID --- CDEMO_ACCT_ID
+  ACCT_ID --- CC_ACCT_ID
+  CC_ACCT_ID --- CC_ACCT_ID_N
+  ACCT_ID --- TRANCAT_ACCT_ID
+  ACCT_ID --- EXP_ACCT_ID
+  ACCT_ID --- ACUP_ACCT_ID
+  ACCT_ID --- WS_RID
+  ACCT_ID --- CARD_UPDATE_AI
+  ACCT_ID --- CCUP_ACCTID
+
+  COACTUPC["COACTUPC\n&#x1F534; FIELD-AWARE"]:::fa
+  COCRDUPC["COCRDUPC\n&#x1F534; FIELD-AWARE"]:::fa
+  COCRDLIC["COCRDLIC\n&#x1F534; FIELD-AWARE"]:::fa
+  COCRDSLC["COCRDSLC\n&#x1F534; FIELD-AWARE"]:::fa
+  COACTVWC["COACTVWC\n&#x1F534; FIELD-AWARE"]:::fa
+  CBACT04C["CBACT04C\n&#x1F534; FIELD-AWARE"]:::fa
+  COBIL00C["COBIL00C\n&#x1F534; FIELD-AWARE"]:::fa
+  COTRN02C["COTRN02C\n&#x1F534; FIELD-AWARE"]:::fa
+  CBIMPORT["CBIMPORT\n&#x1F534; FIELD-AWARE"]:::fa
+  CBTRN02C["CBTRN02C\n&#x1F534; FIELD-AWARE"]:::fa
+  CBACT01C["CBACT01C\n&#x1F534; FIELD-AWARE"]:::fa
+  CBTRN01C["CBTRN01C\n&#x1F534; FIELD-AWARE"]:::fa
+  CBSTM03A["CBSTM03A\n&#x1F534; FIELD-AWARE"]:::fa
+  CBEXPORT["CBEXPORT\n&#x1F534; FIELD-AWARE"]:::fa
+  CBTRN03C["CBTRN03C\n&#x1F534; FIELD-AWARE"]:::fa
+
+  SA_GROUP["COADM01C, COMEN01C, CORPT00C\nCOSGN00C, COTRN00C, COTRN01C\nCOUSR00C-03C, CBACT02C, CBACT03C\n&#x1F7E1; STRUCTURALLY-AFFECTED (12)"]:::sa
+
+  CC_ACCT_ID --> COACTUPC
+  CC_ACCT_ID --> COCRDUPC
+  CC_ACCT_ID --> COCRDLIC
+  CC_ACCT_ID --> COCRDSLC
+  CC_ACCT_ID --> COACTVWC
+  CDEMO_ACCT_ID --> COACTUPC
+  CDEMO_ACCT_ID --> COCRDUPC
+  CDEMO_ACCT_ID --> COCRDLIC
+  CDEMO_ACCT_ID --> COCRDSLC
+  CDEMO_ACCT_ID --> COACTVWC
+  CDEMO_ACCT_ID --> SA_GROUP
+  ACCT_ID --> COACTUPC
+  ACCT_ID --> COBIL00C
+  ACCT_ID --> CBACT01C
+  ACCT_ID --> CBTRN01C
+  ACCT_ID --> CBSTM03A
+  ACCT_ID --> CBEXPORT
+  ACCT_ID --> CBIMPORT
+  XREF_ACCT_ID --> COBIL00C
+  XREF_ACCT_ID --> CBTRN01C
+  XREF_ACCT_ID --> CBTRN02C
+  XREF_ACCT_ID --> CBTRN03C
+  XREF_ACCT_ID --> CBSTM03A
+  XREF_ACCT_ID --> CBEXPORT
+  XREF_ACCT_ID --> COTRN02C
+  CARD_ACCT_ID --> COCRDLIC
+  CARD_ACCT_ID --> CBEXPORT
+  CARD_ACCT_ID --> CBIMPORT
+  TRANCAT_ACCT_ID --> CBACT04C
+  TRANCAT_ACCT_ID --> CBTRN02C
+  EXP_ACCT_ID --> CBEXPORT
+  EXP_ACCT_ID --> CBIMPORT
+  ACUP_ACCT_ID --> COACTUPC
+  WS_RID --> COACTUPC
+  WS_RID --> COACTVWC
+  CARD_UPDATE_AI --> COCRDUPC
+  CCUP_ACCTID --> COCRDUPC
+
+  classDef target fill:#1c4d7a,stroke:#4fa8ff,color:#e6edf3,font-weight:bold
+  classDef alias fill:#161d26,stroke:#4fa8ff,color:#4fa8ff
+  classDef fa fill:#3a1a1f,stroke:#ff5c6c,color:#ff5c6c
+  classDef sa fill:#3a2c14,stroke:#f5a623,color:#f5a623
+      </pre>
+    </div>
+  </section>
+
+  <section>
+    <h2>Precision: near misses correctly rejected</h2>
+    <p class="section-sub">Every one of these looked like a hit to a plain text search — each contains the field name or an alias as a substring — and was independently confirmed to be a different, separately-declared identifier.</p>
+    <div class="precision-note">
+      <b>6 near misses</b> were found and excluded across 4 programs. Rejection reasons: 6&times; dead-never-fed (declared but never populated from any alias in executable code).
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Identifier found</th>
+          <th>Program</th>
+          <th>Line</th>
+          <th>Why it was rejected</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="mono-cell">CUST-ACCT-ID-X</td>
+          <td class="mono-cell">COACTUPC.cbl</td>
+          <td>358</td>
+          <td>dead-never-fed: declared PIC X(11) in CICS-OUTPUT-EDIT-VARS; no MOVE from any confirmed alias found in the procedure division. Its REDEFINES sibling CUST-ACCT-ID-N is equally unfed.</td>
+        </tr>
+        <tr>
+          <td class="mono-cell">CARD-ACCT-ID-X</td>
+          <td class="mono-cell">COCRDLIC.cbl</td>
+          <td>99</td>
+          <td>dead-never-fed: declared PIC X(11) in CICS-OUTPUT-EDIT-VARS; no MOVE from any alias into this field. CARD-ACCT-ID-N (REDEFINES it) is compared at line 1009 but its value is never loaded from alias data.</td>
+        </tr>
+        <tr>
+          <td class="mono-cell">CARD-ACCT-ID-X</td>
+          <td class="mono-cell">COCRDSLC.cbl</td>
+          <td>73</td>
+          <td>dead-never-fed: declared PIC X(11) in CICS-OUTPUT-EDIT-VARS; no MOVE from any alias. CARD-ACCT-ID-N (REDEFINES) used in COMPARE at line 653 but base field never populated.</td>
+        </tr>
+        <tr>
+          <td class="mono-cell">CARD-ACCT-ID-N</td>
+          <td class="mono-cell">COCRDSLC.cbl</td>
+          <td>74</td>
+          <td>dead-never-fed: REDEFINES CARD-ACCT-ID-X (line 73), which is itself never fed. Note: CC-ACCT-ID-N is the correct confirmed alias in this program, not this field.</td>
+        </tr>
+        <tr>
+          <td class="mono-cell">CARD-ACCT-ID-X</td>
+          <td class="mono-cell">COCRDUPC.cbl</td>
+          <td>104</td>
+          <td>dead-never-fed: declared PIC X(11) in CICS-OUTPUT-EDIT-VARS; no MOVE from any confirmed alias into this field in the procedure division.</td>
+        </tr>
+        <tr>
+          <td class="mono-cell">CARD-ACCT-ID-N</td>
+          <td class="mono-cell">COCRDUPC.cbl</td>
+          <td>105</td>
+          <td>dead-never-fed: REDEFINES CARD-ACCT-ID-X (line 104). The program's actual numeric alias is CC-ACCT-ID-N, not this field.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>Scope exclusion note</h2>
+    <p class="section-sub">The following optional integration modules were excluded from TRACE per the user's explicit instruction. They are listed here for completeness.</p>
+    <div class="precision-note">
+      <b>11 programs in 3 optional modules excluded:</b> app/app-authorization-ims-db2-mq/ (8 programs), app/app-transaction-type-db2/ (3 programs), app/app-vsam-mq/ (2 programs). The app/app-vsam-mq/cbl/COACCT01.cbl program is particularly noteworthy as it accesses account data via MQ — it may warrant a separate targeted review.
+    </div>
+  </section>
+
+  <section>
+    <h2>Methodology</h2>
+    <p class="section-sub">
+      Five-stage pipeline run inside IBM Bob: INVENTORY walked the full
+      CardDemo application; SPEC resolved the plain-language change request
+      above to ACCT-ID and its aliases against the actual copybook
+      declarations; TRACE dispatched parallel subagents, each scanning a
+      small group of candidate programs and actively chasing MOVE/
+      REDEFINES/record-level READ INTO chains to discover further,
+      locally-declared aliases beyond the copybook-declared ones SPEC
+      found; VERIFY independently re-checked every claimed hit and every
+      newly-discovered alias against the source, respecting COBOL column-7
+      comment rules and string-literal spans, accepting a same-shaped
+      identifier as a real alias when it is genuinely fed by the target's
+      value and rejecting it only when it is a different entity or dead,
+      unfed code; SYNTHESIS produced this report from only the hits that
+      survived verification.
+      Risk score = (tier base + sum of access-kind weights) &times; module
+      multiplier (core = 1.0, optional-integration = 0.7).
+    </p>
+    <p class="section-sub">
+      <b>Near-miss note on CUST-EFT-ACCOUNT-ID</b> (CVCUS01Y, PIC X(10)): this field was excluded at SPEC stage, not by VERIFY. It is a customer EFT bank-account number — a different real-world entity with a different shape (10-char alphanumeric vs 11-digit numeric). It is never moved from or to ACCT-ID in any program.
+    </p>
+    <p class="section-sub">
+      <b>Dead-copy note on COTRN02C</b>: CVACT01Y is copied at line 89 but ACCT-ID and ACCOUNT-RECORD are never referenced in the procedure division. This is a genuine dead COPY — technical debt surfaced by the pipeline.
+    </p>
+    <p class="section-sub">
+      <b>Latent bug noted in COCRDSLC</b>: the MOVE CC-ACCT-ID-N TO WS-CARD-RID-ACCT-ID statement at line 739 is commented out (col 7 = *). WS-CARD-RID-ACCT-ID is used as a CICS RIDFLD at line 785 but is never populated from live alias data — the alternate-index read path may use an uninitialised or stale key.
+    </p>
+    <p class="section-sub">
+      <b>Aliases discovered beyond SPEC</b>: TRACE found 27 additional locally-declared aliases not visible from copybooks alone (FD fields, WS staging fields, REDEFINES pairs, report-line fields). These accounted for the majority of hit evidence in high-risk programs. A copybook-only search would have missed them.
+    </p>
+  </section>
+
+  <footer>
+    Blast Radius &middot; generated by an IBM Bob IDE pipeline (Skill: blast-radius) &middot; 2026-08-29T22:14:43Z
+  </footer>
+
+</div>
+
+<script type="module">
+  import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+  mermaid.initialize({ startOnLoad: true, theme: "dark" });
+</script>
+</body>
+</html>

@@ -1,0 +1,220 @@
+{
+  "group": 7,
+  "programs": [
+    {
+      "path": "app/app-authorization-ims-db2-mq/cbl/COPAUA0C.cbl",
+      "module": "optional",
+      "tier": "FIELD-AWARE",
+      "copies": [
+        {"copybook": "CVACT03Y", "active": true, "line": 203},
+        {"copybook": "CVACT01Y", "active": true, "line": 206}
+      ],
+      "hits": [
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 523,
+          "source_line": "           MOVE XREF-ACCT-ID          TO WS-CARD-RID-ACCT-ID                    ",
+          "access_kind": "MOVE-SOURCE",
+          "note": "XREF-ACCT-ID copied into local WS-CARD-RID-ACCT-ID, which is used as RIDFLD for the CICS READ of ACCOUNT-RECORD on line 525-533."
+        },
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 619,
+          "source_line": "           MOVE XREF-ACCT-ID                    TO PA-ACCT-ID                   ",
+          "access_kind": "MOVE-SOURCE",
+          "note": "XREF-ACCT-ID loaded into PA-ACCT-ID to drive IMS DLI GU WHERE clause for auth summary segment lookup (5500-READ-AUTH-SUMMRY)."
+        },
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 805,
+          "source_line": "              MOVE XREF-ACCT-ID             TO PA-ACCT-ID                       ",
+          "access_kind": "MOVE-SOURCE",
+          "note": "In 8400-UPDATE-SUMMARY: when no prior auth summary exists, initialises the IMS segment key PA-ACCT-ID from the xref record before ISRT."
+        },
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 911,
+          "source_line": "           MOVE XREF-ACCT-ID                TO PA-ACCT-ID                   ",
+          "access_kind": "MOVE-SOURCE",
+          "note": "Duplicate pattern of line 619 in a second read path (appears in file after line 900); sets PA-ACCT-ID for IMS GU WHERE clause."
+        }
+      ],
+      "near_misses": [
+        {"identifier": "WS-CARD-RID-ACCT-ID", "line": 77},
+        {"identifier": "WS-CARD-RID-ACCT-ID-X", "line": 79}
+      ],
+      "notes": "CVACT01Y (ACCOUNT-RECORD / ACCT-ID) is COPYed and ACCOUNT-RECORD is used as the CICS READ INTO target (line 529-530), but ACCT-ID itself is not named directly in procedures — all field-level access is via XREF-ACCT-ID from CVACT03Y. ACCOUNT-RECORD referenced structurally at lines 529-530."
+    },
+    {
+      "path": "app/app-authorization-ims-db2-mq/cbl/COPAUS0C.cbl",
+      "module": "optional",
+      "tier": "FIELD-AWARE",
+      "copies": [
+        {"copybook": "COCOM01Y", "active": true, "line": 116},
+        {"copybook": "CVACT01Y", "active": true, "line": 144},
+        {"copybook": "CVACT02Y", "active": true, "line": 147},
+        {"copybook": "CVACT03Y", "active": true, "line": 150}
+      ],
+      "hits": [
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "line": 207,
+          "source_line": "                  IF CDEMO-ACCT-ID IS NUMERIC",
+          "access_kind": "COMPARE",
+          "note": "Guards the MOVE on the next line; tests whether the commarea account ID is a valid numeric value before displaying it."
+        },
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "line": 208,
+          "source_line": "                     MOVE CDEMO-ACCT-ID     TO WS-ACCT-ID",
+          "access_kind": "MOVE-SOURCE",
+          "note": "Copies commarea account ID to local WS-ACCT-ID, which drives subsequent XREF and ACCT file lookups."
+        },
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "line": 284,
+          "source_line": "                                                 CDEMO-ACCT-ID",
+          "access_kind": "MOVE-TARGET",
+          "note": "Second target of MOVE ACCTIDI OF COPAU0AI TO WS-ACCT-ID CDEMO-ACCT-ID (line 283-284): stores the screen-entered account number back into the commarea for downstream programs."
+        },
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 868,
+          "source_line": "           MOVE XREF-ACCT-ID            TO WS-CARD-RID-ACCT-ID",
+          "access_kind": "MOVE-SOURCE",
+          "note": "In GETACCTDATA-BYACCT: XREF-ACCT-ID used as the RIDFLD key value (via WS-CARD-RID-ACCT-ID-X) for the CICS READ INTO ACCOUNT-RECORD on line 869-877."
+        },
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "line": 971,
+          "source_line": "           MOVE CDEMO-ACCT-ID                   TO PA-ACCT-ID",
+          "access_kind": "MOVE-SOURCE",
+          "note": "In GET-AUTH-SUMMARY: account ID from commarea used to key the IMS DLI GU WHERE (ACCNTID = PA-ACCT-ID) for auth summary lookup. Line 972 is a commented-out alternative using XREF-ACCT-ID."
+        }
+      ],
+      "near_misses": [
+        {"identifier": "WS-ACCT-ID", "line": 44},
+        {"identifier": "WS-CARD-RID-ACCT-ID", "line": 70},
+        {"identifier": "WS-CARD-RID-ACCT-ID-X", "line": 71}
+      ],
+      "notes": "ACCOUNT-RECORD (from CVACT01Y) referenced structurally at lines 873-874 (CICS READ INTO). CARD-ACCT-ID (CVACT02Y) is never referenced individually — CVACT02Y brings in CARD-RECORD which is not used as a whole block either. XREF-ACCT-ID on line 972 is in a comment (col 7 = '*') and is NOT counted."
+    },
+    {
+      "path": "app/app-authorization-ims-db2-mq/cbl/COPAUS1C.cbl",
+      "module": "optional",
+      "tier": "FIELD-AWARE",
+      "copies": [
+        {"copybook": "COCOM01Y", "active": true, "line": 109}
+      ],
+      "hits": [
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "line": 211,
+          "source_line": "           IF CDEMO-ACCT-ID IS NUMERIC AND",
+          "access_kind": "COMPARE",
+          "note": "Guards entry into PROCESS-ENTER-KEY; checks that the commarea account ID is numeric before processing the auth detail view."
+        },
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "line": 213,
+          "source_line": "              MOVE CDEMO-ACCT-ID            TO WS-ACCT-ID",
+          "access_kind": "MOVE-SOURCE",
+          "note": "Copies commarea account ID to local WS-ACCT-ID, which is then used as PA-ACCT-ID in IMS DLI GU WHERE clause."
+        },
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "line": 231,
+          "source_line": "           MOVE CDEMO-ACCT-ID            TO WS-ACCT-ID",
+          "access_kind": "MOVE-SOURCE",
+          "note": "In MARK-AUTH-FRAUD: re-establishes WS-ACCT-ID from commarea before the fraud read/update sequence."
+        },
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "line": 245,
+          "source_line": "            MOVE CDEMO-ACCT-ID               TO WS-FRD-ACCT-ID",
+          "access_kind": "MOVE-SOURCE",
+          "note": "In MARK-AUTH-FRAUD: passes commarea account ID into WS-FRAUD-DATA.WS-FRD-ACCT-ID, which is the COMMAREA for EXEC CICS LINK to WS-PGM-AUTH-FRAUD (line 248-252)."
+        },
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "line": 270,
+          "source_line": "           MOVE CDEMO-ACCT-ID            TO WS-ACCT-ID",
+          "access_kind": "MOVE-SOURCE",
+          "note": "In PROCESS-PF8-KEY: re-establishes WS-ACCT-ID from commarea before reading next auth record."
+        }
+      ],
+      "near_misses": [
+        {"identifier": "WS-ACCT-ID", "line": 50},
+        {"identifier": "WS-FRD-ACCT-ID", "line": 94}
+      ],
+      "notes": "Only COCOM01Y is COPYed among the target copybooks. CDEMO-ACCT-ID is used to drive IMS DLI operations and also passed (indirectly via WS-FRD-ACCT-ID inside WS-FRAUD-DATA commarea) to the fraud sub-program via CICS LINK."
+    },
+    {
+      "path": "app/app-transaction-type-db2/cbl/COTRTLIC.cbl",
+      "module": "optional",
+      "tier": "DEAD-COPY",
+      "copies": [
+        {"copybook": "CVCRD01Y", "active": true, "line": 327},
+        {"copybook": "COCOM01Y", "active": true, "line": 375},
+        {"copybook": "CVACT02Y", "active": true, "line": 490}
+      ],
+      "hits": [],
+      "near_misses": [
+        {"identifier": "CC-WORK-AREA", "line": 500}
+      ],
+      "notes": "CVCRD01Y defines CC-ACCT-ID / CC-ACCT-ID-N inside record CC-WORK-AREAS. INITIALIZE CC-WORK-AREA (line 500) initialises only the sub-group CC-WORK-AREA, not CC-ACCT-ID directly; neither CC-ACCT-ID nor CC-ACCT-ID-N appears as an exact token in any procedure. COCOM01Y defines CDEMO-ACCT-ID: zero occurrences as an exact token in procedures. CVACT02Y defines CARD-ACCT-ID inside CARD-RECORD: CARD-RECORD is never referenced anywhere in the file (confirmed by grep). All three copybooks are effectively dead imports for the ACCT-ID lineage."
+    },
+    {
+      "path": "app/app-transaction-type-db2/cbl/COTRTUPC.cbl",
+      "module": "optional",
+      "tier": "FIELD-AWARE",
+      "copies": [
+        {"copybook": "CVCRD01Y", "active": true, "line": 241},
+        {"copybook": "COCOM01Y", "active": true, "line": 292}
+      ],
+      "hits": [
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "line": 473,
+          "source_line": "047300                        CDEMO-ACCT-ID                             04730000",
+          "access_kind": "MOVE-TARGET",
+          "note": "Third item in an INITIALIZE statement (lines 471-473: INITIALIZE WS-THIS-PROGCOMMAREA WS-MISC-STORAGE CDEMO-ACCT-ID). Resets the commarea account ID to its default/zero state when entering fresh from an admin or list program."
+        },
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "line": 1069,
+          "source_line": "106900               MOVE ZEROES       TO CDEMO-ACCT-ID                 10690000",
+          "access_kind": "MOVE-TARGET",
+          "note": "In 2000-DECIDE-ACTION after a successful update: zeroes out CDEMO-ACCT-ID (along with CDEMO-CARD-NUM) when the from-tranid is empty/spaces, clearing the commarea account context."
+        }
+      ],
+      "near_misses": [
+        {"identifier": "CC-WORK-AREA", "line": 352}
+      ],
+      "notes": "CVCRD01Y defines CC-ACCT-ID / CC-ACCT-ID-N: neither appears as an exact token in any procedure. CC-WORK-AREA is initialised (line 352) but that is the sub-group, not a field-level reference to CC-ACCT-ID. Only CDEMO-ACCT-ID (from COCOM01Y) is directly named."
+    },
+    {
+      "path": "app/app-vsam-mq/cbl/COACCT01.cbl",
+      "module": "optional",
+      "tier": "FIELD-AWARE",
+      "copies": [
+        {"copybook": "CVACT01Y", "active": true, "line": 171}
+      ],
+      "hits": [
+        {
+          "alias": "ACCT-ID",
+          "line": 408,
+          "source_line": "                     MOVE ACCT-ID          TO WS-ACCT-ID                 03701510",
+          "access_kind": "MOVE-SOURCE",
+          "note": "After a successful CICS READ INTO ACCOUNT-RECORD (line 400), ACCT-ID is extracted and placed into WS-ACCT-ID, which is then included in the MQ reply message sent back to the requesting system (via WS-ACCT-RESPONSE MOVE to REPLY-MESSAGE at line 426)."
+        }
+      ],
+      "near_misses": [
+        {"identifier": "WS-ACCT-ID", "line": 134},
+        {"identifier": "WS-CARD-RID-ACCT-ID", "line": 126},
+        {"identifier": "WS-CARD-RID-ACCT-ID-X", "line": 127}
+      ],
+      "notes": "ACCOUNT-RECORD (from CVACT01Y) is read via EXEC CICS READ INTO (ACCOUNT-RECORD) at line 400. ACCT-ID is then individually named on line 408 as the first field extracted from the record. This program serves as an MQ-based account inquiry service: it receives an account key via MQ, reads the VSAM file, and puts key account fields including ACCT-ID into a reply message."
+    }
+  ]
+}

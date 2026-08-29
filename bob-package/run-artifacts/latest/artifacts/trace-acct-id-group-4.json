@@ -1,0 +1,392 @@
+{
+  "programs": [
+    {
+      "path": "app/cbl/COCRDSLC.cbl",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {
+          "alias": "CC-ACCT-ID-N",
+          "line": 342,
+          "source_line": "                   MOVE CDEMO-ACCT-ID       TO CC-ACCT-ID-N",
+          "access_kind": "MOVE-TARGET",
+          "note": "CDEMO-ACCT-ID (from commarea) is moved into CC-ACCT-ID-N (REDEFINES of CC-ACCT-ID from CVCRD01Y) to seed the search key when arriving from the list screen."
+        },
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "line": 462,
+          "source_line": "               IF CDEMO-ACCT-ID = 0",
+          "access_kind": "COMPARE",
+          "note": "Guards screen display: if commarea account ID is zero, low-values are sent to screen field instead of the value."
+        },
+        {
+          "alias": "CC-ACCT-ID",
+          "line": 465,
+          "source_line": "                  MOVE CC-ACCT-ID   TO ACCTSIDO OF CCRDSLAO",
+          "access_kind": "MOVE-SOURCE",
+          "note": "CC-ACCT-ID is moved to the output map field ACCTSIDO for display on the credit-card search screen."
+        },
+        {
+          "alias": "CC-ACCT-ID",
+          "line": 617,
+          "source_line": "                MOVE LOW-VALUES           TO  CC-ACCT-ID",
+          "access_kind": "MOVE-TARGET",
+          "note": "Screen input ACCTSIDI is '*' or spaces; CC-ACCT-ID is zeroed out (blank filter)."
+        },
+        {
+          "alias": "CC-ACCT-ID",
+          "line": 619,
+          "source_line": "                MOVE ACCTSIDI OF CCRDSLAI TO  CC-ACCT-ID",
+          "access_kind": "MOVE-TARGET",
+          "note": "Screen-entered account ID copied into CC-ACCT-ID for subsequent validation."
+        },
+        {
+          "alias": "CC-ACCT-ID",
+          "line": 651,
+          "source_line": "            IF CC-ACCT-ID   EQUAL LOW-VALUES",
+          "access_kind": "COMPARE",
+          "note": "Validation check: account filter blank/zero branch (part of multi-condition IF)."
+        },
+        {
+          "alias": "CC-ACCT-ID",
+          "line": 652,
+          "source_line": "            OR CC-ACCT-ID   EQUAL SPACES",
+          "access_kind": "COMPARE",
+          "note": "Validation check: account filter blank/spaces branch."
+        },
+        {
+          "alias": "CC-ACCT-ID-N",
+          "line": 653,
+          "source_line": "            OR CC-ACCT-ID-N EQUAL ZEROS",
+          "access_kind": "COMPARE",
+          "note": "Numeric REDEFINES of CC-ACCT-ID checked for zero value in blank-filter test."
+        },
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "line": 659,
+          "source_line": "               MOVE ZEROES       TO CDEMO-ACCT-ID",
+          "access_kind": "MOVE-TARGET",
+          "note": "Clears commarea account ID when account filter is blank/invalid."
+        },
+        {
+          "alias": "CC-ACCT-ID",
+          "line": 665,
+          "source_line": "            IF CC-ACCT-ID  IS NOT NUMERIC",
+          "access_kind": "COMPARE",
+          "note": "Validation: rejects non-numeric account filter input."
+        },
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "line": 673,
+          "source_line": "               MOVE ZERO       TO CDEMO-ACCT-ID",
+          "access_kind": "MOVE-TARGET",
+          "note": "Clears commarea account ID when account filter is non-numeric."
+        },
+        {
+          "alias": "CC-ACCT-ID",
+          "line": 676,
+          "source_line": "               MOVE CC-ACCT-ID TO CDEMO-ACCT-ID",
+          "access_kind": "MOVE-SOURCE",
+          "note": "Validated CC-ACCT-ID promoted into CDEMO-ACCT-ID in the commarea for use by downstream programs."
+        },
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "line": 676,
+          "source_line": "               MOVE CC-ACCT-ID TO CDEMO-ACCT-ID",
+          "access_kind": "MOVE-TARGET",
+          "note": "CDEMO-ACCT-ID receives the validated account ID from CC-ACCT-ID."
+        }
+      ],
+      "newly_discovered_aliases": [
+        {
+          "identifier": "WS-CARD-RID-ACCT-ID",
+          "confirmed_by": "MOVE",
+          "evidence_line": 739,
+          "evidence_text": "      *    MOVE CC-ACCT-ID-N      TO WS-CARD-RID-ACCT-ID",
+          "note": "UNCERTAIN: The only MOVE that would feed WS-CARD-RID-ACCT-ID from a known alias (CC-ACCT-ID-N) is commented out (col7=*). WS-CARD-RID-ACCT-ID is used as RIDFLD on lines 785-786 in 9150-GETCARD-BYACCT but is not reliably loaded from the target field in live code. Not confirmed as an active alias."
+        }
+      ],
+      "near_miss_signals": [
+        {
+          "identifier": "CARD-ACCT-ID-X",
+          "line": 73,
+          "reason": "dead-never-fed",
+          "note": "Locally declared PIC X(11) inside CICS-OUTPUT-EDIT-VARS. Never referenced in PROCEDURE DIVISION. Not fed by any known alias."
+        },
+        {
+          "identifier": "CARD-ACCT-ID-N",
+          "line": 74,
+          "reason": "dead-never-fed",
+          "note": "REDEFINES of CARD-ACCT-ID-X, also never referenced in PROCEDURE DIVISION."
+        }
+      ],
+      "notes": "COCRDSLC is the Credit Card Search/Detail screen. It COPYs CVCRD01Y (CC-ACCT-ID/CC-ACCT-ID-N) and COCOM01Y (CDEMO-ACCT-ID). Key flow: screen input -> CC-ACCT-ID -> validated -> CDEMO-ACCT-ID (commarea). Incoming path: CDEMO-ACCT-ID -> CC-ACCT-ID-N when arriving from list screen. CVACT02Y is COPYed (CARD-RECORD used as whole block in READ INTO) but CARD-ACCT-ID from that copybook is never individually named in procedural code. CVACT01Y and CVACT03Y are commented out (lines 231, 237)."
+    },
+    {
+      "path": "app/cbl/COCRDUPC.cbl",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "line": 460,
+          "source_line": "                        MOVE ZEROS          TO CDEMO-ACCT-ID",
+          "access_kind": "MOVE-TARGET",
+          "note": "Clears CDEMO-ACCT-ID in commarea when returning to list screen after update or failure."
+        },
+        {
+          "alias": "CC-ACCT-ID-N",
+          "line": 490,
+          "source_line": "                    MOVE CDEMO-ACCT-ID       TO CC-ACCT-ID-N",
+          "access_kind": "MOVE-TARGET",
+          "note": "CDEMO-ACCT-ID from commarea loaded into CC-ACCT-ID-N (numeric alias of CC-ACCT-ID) when arriving from list screen."
+        },
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "line": 521,
+          "source_line": "                               CDEMO-ACCT-ID",
+          "access_kind": "WRITE",
+          "note": "INITIALIZE statement (spanning lines 519-522) zeros CDEMO-ACCT-ID when resetting after completed/failed update."
+        },
+        {
+          "alias": "CC-ACCT-ID",
+          "line": 591,
+          "source_line": "                MOVE LOW-VALUES           TO  CC-ACCT-ID",
+          "access_kind": "MOVE-TARGET",
+          "note": "Screen account input is blank/asterisk; CC-ACCT-ID cleared to LOW-VALUES (along with CCUP-NEW-ACCTID)."
+        },
+        {
+          "alias": "CC-ACCT-ID",
+          "line": 594,
+          "source_line": "                MOVE ACCTSIDI OF CCRDUPAI TO  CC-ACCT-ID",
+          "access_kind": "MOVE-TARGET",
+          "note": "Screen-entered account ID copied into CC-ACCT-ID (along with CCUP-NEW-ACCTID) for validation."
+        },
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "line": 671,
+          "source_line": "            MOVE CCUP-OLD-ACCTID     TO CDEMO-ACCT-ID",
+          "access_kind": "MOVE-TARGET",
+          "note": "Previously saved account ID (CCUP-OLD-ACCTID, confirmed alias) restored into CDEMO-ACCT-ID commarea field when search keys are already validated."
+        },
+        {
+          "alias": "CC-ACCT-ID",
+          "line": 725,
+          "source_line": "            IF CC-ACCT-ID   EQUAL LOW-VALUES",
+          "access_kind": "COMPARE",
+          "note": "Validation: account filter blank/low-values branch."
+        },
+        {
+          "alias": "CC-ACCT-ID",
+          "line": 726,
+          "source_line": "            OR CC-ACCT-ID   EQUAL SPACES",
+          "access_kind": "COMPARE",
+          "note": "Validation: account filter spaces branch."
+        },
+        {
+          "alias": "CC-ACCT-ID-N",
+          "line": 727,
+          "source_line": "            OR CC-ACCT-ID-N EQUAL ZEROS",
+          "access_kind": "COMPARE",
+          "note": "Numeric REDEFINES of CC-ACCT-ID checked for zero in blank-filter test."
+        },
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "line": 733,
+          "source_line": "               MOVE ZEROES       TO CDEMO-ACCT-ID",
+          "access_kind": "MOVE-TARGET",
+          "note": "Clears commarea account ID when account filter is blank."
+        },
+        {
+          "alias": "CC-ACCT-ID",
+          "line": 740,
+          "source_line": "            IF CC-ACCT-ID  IS NOT NUMERIC",
+          "access_kind": "COMPARE",
+          "note": "Validation: rejects non-numeric account filter."
+        },
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "line": 748,
+          "source_line": "               MOVE ZERO       TO CDEMO-ACCT-ID",
+          "access_kind": "MOVE-TARGET",
+          "note": "Clears commarea account ID when account filter is non-numeric."
+        },
+        {
+          "alias": "CC-ACCT-ID",
+          "line": 752,
+          "source_line": "               MOVE CC-ACCT-ID TO CDEMO-ACCT-ID",
+          "access_kind": "MOVE-SOURCE",
+          "note": "Validated CC-ACCT-ID promoted into CDEMO-ACCT-ID commarea field (and also into CCUP-NEW-ACCTID on line 753)."
+        },
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "line": 752,
+          "source_line": "               MOVE CC-ACCT-ID TO CDEMO-ACCT-ID",
+          "access_kind": "MOVE-TARGET",
+          "note": "CDEMO-ACCT-ID receives validated account ID from CC-ACCT-ID."
+        },
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "line": 1015,
+          "source_line": "                      MOVE ZEROES       TO CDEMO-ACCT-ID",
+          "access_kind": "MOVE-TARGET",
+          "note": "Clears CDEMO-ACCT-ID (and CDEMO-CARD-NUM) in commarea after a confirmed successful update cycle."
+        },
+        {
+          "alias": "CC-ACCT-ID-N",
+          "line": 1087,
+          "source_line": "               IF CC-ACCT-ID-N = 0",
+          "access_kind": "COMPARE",
+          "note": "Screen setup: if numeric account ID is zero, low-values are sent to the output map field."
+        },
+        {
+          "alias": "CC-ACCT-ID",
+          "line": 1090,
+          "source_line": "                  MOVE CC-ACCT-ID          TO ACCTSIDO OF CCRDUPAO",
+          "access_kind": "MOVE-SOURCE",
+          "note": "CC-ACCT-ID moved to output map field ACCTSIDO for display on the update screen."
+        },
+        {
+          "alias": "CC-ACCT-ID",
+          "line": 1346,
+          "source_line": "            MOVE CC-ACCT-ID              TO CCUP-OLD-ACCTID",
+          "access_kind": "MOVE-SOURCE",
+          "note": "CC-ACCT-ID copied into local commarea save-area field CCUP-OLD-ACCTID (confirmed new alias) before reading the card record."
+        },
+        {
+          "alias": "CC-ACCT-ID-N",
+          "line": 1463,
+          "source_line": "            MOVE CC-ACCT-ID-N                TO CARD-UPDATE-ACCT-ID",
+          "access_kind": "MOVE-SOURCE",
+          "note": "CC-ACCT-ID-N (numeric) copied into CARD-UPDATE-ACCT-ID (confirmed new alias) in the update record prior to CICS REWRITE."
+        }
+      ],
+      "newly_discovered_aliases": [
+        {
+          "identifier": "CCUP-OLD-ACCTID",
+          "confirmed_by": "MOVE",
+          "evidence_line": 1346,
+          "evidence_text": "            MOVE CC-ACCT-ID              TO CCUP-OLD-ACCTID",
+          "note": "PIC X(11) field inside CCUP-OLD-DETAILS (WS-THIS-PROGCOMMAREA). Fed directly from CC-ACCT-ID. Later moved back to CDEMO-ACCT-ID at line 671. Persists the account ID across CICS pseudo-conversational returns."
+        },
+        {
+          "identifier": "CCUP-NEW-ACCTID",
+          "confirmed_by": "MOVE",
+          "evidence_line": 595,
+          "evidence_text": "                MOVE ACCTSIDI OF CCRDUPAI TO  CC-ACCT-ID\n                                              CCUP-NEW-ACCTID",
+          "note": "PIC X(11) field inside CCUP-NEW-DETAILS. Fed from the same screen source as CC-ACCT-ID at lines 592/595, and overwritten alongside CC-ACCT-ID at line 753. Acts as the 'new' account ID scratch field during the update flow."
+        },
+        {
+          "identifier": "CARD-UPDATE-ACCT-ID",
+          "confirmed_by": "MOVE",
+          "evidence_line": 1463,
+          "evidence_text": "            MOVE CC-ACCT-ID-N                TO CARD-UPDATE-ACCT-ID",
+          "note": "PIC 9(11) field inside CARD-UPDATE-RECORD (WS-THIS-PROGCOMMAREA). Receives the numeric account ID from CC-ACCT-ID-N at line 1463 and is then written to the VSAM card file via EXEC CICS REWRITE FROM(CARD-UPDATE-RECORD) at line 1479."
+        }
+      ],
+      "near_miss_signals": [
+        {
+          "identifier": "CARD-ACCT-ID-X",
+          "line": 104,
+          "reason": "dead-never-fed",
+          "note": "Locally declared PIC X(11) in CICS-OUTPUT-EDIT-VARS. Never referenced in PROCEDURE DIVISION. Not fed by any alias."
+        },
+        {
+          "identifier": "CARD-ACCT-ID-N",
+          "line": 105,
+          "reason": "dead-never-fed",
+          "note": "REDEFINES of local CARD-ACCT-ID-X. Never referenced in PROCEDURE DIVISION."
+        }
+      ],
+      "notes": "COCRDUPC is the Credit Card Update program. It COPYs CVCRD01Y (CC-ACCT-ID/CC-ACCT-ID-N) and COCOM01Y (CDEMO-ACCT-ID). CVACT02Y is COPYed (CARD-RECORD used in READ/REWRITE as a whole block) but CARD-ACCT-ID is never individually named. Three new local aliases confirmed: CCUP-OLD-ACCTID (saves CC-ACCT-ID across pseudo-conversational turns), CCUP-NEW-ACCTID (screen input staging), CARD-UPDATE-ACCT-ID (written to VSAM via REWRITE). The commented-out MOVEs to WS-CARD-RID-ACCT-ID (lines 1379, 1424) mean file reads use an uninitialised/stale key for the alternate-index path — a potential bug but not an active alias."
+    },
+    {
+      "path": "app/cbl/COMEN01C.cbl",
+      "tier": "STRUCTURALLY-AFFECTED",
+      "hits": [],
+      "structural_evidence": [
+        {
+          "line": 86,
+          "source_line": "               MOVE DFHCOMMAREA(1:EIBCALEN) TO CARDDEMO-COMMAREA",
+          "note": "Whole CARDDEMO-COMMAREA (01-level from COCOM01Y, which contains CDEMO-ACCT-ID) loaded from inbound DFHCOMMAREA as an opaque block."
+        },
+        {
+          "line": 109,
+          "source_line": "                     COMMAREA (CARDDEMO-COMMAREA)",
+          "note": "CARDDEMO-COMMAREA passed as whole COMMAREA in EXEC CICS RETURN — carries CDEMO-ACCT-ID to next transaction without naming it."
+        },
+        {
+          "line": 158,
+          "source_line": "                          COMMAREA(CARDDEMO-COMMAREA)",
+          "note": "CARDDEMO-COMMAREA passed whole in EXEC CICS XCTL to selected menu program."
+        },
+        {
+          "line": 186,
+          "source_line": "                         COMMAREA(CARDDEMO-COMMAREA)",
+          "note": "CARDDEMO-COMMAREA passed whole in EXEC CICS XCTL to selected menu program (WHEN OTHER branch)."
+        }
+      ],
+      "newly_discovered_aliases": [],
+      "near_miss_signals": [],
+      "notes": "COMEN01C COPYs COCOM01Y (declaring CDEMO-ACCT-ID inside CARDDEMO-COMMAREA) but never references CDEMO-ACCT-ID individually. The program is a menu dispatcher; it passes CARDDEMO-COMMAREA as a whole opaque block inbound and outbound via CICS RETURN/XCTL. CDEMO-ACCT-ID travels through this program unseen."
+    },
+    {
+      "path": "app/cbl/CORPT00C.cbl",
+      "tier": "STRUCTURALLY-AFFECTED",
+      "hits": [],
+      "structural_evidence": [
+        {
+          "line": 176,
+          "source_line": "               MOVE DFHCOMMAREA(1:EIBCALEN) TO CARDDEMO-COMMAREA",
+          "note": "Whole CARDDEMO-COMMAREA loaded from DFHCOMMAREA as opaque block on entry."
+        },
+        {
+          "line": 201,
+          "source_line": "                     COMMAREA (CARDDEMO-COMMAREA)",
+          "note": "CARDDEMO-COMMAREA passed whole in EXEC CICS RETURN."
+        },
+        {
+          "line": 550,
+          "source_line": "                COMMAREA(CARDDEMO-COMMAREA)",
+          "note": "CARDDEMO-COMMAREA passed whole in EXEC CICS XCTL to previous screen (RETURN-TO-PREV-SCREEN)."
+        },
+        {
+          "line": 589,
+          "source_line": "                      COMMAREA (CARDDEMO-COMMAREA)",
+          "note": "CARDDEMO-COMMAREA passed whole in EXEC CICS RETURN (RETURN-TO-CICS paragraph)."
+        }
+      ],
+      "newly_discovered_aliases": [],
+      "near_miss_signals": [],
+      "notes": "CORPT00C COPYs COCOM01Y (declaring CDEMO-ACCT-ID inside CARDDEMO-COMMAREA) but never references CDEMO-ACCT-ID individually. The program is a batch-job submission screen; CARDDEMO-COMMAREA is purely a pass-through carrier here. CVTRA05Y is also COPYed (TRANCAT-ACCT-ID lives in CVTRA01Y, not CVTRA05Y — no overlap)."
+    },
+    {
+      "path": "app/cbl/COSGN00C.cbl",
+      "tier": "STRUCTURALLY-AFFECTED",
+      "hits": [],
+      "structural_evidence": [
+        {
+          "line": 100,
+          "source_line": "                      COMMAREA (CARDDEMO-COMMAREA)",
+          "note": "CARDDEMO-COMMAREA passed whole in EXEC CICS RETURN at program end."
+        },
+        {
+          "line": 101,
+          "source_line": "                      LENGTH(LENGTH OF CARDDEMO-COMMAREA)",
+          "note": "LENGTH clause confirming the whole-record pass of CARDDEMO-COMMAREA."
+        },
+        {
+          "line": 233,
+          "source_line": "                               COMMAREA(CARDDEMO-COMMAREA)",
+          "note": "CARDDEMO-COMMAREA passed whole in EXEC CICS XCTL to COADM01C (admin path)."
+        },
+        {
+          "line": 238,
+          "source_line": "                               COMMAREA(CARDDEMO-COMMAREA)",
+          "note": "CARDDEMO-COMMAREA passed whole in EXEC CICS XCTL to COMEN01C (user path)."
+        }
+      ],
+      "newly_discovered_aliases": [],
+      "near_miss_signals": [],
+      "notes": "COSGN00C COPYs COCOM01Y (declaring CDEMO-ACCT-ID inside CARDDEMO-COMMAREA) but never references CDEMO-ACCT-ID individually. CDEMO-USER-ID and CDEMO-USER-TYPE are populated from the security file read but CDEMO-ACCT-ID is never touched — it remains at its initialized zero value. CARDDEMO-COMMAREA is passed as a whole opaque block to downstream programs."
+    }
+  ]
+}

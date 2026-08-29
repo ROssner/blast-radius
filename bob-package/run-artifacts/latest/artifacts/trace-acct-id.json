@@ -1,0 +1,658 @@
+{
+  "field": "ACCT-ID",
+  "source_groups": [
+    ".blast-radius/artifacts/trace-acct-id-group-1.json",
+    ".blast-radius/artifacts/trace-acct-id-group-2.json",
+    ".blast-radius/artifacts/trace-acct-id-group-3.json",
+    ".blast-radius/artifacts/trace-acct-id-group-4.json",
+    ".blast-radius/artifacts/trace-acct-id-group-5.json",
+    ".blast-radius/artifacts/trace-acct-id-group-6.json",
+    ".blast-radius/artifacts/trace-acct-id-group-7.json"
+  ],
+  "programs": [
+    {
+      "path": "app/cbl/CBACT01C.cbl",
+      "module": "core",
+      "tier": "FIELD-AWARE",
+      "copies": [
+        {"copybook": "CVACT01Y", "active": true, "line": 89}
+      ],
+      "hits": [
+        {"alias": "ACCT-ID", "line": 201, "access_kind": "DISPLAY",      "snippet": "DISPLAY 'ACCT-ID :' ACCT-ID"},
+        {"alias": "ACCT-ID", "line": 216, "access_kind": "MOVE-SOURCE",   "snippet": "MOVE ACCT-ID TO OUT-ACCT-ID"},
+        {"alias": "ACCT-ID", "line": 254, "access_kind": "MOVE-SOURCE",   "snippet": "MOVE ACCT-ID TO ARR-ACCT-ID"},
+        {"alias": "ACCT-ID", "line": 277, "access_kind": "MOVE-SOURCE",   "snippet": "MOVE ACCT-ID TO VB1-ACCT-ID"}
+      ],
+      "near_misses": [
+        {"name": "FD-ACCT-ID",  "line": 32},
+        {"name": "FD-ACCT-ID",  "line": 54},
+        {"name": "OUT-ACCT-ID", "line": 58},
+        {"name": "ARR-ACCT-ID", "line": 73},
+        {"name": "VB1-ACCT-ID", "line": 124},
+        {"name": "VB2-ACCT-ID", "line": 127}
+      ],
+      "notes": "Batch account-dump program. Reads ACCTFILE sequentially via READ INTO ACCOUNT-RECORD, then names ACCT-ID four times to fan output to three separate files (OUT-FILE, ARRY-FILE, VBRC-FILE)."
+    },
+    {
+      "path": "app/cbl/CBACT02C.cbl",
+      "module": "core",
+      "tier": "STRUCTURALLY-AFFECTED",
+      "copies": [
+        {"copybook": "CVACT02Y", "active": true, "line": 45}
+      ],
+      "hits": [],
+      "near_misses": [],
+      "notes": "Reads CARDFILE via READ INTO CARD-RECORD (line 93) and DISPLAYs CARD-RECORD as an opaque block (line 78). CARD-ACCT-ID is never individually named."
+    },
+    {
+      "path": "app/cbl/CBACT03C.cbl",
+      "module": "core",
+      "tier": "STRUCTURALLY-AFFECTED",
+      "copies": [
+        {"copybook": "CVACT03Y", "active": true, "line": 45}
+      ],
+      "hits": [],
+      "near_misses": [],
+      "notes": "Reads XREFFILE via READ INTO CARD-XREF-RECORD (line 93) and DISPLAYs CARD-XREF-RECORD as an opaque block (lines 78, 96). XREF-ACCT-ID is never individually named."
+    },
+    {
+      "path": "app/cbl/CBACT04C.cbl",
+      "module": "core",
+      "tier": "FIELD-AWARE",
+      "copies": [
+        {"copybook": "CVTRA01Y", "active": true, "line": 97},
+        {"copybook": "CVACT03Y", "active": true, "line": 102},
+        {"copybook": "CVACT01Y", "active": true, "line": 112}
+      ],
+      "hits": [
+        {"alias": "TRANCAT-ACCT-ID", "line": 194, "access_kind": "COMPARE",    "snippet": "IF TRANCAT-ACCT-ID NOT= WS-LAST-ACCT-NUM"},
+        {"alias": "TRANCAT-ACCT-ID", "line": 201, "access_kind": "MOVE-SOURCE", "snippet": "MOVE TRANCAT-ACCT-ID TO WS-LAST-ACCT-NUM"},
+        {"alias": "TRANCAT-ACCT-ID", "line": 202, "access_kind": "MOVE-SOURCE", "snippet": "MOVE TRANCAT-ACCT-ID TO FD-ACCT-ID"},
+        {"alias": "TRANCAT-ACCT-ID", "line": 204, "access_kind": "MOVE-SOURCE", "snippet": "MOVE TRANCAT-ACCT-ID TO FD-XREF-ACCT-ID"},
+        {"alias": "ACCT-ID",         "line": 486, "access_kind": "MOVE-SOURCE", "snippet": "STRING 'Int. for a/c ' , ACCT-ID DELIMITED BY SIZE INTO TRAN-DESC"}
+      ],
+      "near_misses": [
+        {"name": "FD-TRANCAT-ACCT-ID", "line": 64},
+        {"name": "FD-ACCT-ID",         "line": 86},
+        {"name": "FD-XREF-ACCT-ID",    "line": 73}
+      ],
+      "notes": "Interest-calculation batch. Uses TRANCAT-ACCT-ID (CVTRA01Y) as grouping key to drive random reads of ACCOUNT-FILE and XREF-FILE, then uses ACCT-ID (CVACT01Y) as STRING source for transaction description. XREF-ACCT-ID (CVACT03Y) travels structurally only via READ INTO CARD-XREF-RECORD."
+    },
+    {
+      "path": "app/cbl/CBEXPORT.cbl",
+      "module": "core",
+      "tier": "FIELD-AWARE",
+      "copies": [
+        {"copybook": "CVACT01Y", "active": true, "line": 78},
+        {"copybook": "CVACT03Y", "active": true, "line": 81},
+        {"copybook": "CVACT02Y", "active": true, "line": 87},
+        {"copybook": "CVEXPORT",  "active": true, "line": 96}
+      ],
+      "hits": [
+        {"alias": "ACCT-ID",         "line": 44,  "access_kind": "READ",        "snippet": "RECORD KEY IS ACCT-ID"},
+        {"alias": "ACCT-ID",         "line": 351, "access_kind": "MOVE-SOURCE", "snippet": "MOVE ACCT-ID TO EXP-ACCT-ID"},
+        {"alias": "EXP-ACCT-ID",     "line": 351, "access_kind": "MOVE-TARGET", "snippet": "MOVE ACCT-ID TO EXP-ACCT-ID"},
+        {"alias": "XREF-ACCT-ID",    "line": 417, "access_kind": "MOVE-SOURCE", "snippet": "MOVE XREF-ACCT-ID TO EXP-XREF-ACCT-ID"},
+        {"alias": "EXP-XREF-ACCT-ID","line": 417, "access_kind": "MOVE-TARGET", "snippet": "MOVE XREF-ACCT-ID TO EXP-XREF-ACCT-ID"},
+        {"alias": "CARD-ACCT-ID",    "line": 536, "access_kind": "MOVE-SOURCE", "snippet": "MOVE CARD-ACCT-ID TO EXP-CARD-ACCT-ID"},
+        {"alias": "EXP-CARD-ACCT-ID","line": 536, "access_kind": "MOVE-TARGET", "snippet": "MOVE CARD-ACCT-ID TO EXP-CARD-ACCT-ID"}
+      ],
+      "near_misses": [],
+      "notes": "Branch-integration export program. Touches three alias pairs across CVACT01Y/CVACT02Y/CVACT03Y/CVEXPORT. ACCT-ID is also the FILE SECTION RECORD KEY at line 44."
+    },
+    {
+      "path": "app/cbl/CBIMPORT.cbl",
+      "module": "core",
+      "tier": "FIELD-AWARE",
+      "copies": [
+        {"copybook": "CVACT01Y", "active": true, "line": 89},
+        {"copybook": "CVACT03Y", "active": true, "line": 94},
+        {"copybook": "CVACT02Y", "active": true, "line": 104},
+        {"copybook": "CVEXPORT",  "active": true, "line": 113}
+      ],
+      "hits": [
+        {"alias": "EXP-ACCT-ID",     "line": 328, "access_kind": "MOVE-SOURCE", "snippet": "MOVE EXP-ACCT-ID TO ACCT-ID"},
+        {"alias": "ACCT-ID",         "line": 328, "access_kind": "MOVE-TARGET", "snippet": "MOVE EXP-ACCT-ID TO ACCT-ID"},
+        {"alias": "EXP-XREF-ACCT-ID","line": 359, "access_kind": "MOVE-SOURCE", "snippet": "MOVE EXP-XREF-ACCT-ID TO XREF-ACCT-ID"},
+        {"alias": "XREF-ACCT-ID",    "line": 359, "access_kind": "MOVE-TARGET", "snippet": "MOVE EXP-XREF-ACCT-ID TO XREF-ACCT-ID"},
+        {"alias": "EXP-CARD-ACCT-ID","line": 408, "access_kind": "MOVE-SOURCE", "snippet": "MOVE EXP-CARD-ACCT-ID TO CARD-ACCT-ID"},
+        {"alias": "CARD-ACCT-ID",    "line": 408, "access_kind": "MOVE-TARGET", "snippet": "MOVE EXP-CARD-ACCT-ID TO CARD-ACCT-ID"}
+      ],
+      "near_misses": [],
+      "notes": "Inverse of CBEXPORT. Reads multi-record import file and reconstructs VSAM records. Three alias pairs mirroring CBEXPORT."
+    },
+    {
+      "path": "app/cbl/CBSTM03A.CBL",
+      "module": "core",
+      "tier": "FIELD-AWARE",
+      "copies": [
+        {"copybook": "CVACT03Y", "active": true, "line": 53},
+        {"copybook": "CVACT01Y", "active": true, "line": 57}
+      ],
+      "hits": [
+        {"alias": "XREF-ACCT-ID", "line": 396, "access_kind": "MOVE-SOURCE", "snippet": "MOVE XREF-ACCT-ID TO WS-M03B-KEY"},
+        {"alias": "XREF-ACCT-ID", "line": 398, "access_kind": "READ",        "snippet": "COMPUTE WS-M03B-KEY-LN = LENGTH OF XREF-ACCT-ID"},
+        {"alias": "ACCT-ID",      "line": 483, "access_kind": "MOVE-SOURCE", "snippet": "MOVE ACCT-ID TO ST-ACCT-ID"},
+        {"alias": "ACCT-ID",      "line": 529, "access_kind": "MOVE-SOURCE", "snippet": "MOVE ACCT-ID TO L11-ACCT"}
+      ],
+      "near_misses": [
+        {"name": "ST-ACCT-ID", "line": 109}
+      ],
+      "notes": "Account-statement batch printer. Loads CARD-XREF-RECORD and ACCOUNT-RECORD as opaque blocks via subroutine CBSTM03B, then individually names XREF-ACCT-ID (key sizing) and ACCT-ID (output formatting)."
+    },
+    {
+      "path": "app/cbl/CBTRN01C.cbl",
+      "module": "core",
+      "tier": "FIELD-AWARE",
+      "copies": [
+        {"copybook": "CVACT03Y", "active": true, "line": 109},
+        {"copybook": "CVACT02Y", "active": true, "line": 114},
+        {"copybook": "CVACT01Y", "active": true, "line": 119}
+      ],
+      "hits": [
+        {"alias": "XREF-ACCT-ID", "line": 175, "access_kind": "MOVE-SOURCE", "snippet": "MOVE XREF-ACCT-ID TO ACCT-ID"},
+        {"alias": "ACCT-ID",      "line": 175, "access_kind": "MOVE-TARGET", "snippet": "MOVE XREF-ACCT-ID TO ACCT-ID"},
+        {"alias": "ACCT-ID",      "line": 178, "access_kind": "DISPLAY",     "snippet": "DISPLAY 'ACCOUNT ' ACCT-ID ' NOT FOUND'"},
+        {"alias": "XREF-ACCT-ID", "line": 237, "access_kind": "DISPLAY",     "snippet": "DISPLAY 'ACCOUNT ID : ' XREF-ACCT-ID"},
+        {"alias": "ACCT-ID",      "line": 242, "access_kind": "MOVE-SOURCE", "snippet": "MOVE ACCT-ID TO FD-ACCT-ID"}
+      ],
+      "near_misses": [
+        {"name": "FD-ACCT-ID", "line": 88}
+      ],
+      "notes": "Daily-transaction posting. Looks up XREF-ACCT-ID after reading CARD-XREF-RECORD, moves it to ACCT-ID to key the account file READ/REWRITE."
+    },
+    {
+      "path": "app/cbl/CBTRN02C.cbl",
+      "module": "core",
+      "tier": "FIELD-AWARE",
+      "copies": [
+        {"copybook": "CVACT03Y", "active": true, "line": 112},
+        {"copybook": "CVACT01Y", "active": true, "line": 121},
+        {"copybook": "CVTRA01Y", "active": true, "line": 126}
+      ],
+      "hits": [
+        {"alias": "XREF-ACCT-ID", "line": 394, "access_kind": "MOVE-SOURCE", "snippet": "MOVE XREF-ACCT-ID TO FD-ACCT-ID"},
+        {"alias": "XREF-ACCT-ID", "line": 469, "access_kind": "MOVE-SOURCE", "snippet": "MOVE XREF-ACCT-ID TO FD-TRANCAT-ACCT-ID"},
+        {"alias": "XREF-ACCT-ID", "line": 505, "access_kind": "MOVE-SOURCE", "snippet": "MOVE XREF-ACCT-ID TO TRANCAT-ACCT-ID"}
+      ],
+      "near_misses": [
+        {"name": "FD-ACCT-ID",         "line": 88},
+        {"name": "FD-TRANCAT-ACCT-ID", "line": 94}
+      ],
+      "notes": "Daily-transaction validation + posting. XREF-ACCT-ID drives three operations: account-file lookup key, TCATBAL file key, and TRAN-CAT-BAL-RECORD population for WRITE/REWRITE."
+    },
+    {
+      "path": "app/cbl/CBTRN03C.cbl",
+      "module": "core",
+      "tier": "FIELD-AWARE",
+      "copies": [
+        {"copybook": "CVACT03Y", "active": true, "line": 98},
+        {"copybook": "CVTRA07Y", "active": true, "line": 113}
+      ],
+      "hits": [
+        {"alias": "XREF-ACCT-ID",         "line": 364, "access_kind": "MOVE-SOURCE", "snippet": "MOVE XREF-ACCT-ID TO TRAN-REPORT-ACCOUNT-ID"},
+        {"alias": "TRAN-REPORT-ACCOUNT-ID","line": 364, "access_kind": "MOVE-TARGET", "snippet": "MOVE XREF-ACCT-ID TO TRAN-REPORT-ACCOUNT-ID"}
+      ],
+      "near_misses": [],
+      "notes": "Daily-transaction report generator. XREF-ACCT-ID populated from CARD-XREF-RECORD read, then moved into TRAN-REPORT-ACCOUNT-ID for report line output."
+    },
+    {
+      "path": "app/cbl/COACTUPC.cbl",
+      "module": "core",
+      "tier": "FIELD-AWARE",
+      "copies": [
+        {"copybook": "CVCRD01Y", "active": true, "line": 597},
+        {"copybook": "CVACT01Y", "active": true, "line": 640},
+        {"copybook": "CVACT03Y", "active": true, "line": 643},
+        {"copybook": "COCOM01Y", "active": true, "line": 650}
+      ],
+      "hits": [
+        {"alias": "CC-ACCT-ID",   "line": 1053, "access_kind": "MOVE-TARGET", "snippet": "MOVE LOW-VALUES TO CC-ACCT-ID"},
+        {"alias": "CC-ACCT-ID",   "line": 1056, "access_kind": "MOVE-TARGET", "snippet": "MOVE ACCTSIDI OF CACTUPAI TO CC-ACCT-ID"},
+        {"alias": "CC-ACCT-ID",   "line": 1787, "access_kind": "COMPARE",     "snippet": "IF CC-ACCT-ID EQUAL LOW-VALUES"},
+        {"alias": "CC-ACCT-ID",   "line": 1788, "access_kind": "COMPARE",     "snippet": "OR CC-ACCT-ID EQUAL SPACES"},
+        {"alias": "CC-ACCT-ID",   "line": 1801, "access_kind": "MOVE-SOURCE", "snippet": "MOVE CC-ACCT-ID TO ACUP-NEW-ACCT-ID"},
+        {"alias": "CC-ACCT-ID",   "line": 1802, "access_kind": "COMPARE",     "snippet": "IF CC-ACCT-ID IS NOT NUMERIC"},
+        {"alias": "CC-ACCT-ID-N", "line": 1803, "access_kind": "COMPARE",     "snippet": "OR CC-ACCT-ID-N EQUAL ZEROS"},
+        {"alias": "CC-ACCT-ID",   "line": 1815, "access_kind": "MOVE-SOURCE", "snippet": "MOVE CC-ACCT-ID TO CDEMO-ACCT-ID"},
+        {"alias": "CDEMO-ACCT-ID","line": 1794, "access_kind": "MOVE-TARGET", "snippet": "MOVE ZEROES TO CDEMO-ACCT-ID"},
+        {"alias": "CDEMO-ACCT-ID","line": 1812, "access_kind": "MOVE-TARGET", "snippet": "MOVE ZEROES TO CDEMO-ACCT-ID"},
+        {"alias": "CDEMO-ACCT-ID","line": 2629, "access_kind": "MOVE-TARGET", "snippet": "MOVE ZEROES TO CDEMO-ACCT-ID"},
+        {"alias": "CC-ACCT-ID-N", "line": 2703, "access_kind": "COMPARE",     "snippet": "IF CC-ACCT-ID-N = 0"},
+        {"alias": "CC-ACCT-ID",   "line": 2707, "access_kind": "MOVE-SOURCE", "snippet": "MOVE CC-ACCT-ID TO ACCTSIDO OF CACTUPAO"},
+        {"alias": "CC-ACCT-ID-N", "line": 2712, "access_kind": "COMPARE",     "snippet": "WHEN CC-ACCT-ID-N = 0"},
+        {"alias": "CC-ACCT-ID",   "line": 3614, "access_kind": "MOVE-SOURCE", "snippet": "MOVE CC-ACCT-ID TO ACUP-OLD-ACCT-ID / WS-CARD-RID-ACCT-ID"},
+        {"alias": "ACCT-ID",      "line": 3805, "access_kind": "MOVE-SOURCE", "snippet": "MOVE ACCT-ID TO CDEMO-ACCT-ID"},
+        {"alias": "ACCT-ID",      "line": 3817, "access_kind": "MOVE-SOURCE", "snippet": "MOVE ACCT-ID TO ACUP-OLD-ACCT-ID"},
+        {"alias": "CC-ACCT-ID",   "line": 3892, "access_kind": "MOVE-SOURCE", "snippet": "MOVE CC-ACCT-ID TO WS-CARD-RID-ACCT-ID"}
+      ],
+      "near_misses": [
+        {"name": "WS-CARD-RID-ACCT-ID",  "line": 381},
+        {"name": "WS-CARD-RID-ACCT-ID-X","line": 382},
+        {"name": "ACUP-OLD-ACCT-ID",     "line": 672},
+        {"name": "ACUP-NEW-ACCT-ID",     "line": 760},
+        {"name": "ACCT-UPDATE-ID",       "line": 3960}
+      ],
+      "notes": "Account-update CICS program. Full lifecycle: screen receive (CC-ACCT-ID), validation, commarea staging (CDEMO-ACCT-ID), CICS READ RIDFLD (CC-ACCT-ID/CC-ACCT-ID-N), account-record extraction (ACCT-ID from CVACT01Y). 18 hits across four aliases."
+    },
+    {
+      "path": "app/cbl/COACTVWC.cbl",
+      "module": "core",
+      "tier": "FIELD-AWARE",
+      "copies": [
+        {"copybook": "CVCRD01Y", "active": true, "line": 207},
+        {"copybook": "COCOM01Y", "active": true, "line": 211},
+        {"copybook": "CVACT01Y", "active": true, "line": 244},
+        {"copybook": "CVACT02Y", "active": true, "line": 248},
+        {"copybook": "CVACT03Y", "active": true, "line": 251}
+      ],
+      "hits": [
+        {"alias": "CC-ACCT-ID",   "line": 468,  "access_kind": "MOVE-SOURCE", "snippet": "MOVE CC-ACCT-ID TO ACCTSIDO OF CACTVWAO"},
+        {"alias": "CC-ACCT-ID",   "line": 630,  "access_kind": "MOVE-TARGET", "snippet": "MOVE LOW-VALUES TO CC-ACCT-ID"},
+        {"alias": "CC-ACCT-ID",   "line": 632,  "access_kind": "MOVE-TARGET", "snippet": "MOVE ACCTSIDI OF CACTVWAI TO CC-ACCT-ID"},
+        {"alias": "CC-ACCT-ID",   "line": 653,  "access_kind": "COMPARE",     "snippet": "IF CC-ACCT-ID EQUAL LOW-VALUES"},
+        {"alias": "CC-ACCT-ID",   "line": 654,  "access_kind": "COMPARE",     "snippet": "OR CC-ACCT-ID EQUAL SPACES"},
+        {"alias": "CC-ACCT-ID",   "line": 666,  "access_kind": "COMPARE",     "snippet": "IF CC-ACCT-ID IS NOT NUMERIC"},
+        {"alias": "CC-ACCT-ID",   "line": 667,  "access_kind": "COMPARE",     "snippet": "OR CC-ACCT-ID EQUAL ZEROES"},
+        {"alias": "CC-ACCT-ID",   "line": 678,  "access_kind": "MOVE-SOURCE", "snippet": "MOVE CC-ACCT-ID TO CDEMO-ACCT-ID"},
+        {"alias": "CDEMO-ACCT-ID","line": 660,  "access_kind": "MOVE-TARGET", "snippet": "MOVE ZEROES TO CDEMO-ACCT-ID"},
+        {"alias": "CDEMO-ACCT-ID","line": 675,  "access_kind": "MOVE-TARGET", "snippet": "MOVE ZERO TO CDEMO-ACCT-ID"},
+        {"alias": "CDEMO-ACCT-ID","line": 678,  "access_kind": "MOVE-TARGET", "snippet": "MOVE CC-ACCT-ID TO CDEMO-ACCT-ID"},
+        {"alias": "CDEMO-ACCT-ID","line": 691,  "access_kind": "MOVE-SOURCE", "snippet": "MOVE CDEMO-ACCT-ID TO WS-CARD-RID-ACCT-ID"}
+      ],
+      "near_misses": [
+        {"name": "WS-CARD-RID-ACCT-ID",  "line": 78},
+        {"name": "WS-CARD-RID-ACCT-ID-X","line": 79}
+      ],
+      "notes": "Account-view CICS program. Screen receive → validate → stage in CDEMO-ACCT-ID → use as RIDFLD for CICS reads of CARDXREF and ACCTDAT."
+    },
+    {
+      "path": "app/cbl/COADM01C.cbl",
+      "module": "core",
+      "tier": "STRUCTURALLY-AFFECTED",
+      "copies": [
+        {"copybook": "COCOM01Y", "active": true, "line": 50}
+      ],
+      "hits": [],
+      "near_misses": [],
+      "notes": "Admin menu. Loads CARDDEMO-COMMAREA from DFHCOMMAREA as opaque block and passes it via CICS RETURN/XCTL COMMAREA. CDEMO-ACCT-ID never individually named."
+    },
+    {
+      "path": "app/cbl/COBIL00C.cbl",
+      "module": "core",
+      "tier": "FIELD-AWARE",
+      "copies": [
+        {"copybook": "COCOM01Y", "active": true, "line": 63},
+        {"copybook": "CVACT01Y", "active": true, "line": 80},
+        {"copybook": "CVACT03Y", "active": true, "line": 81}
+      ],
+      "hits": [
+        {"alias": "ACCT-ID",     "line": 170, "access_kind": "MOVE-TARGET", "snippet": "MOVE ACTIDINI OF COBIL0AI TO ACCT-ID"},
+        {"alias": "XREF-ACCT-ID","line": 171, "access_kind": "MOVE-TARGET", "snippet": "... XREF-ACCT-ID (continuation of MOVE line 170)"},
+        {"alias": "ACCT-ID",     "line": 349, "access_kind": "READ",        "snippet": "RIDFLD (ACCT-ID)"},
+        {"alias": "ACCT-ID",     "line": 350, "access_kind": "READ",        "snippet": "KEYLENGTH (LENGTH OF ACCT-ID)"},
+        {"alias": "XREF-ACCT-ID","line": 414, "access_kind": "READ",        "snippet": "RIDFLD (XREF-ACCT-ID)"},
+        {"alias": "XREF-ACCT-ID","line": 415, "access_kind": "READ",        "snippet": "KEYLENGTH (LENGTH OF XREF-ACCT-ID)"}
+      ],
+      "near_misses": [],
+      "notes": "Bill-payment CICS program. Screen input moves into ACCT-ID + XREF-ACCT-ID simultaneously; both used as CICS READ RIDFLDs. ACCOUNT-RECORD also rewritten as a whole after balance update."
+    },
+    {
+      "path": "app/cbl/COCRDLIC.cbl",
+      "module": "core",
+      "tier": "FIELD-AWARE",
+      "copies": [
+        {"copybook": "CVCRD01Y", "active": true, "line": 221},
+        {"copybook": "COCOM01Y", "active": true, "line": 227},
+        {"copybook": "CVACT02Y", "active": true, "line": 290}
+      ],
+      "hits": [
+        {"alias": "CC-ACCT-ID",   "line": 847,  "access_kind": "MOVE-SOURCE", "snippet": "MOVE CC-ACCT-ID TO ACCTSIDO OF CCRDLIAO"},
+        {"alias": "CC-ACCT-ID",   "line": 969,  "access_kind": "MOVE-TARGET", "snippet": "MOVE ACCTSIDI OF CCRDLIAI TO CC-ACCT-ID"},
+        {"alias": "CC-ACCT-ID",   "line": 1007, "access_kind": "COMPARE",     "snippet": "IF CC-ACCT-ID EQUAL LOW-VALUES"},
+        {"alias": "CC-ACCT-ID",   "line": 1008, "access_kind": "COMPARE",     "snippet": "OR CC-ACCT-ID EQUAL SPACES"},
+        {"alias": "CC-ACCT-ID",   "line": 1017, "access_kind": "COMPARE",     "snippet": "IF CC-ACCT-ID IS NOT NUMERIC"},
+        {"alias": "CC-ACCT-ID",   "line": 1027, "access_kind": "MOVE-SOURCE", "snippet": "MOVE CC-ACCT-ID TO CDEMO-ACCT-ID"},
+        {"alias": "CARD-ACCT-ID", "line": 1167, "access_kind": "MOVE-SOURCE", "snippet": "MOVE CARD-ACCT-ID TO WS-ROW-ACCTNO (forward browse)"},
+        {"alias": "CARD-ACCT-ID", "line": 1174, "access_kind": "MOVE-SOURCE", "snippet": "MOVE CARD-ACCT-ID TO WS-CA-FIRST-CARD-ACCT-ID"},
+        {"alias": "CARD-ACCT-ID", "line": 1194, "access_kind": "MOVE-SOURCE", "snippet": "MOVE CARD-ACCT-ID TO WS-CA-LAST-CARD-ACCT-ID"},
+        {"alias": "CARD-ACCT-ID", "line": 1212, "access_kind": "MOVE-SOURCE", "snippet": "MOVE CARD-ACCT-ID TO WS-CA-LAST-CARD-ACCT-ID (look-ahead)"},
+        {"alias": "CARD-ACCT-ID", "line": 1236, "access_kind": "MOVE-SOURCE", "snippet": "MOVE CARD-ACCT-ID TO WS-CA-LAST-CARD-ACCT-ID (EOF)"},
+        {"alias": "CARD-ACCT-ID", "line": 1340, "access_kind": "MOVE-SOURCE", "snippet": "MOVE CARD-ACCT-ID TO WS-ROW-ACCTNO (backward browse)"},
+        {"alias": "CARD-ACCT-ID", "line": 1350, "access_kind": "MOVE-SOURCE", "snippet": "MOVE CARD-ACCT-ID TO WS-CA-FIRST-CARD-ACCT-ID (back)"},
+        {"alias": "CARD-ACCT-ID", "line": 1386, "access_kind": "COMPARE",     "snippet": "IF CARD-ACCT-ID = CC-ACCT-ID"},
+        {"alias": "CDEMO-ACCT-ID","line": 532,  "access_kind": "MOVE-TARGET", "snippet": "MOVE WS-ROW-ACCTNO(I-SELECTED) TO CDEMO-ACCT-ID"},
+        {"alias": "CDEMO-ACCT-ID","line": 560,  "access_kind": "MOVE-TARGET", "snippet": "MOVE WS-ROW-ACCTNO(I-SELECTED) TO CDEMO-ACCT-ID"},
+        {"alias": "CDEMO-ACCT-ID","line": 849,  "access_kind": "COMPARE",     "snippet": "WHEN CDEMO-ACCT-ID = 0"},
+        {"alias": "CDEMO-ACCT-ID","line": 852,  "access_kind": "MOVE-SOURCE", "snippet": "MOVE CDEMO-ACCT-ID TO ACCTSIDO OF CCRDLIAO"},
+        {"alias": "CDEMO-ACCT-ID","line": 1011, "access_kind": "MOVE-TARGET", "snippet": "MOVE ZEROES TO CDEMO-ACCT-ID"},
+        {"alias": "CDEMO-ACCT-ID","line": 1024, "access_kind": "MOVE-TARGET", "snippet": "MOVE ZERO TO CDEMO-ACCT-ID"},
+        {"alias": "CDEMO-ACCT-ID","line": 1027, "access_kind": "MOVE-TARGET", "snippet": "MOVE CC-ACCT-ID TO CDEMO-ACCT-ID"}
+      ],
+      "near_misses": [
+        {"name": "CARD-ACCT-ID-X",         "line": 99},
+        {"name": "CARD-ACCT-ID-N",         "line": 100},
+        {"name": "WS-CARD-RID-ACCT-ID",    "line": 139},
+        {"name": "WS-CA-LAST-CARD-ACCT-ID","line": 232},
+        {"name": "WS-CA-FIRST-CARD-ACCT-ID","line": 235}
+      ],
+      "notes": "Card-list CICS browse program. 21 hits across CC-ACCT-ID, CARD-ACCT-ID, CDEMO-ACCT-ID. Uses CC-ACCT-ID as account filter, CARD-ACCT-ID from each READNEXT for display and filter comparison, CDEMO-ACCT-ID to pass selected account to downstream CICS programs."
+    },
+    {
+      "path": "app/cbl/COCRDSLC.cbl",
+      "module": "core",
+      "tier": "FIELD-AWARE",
+      "copies": [
+        {"copybook": "CVCRD01Y", "active": true,  "line": 194},
+        {"copybook": "COCOM01Y", "active": true,  "line": 198},
+        {"copybook": "CVACT02Y", "active": true,  "line": 234},
+        {"copybook": "CVACT01Y", "active": false, "line": 231},
+        {"copybook": "CVACT03Y", "active": false, "line": 237}
+      ],
+      "hits": [
+        {"alias": "CDEMO-ACCT-ID","line": 342, "access_kind": "MOVE-SOURCE", "snippet": "MOVE CDEMO-ACCT-ID TO CC-ACCT-ID-N"},
+        {"alias": "CC-ACCT-ID-N", "line": 342, "access_kind": "MOVE-TARGET", "snippet": "MOVE CDEMO-ACCT-ID TO CC-ACCT-ID-N"},
+        {"alias": "CDEMO-ACCT-ID","line": 462, "access_kind": "COMPARE",     "snippet": "IF CDEMO-ACCT-ID = 0"},
+        {"alias": "CDEMO-ACCT-ID","line": 659, "access_kind": "MOVE-TARGET", "snippet": "MOVE ZEROES TO CDEMO-ACCT-ID"},
+        {"alias": "CDEMO-ACCT-ID","line": 673, "access_kind": "MOVE-TARGET", "snippet": "MOVE ZERO TO CDEMO-ACCT-ID"},
+        {"alias": "CDEMO-ACCT-ID","line": 676, "access_kind": "MOVE-TARGET", "snippet": "MOVE CC-ACCT-ID TO CDEMO-ACCT-ID"},
+        {"alias": "CC-ACCT-ID",   "line": 465, "access_kind": "MOVE-SOURCE", "snippet": "MOVE CC-ACCT-ID TO ACCTSIDO OF CCRDSLAO"},
+        {"alias": "CC-ACCT-ID",   "line": 617, "access_kind": "MOVE-TARGET", "snippet": "MOVE LOW-VALUES TO CC-ACCT-ID"},
+        {"alias": "CC-ACCT-ID",   "line": 619, "access_kind": "MOVE-TARGET", "snippet": "MOVE ACCTSIDI OF CCRDSLAI TO CC-ACCT-ID"},
+        {"alias": "CC-ACCT-ID",   "line": 651, "access_kind": "COMPARE",     "snippet": "IF CC-ACCT-ID EQUAL LOW-VALUES"},
+        {"alias": "CC-ACCT-ID",   "line": 652, "access_kind": "COMPARE",     "snippet": "OR CC-ACCT-ID EQUAL SPACES"},
+        {"alias": "CC-ACCT-ID",   "line": 665, "access_kind": "COMPARE",     "snippet": "IF CC-ACCT-ID IS NOT NUMERIC"},
+        {"alias": "CC-ACCT-ID",   "line": 676, "access_kind": "MOVE-SOURCE", "snippet": "MOVE CC-ACCT-ID TO CDEMO-ACCT-ID"}
+      ],
+      "near_misses": [
+        {"name": "CARD-ACCT-ID-X",       "line": 73},
+        {"name": "CARD-ACCT-ID-N",       "line": 74},
+        {"name": "WS-CARD-RID-ACCT-ID",  "line": 99},
+        {"name": "WS-CARD-RID-ACCT-ID-X","line": 100}
+      ],
+      "notes": "Card-selection CICS program. CVACT01Y and CVACT03Y are commented out (active=false). Uses CC-ACCT-ID (screen input/display/validation) and CDEMO-ACCT-ID (commarea receive/propagate). CC-ACCT-ID-N redefine also hit via MOVE CDEMO-ACCT-ID TO CC-ACCT-ID-N."
+    },
+    {
+      "path": "app/cbl/COCRDUPC.cbl",
+      "module": "core",
+      "tier": "FIELD-AWARE",
+      "copies": [
+        {"copybook": "CVCRD01Y", "active": true,  "line": 268},
+        {"copybook": "COCOM01Y", "active": true,  "line": 272},
+        {"copybook": "CVACT02Y", "active": true,  "line": 353},
+        {"copybook": "CVACT01Y", "active": false, "line": 350},
+        {"copybook": "CVACT03Y", "active": false, "line": 356}
+      ],
+      "hits": [
+        {"alias": "CDEMO-ACCT-ID","line": 460,  "access_kind": "MOVE-TARGET", "snippet": "MOVE ZEROS TO CDEMO-ACCT-ID"},
+        {"alias": "CDEMO-ACCT-ID","line": 490,  "access_kind": "MOVE-SOURCE", "snippet": "MOVE CDEMO-ACCT-ID TO CC-ACCT-ID-N"},
+        {"alias": "CC-ACCT-ID-N", "line": 490,  "access_kind": "MOVE-TARGET", "snippet": "MOVE CDEMO-ACCT-ID TO CC-ACCT-ID-N"},
+        {"alias": "CDEMO-ACCT-ID","line": 521,  "access_kind": "WRITE",       "snippet": "INITIALIZE ... CDEMO-ACCT-ID"},
+        {"alias": "CDEMO-ACCT-ID","line": 671,  "access_kind": "MOVE-TARGET", "snippet": "MOVE CCUP-OLD-ACCTID TO CDEMO-ACCT-ID"},
+        {"alias": "CDEMO-ACCT-ID","line": 733,  "access_kind": "MOVE-TARGET", "snippet": "MOVE ZEROES TO CDEMO-ACCT-ID"},
+        {"alias": "CDEMO-ACCT-ID","line": 748,  "access_kind": "MOVE-TARGET", "snippet": "MOVE ZERO TO CDEMO-ACCT-ID"},
+        {"alias": "CDEMO-ACCT-ID","line": 752,  "access_kind": "MOVE-TARGET", "snippet": "MOVE CC-ACCT-ID TO CDEMO-ACCT-ID"},
+        {"alias": "CDEMO-ACCT-ID","line": 1015, "access_kind": "MOVE-TARGET", "snippet": "MOVE ZEROES TO CDEMO-ACCT-ID"},
+        {"alias": "CC-ACCT-ID",   "line": 591,  "access_kind": "MOVE-TARGET", "snippet": "MOVE LOW-VALUES TO CC-ACCT-ID"},
+        {"alias": "CC-ACCT-ID",   "line": 594,  "access_kind": "MOVE-TARGET", "snippet": "MOVE ACCTSIDI OF CCRDUPAI TO CC-ACCT-ID"},
+        {"alias": "CC-ACCT-ID",   "line": 725,  "access_kind": "COMPARE",     "snippet": "IF CC-ACCT-ID EQUAL LOW-VALUES"},
+        {"alias": "CC-ACCT-ID",   "line": 726,  "access_kind": "COMPARE",     "snippet": "OR CC-ACCT-ID EQUAL SPACES"},
+        {"alias": "CC-ACCT-ID",   "line": 740,  "access_kind": "COMPARE",     "snippet": "IF CC-ACCT-ID IS NOT NUMERIC"},
+        {"alias": "CC-ACCT-ID",   "line": 752,  "access_kind": "MOVE-SOURCE", "snippet": "MOVE CC-ACCT-ID TO CDEMO-ACCT-ID"},
+        {"alias": "CC-ACCT-ID",   "line": 1090, "access_kind": "MOVE-SOURCE", "snippet": "MOVE CC-ACCT-ID TO ACCTSIDO OF CCRDUPAO"},
+        {"alias": "CC-ACCT-ID",   "line": 1346, "access_kind": "MOVE-SOURCE", "snippet": "MOVE CC-ACCT-ID TO CCUP-OLD-ACCTID"}
+      ],
+      "near_misses": [
+        {"name": "CARD-ACCT-ID-X",    "line": 104},
+        {"name": "CARD-ACCT-ID-N",    "line": 105},
+        {"name": "WS-CARD-RID-ACCT-ID","line": 130},
+        {"name": "CARD-UPDATE-ACCT-ID","line": 316},
+        {"name": "CCUP-OLD-ACCTID",   "line": 292},
+        {"name": "CCUP-NEW-ACCTID",   "line": 304}
+      ],
+      "notes": "Card-update CICS program. CVACT01Y and CVACT03Y are commented out (active=false). 17 hits across CC-ACCT-ID, CC-ACCT-ID-N, CDEMO-ACCT-ID. Screen receive, validate, commarea propagate, CARD-RECORD read/rewrite using the account ID."
+    },
+    {
+      "path": "app/cbl/COMEN01C.cbl",
+      "module": "core",
+      "tier": "STRUCTURALLY-AFFECTED",
+      "copies": [
+        {"copybook": "COCOM01Y", "active": true, "line": 50}
+      ],
+      "hits": [],
+      "near_misses": [],
+      "notes": "User main menu. Passes CARDDEMO-COMMAREA as opaque block via CICS RETURN/XCTL. CDEMO-ACCT-ID never individually named."
+    },
+    {
+      "path": "app/cbl/CORPT00C.cbl",
+      "module": "core",
+      "tier": "STRUCTURALLY-AFFECTED",
+      "copies": [
+        {"copybook": "COCOM01Y", "active": true, "line": 138}
+      ],
+      "hits": [],
+      "near_misses": [],
+      "notes": "Report menu. Passes CARDDEMO-COMMAREA as opaque block via CICS RETURN/XCTL. CDEMO-ACCT-ID never individually named."
+    },
+    {
+      "path": "app/cbl/COSGN00C.cbl",
+      "module": "core",
+      "tier": "STRUCTURALLY-AFFECTED",
+      "copies": [
+        {"copybook": "COCOM01Y", "active": true, "line": 48}
+      ],
+      "hits": [],
+      "near_misses": [],
+      "notes": "Signon program. Passes CARDDEMO-COMMAREA as opaque block via CICS XCTL (admin path and user path). CDEMO-ACCT-ID never individually named."
+    },
+    {
+      "path": "app/cbl/COTRN00C.cbl",
+      "module": "core",
+      "tier": "STRUCTURALLY-AFFECTED",
+      "copies": [
+        {"copybook": "COCOM01Y", "active": true, "line": 61}
+      ],
+      "hits": [],
+      "near_misses": [],
+      "notes": "Transaction-list CICS program. Passes CARDDEMO-COMMAREA as opaque block via CICS RETURN/XCTL. CDEMO-ACCT-ID never individually named."
+    },
+    {
+      "path": "app/cbl/COTRN01C.cbl",
+      "module": "core",
+      "tier": "STRUCTURALLY-AFFECTED",
+      "copies": [
+        {"copybook": "COCOM01Y", "active": true, "line": 52}
+      ],
+      "hits": [],
+      "near_misses": [],
+      "notes": "Transaction-detail CICS program. Passes CARDDEMO-COMMAREA as opaque block via CICS RETURN/XCTL. CDEMO-ACCT-ID never individually named."
+    },
+    {
+      "path": "app/cbl/COTRN02C.cbl",
+      "module": "core",
+      "tier": "FIELD-AWARE",
+      "copies": [
+        {"copybook": "COCOM01Y", "active": true, "line": 71},
+        {"copybook": "CVACT01Y", "active": true, "line": 89},
+        {"copybook": "CVACT03Y", "active": true, "line": 90}
+      ],
+      "hits": [
+        {"alias": "XREF-ACCT-ID", "line": 206, "access_kind": "MOVE-TARGET", "snippet": "MOVE WS-ACCT-ID-N TO XREF-ACCT-ID"},
+        {"alias": "XREF-ACCT-ID", "line": 223, "access_kind": "MOVE-SOURCE", "snippet": "MOVE XREF-ACCT-ID TO ACTIDINI OF COTRN2AI"},
+        {"alias": "XREF-ACCT-ID", "line": 582, "access_kind": "READ",        "snippet": "RIDFLD (XREF-ACCT-ID)"},
+        {"alias": "XREF-ACCT-ID", "line": 583, "access_kind": "READ",        "snippet": "KEYLENGTH (LENGTH OF XREF-ACCT-ID)"}
+      ],
+      "near_misses": [
+        {"name": "WS-ACCT-ID-N", "line": 55}
+      ],
+      "notes": "Transaction-add CICS program. CVACT01Y is COPYed but ACCT-ID never named (dead-copy for this alias). XREF-ACCT-ID used as screen-keyed lookup and CICS READ RIDFLD. CDEMO-ACCT-ID flows only in opaque CARDDEMO-COMMAREA block."
+    },
+    {
+      "path": "app/cbl/COUSR00C.cbl",
+      "module": "core",
+      "tier": "STRUCTURALLY-AFFECTED",
+      "copies": [
+        {"copybook": "COCOM01Y", "active": true, "line": 66}
+      ],
+      "hits": [],
+      "near_misses": [],
+      "notes": "User-list CICS program. Passes CARDDEMO-COMMAREA as opaque block. CDEMO-ACCT-ID never individually named."
+    },
+    {
+      "path": "app/cbl/COUSR01C.cbl",
+      "module": "core",
+      "tier": "STRUCTURALLY-AFFECTED",
+      "copies": [
+        {"copybook": "COCOM01Y", "active": true, "line": 46}
+      ],
+      "hits": [],
+      "near_misses": [],
+      "notes": "User-add CICS program. Passes CARDDEMO-COMMAREA as opaque block. CDEMO-ACCT-ID never individually named."
+    },
+    {
+      "path": "app/cbl/COUSR02C.cbl",
+      "module": "core",
+      "tier": "STRUCTURALLY-AFFECTED",
+      "copies": [
+        {"copybook": "COCOM01Y", "active": true, "line": 49}
+      ],
+      "hits": [],
+      "near_misses": [],
+      "notes": "User-update CICS program. Passes CARDDEMO-COMMAREA as opaque block. CDEMO-ACCT-ID never individually named."
+    },
+    {
+      "path": "app/cbl/COUSR03C.cbl",
+      "module": "core",
+      "tier": "STRUCTURALLY-AFFECTED",
+      "copies": [
+        {"copybook": "COCOM01Y", "active": true, "line": 49}
+      ],
+      "hits": [],
+      "near_misses": [],
+      "notes": "User-delete CICS program. Passes CARDDEMO-COMMAREA as opaque block. CDEMO-ACCT-ID never individually named."
+    },
+    {
+      "path": "app/app-authorization-ims-db2-mq/cbl/COPAUA0C.cbl",
+      "module": "optional",
+      "tier": "FIELD-AWARE",
+      "copies": [
+        {"copybook": "CVACT03Y", "active": true, "line": 203},
+        {"copybook": "CVACT01Y", "active": true, "line": 206}
+      ],
+      "hits": [
+        {"alias": "XREF-ACCT-ID", "line": 523, "access_kind": "MOVE-SOURCE", "snippet": "MOVE XREF-ACCT-ID TO WS-CARD-RID-ACCT-ID"},
+        {"alias": "XREF-ACCT-ID", "line": 619, "access_kind": "MOVE-SOURCE", "snippet": "MOVE XREF-ACCT-ID TO PA-ACCT-ID"},
+        {"alias": "XREF-ACCT-ID", "line": 805, "access_kind": "MOVE-SOURCE", "snippet": "MOVE XREF-ACCT-ID TO PA-ACCT-ID"},
+        {"alias": "XREF-ACCT-ID", "line": 911, "access_kind": "MOVE-SOURCE", "snippet": "MOVE XREF-ACCT-ID TO PA-ACCT-ID"}
+      ],
+      "near_misses": [
+        {"name": "WS-CARD-RID-ACCT-ID",  "line": 77},
+        {"name": "WS-CARD-RID-ACCT-ID-X","line": 79}
+      ],
+      "notes": "IMS-DB2-MQ authorization program. CVACT01Y is COPYed but ACCT-ID never individually named (ACCOUNT-RECORD loaded structurally via CICS READ INTO). XREF-ACCT-ID drives CICS READ RIDFLD and IMS DLI GU WHERE keying."
+    },
+    {
+      "path": "app/app-authorization-ims-db2-mq/cbl/COPAUS0C.cbl",
+      "module": "optional",
+      "tier": "FIELD-AWARE",
+      "copies": [
+        {"copybook": "COCOM01Y", "active": true, "line": 116},
+        {"copybook": "CVACT01Y", "active": true, "line": 144},
+        {"copybook": "CVACT02Y", "active": true, "line": 147},
+        {"copybook": "CVACT03Y", "active": true, "line": 150}
+      ],
+      "hits": [
+        {"alias": "CDEMO-ACCT-ID", "line": 207, "access_kind": "COMPARE",     "snippet": "IF CDEMO-ACCT-ID IS NUMERIC"},
+        {"alias": "CDEMO-ACCT-ID", "line": 208, "access_kind": "MOVE-SOURCE", "snippet": "MOVE CDEMO-ACCT-ID TO WS-ACCT-ID"},
+        {"alias": "CDEMO-ACCT-ID", "line": 284, "access_kind": "MOVE-TARGET", "snippet": "MOVE ACCTIDI OF COPAU0AI TO ... CDEMO-ACCT-ID"},
+        {"alias": "XREF-ACCT-ID",  "line": 868, "access_kind": "MOVE-SOURCE", "snippet": "MOVE XREF-ACCT-ID TO WS-CARD-RID-ACCT-ID"},
+        {"alias": "CDEMO-ACCT-ID", "line": 971, "access_kind": "MOVE-SOURCE", "snippet": "MOVE CDEMO-ACCT-ID TO PA-ACCT-ID"}
+      ],
+      "near_misses": [
+        {"name": "WS-ACCT-ID",          "line": 44},
+        {"name": "WS-CARD-RID-ACCT-ID", "line": 70}
+      ],
+      "notes": "Authorization summary CICS program. Uses CDEMO-ACCT-ID from commarea and XREF-ACCT-ID for IMS DLI keying. CARD-ACCT-ID (CVACT02Y) never individually named."
+    },
+    {
+      "path": "app/app-authorization-ims-db2-mq/cbl/COPAUS1C.cbl",
+      "module": "optional",
+      "tier": "FIELD-AWARE",
+      "copies": [
+        {"copybook": "COCOM01Y", "active": true, "line": 109}
+      ],
+      "hits": [
+        {"alias": "CDEMO-ACCT-ID", "line": 211, "access_kind": "COMPARE",     "snippet": "IF CDEMO-ACCT-ID IS NUMERIC AND"},
+        {"alias": "CDEMO-ACCT-ID", "line": 213, "access_kind": "MOVE-SOURCE", "snippet": "MOVE CDEMO-ACCT-ID TO WS-ACCT-ID"},
+        {"alias": "CDEMO-ACCT-ID", "line": 231, "access_kind": "MOVE-SOURCE", "snippet": "MOVE CDEMO-ACCT-ID TO WS-ACCT-ID"},
+        {"alias": "CDEMO-ACCT-ID", "line": 245, "access_kind": "MOVE-SOURCE", "snippet": "MOVE CDEMO-ACCT-ID TO WS-FRD-ACCT-ID"},
+        {"alias": "CDEMO-ACCT-ID", "line": 270, "access_kind": "MOVE-SOURCE", "snippet": "MOVE CDEMO-ACCT-ID TO WS-ACCT-ID"}
+      ],
+      "near_misses": [
+        {"name": "WS-ACCT-ID",    "line": 50},
+        {"name": "WS-FRD-ACCT-ID","line": 94}
+      ],
+      "notes": "Authorization detail CICS program. Only COCOM01Y copied. CDEMO-ACCT-ID drives IMS DLI operations and is passed (via WS-FRD-ACCT-ID) to fraud sub-program via CICS LINK."
+    },
+    {
+      "path": "app/app-transaction-type-db2/cbl/COTRTLIC.cbl",
+      "module": "optional",
+      "tier": "DEAD-COPY",
+      "copies": [
+        {"copybook": "CVCRD01Y", "active": true, "line": 327},
+        {"copybook": "COCOM01Y", "active": true, "line": 375},
+        {"copybook": "CVACT02Y", "active": true, "line": 490}
+      ],
+      "hits": [],
+      "near_misses": [
+        {"name": "CC-WORK-AREA", "line": 500}
+      ],
+      "notes": "Transaction-type list CICS program. COPYs CVCRD01Y (CC-ACCT-ID), COCOM01Y (CDEMO-ACCT-ID), CVACT02Y (CARD-ACCT-ID) — none of these alias tokens appear in procedure code. All three are dead imports for the ACCT-ID lineage."
+    },
+    {
+      "path": "app/app-transaction-type-db2/cbl/COTRTUPC.cbl",
+      "module": "optional",
+      "tier": "FIELD-AWARE",
+      "copies": [
+        {"copybook": "CVCRD01Y", "active": true, "line": 241},
+        {"copybook": "COCOM01Y", "active": true, "line": 292}
+      ],
+      "hits": [
+        {"alias": "CDEMO-ACCT-ID", "line": 473,  "access_kind": "MOVE-TARGET", "snippet": "INITIALIZE ... CDEMO-ACCT-ID"},
+        {"alias": "CDEMO-ACCT-ID", "line": 1069, "access_kind": "MOVE-TARGET", "snippet": "MOVE ZEROES TO CDEMO-ACCT-ID"}
+      ],
+      "near_misses": [
+        {"name": "CC-WORK-AREA", "line": 352}
+      ],
+      "notes": "Transaction-type update CICS program. CC-ACCT-ID (CVCRD01Y) never individually named. CDEMO-ACCT-ID is initialised/zeroed on state transitions."
+    },
+    {
+      "path": "app/app-vsam-mq/cbl/COACCT01.cbl",
+      "module": "optional",
+      "tier": "FIELD-AWARE",
+      "copies": [
+        {"copybook": "CVACT01Y", "active": true, "line": 171}
+      ],
+      "hits": [
+        {"alias": "ACCT-ID", "line": 408, "access_kind": "MOVE-SOURCE", "snippet": "MOVE ACCT-ID TO WS-ACCT-ID"}
+      ],
+      "near_misses": [
+        {"name": "WS-ACCT-ID",          "line": 134},
+        {"name": "WS-CARD-RID-ACCT-ID", "line": 126}
+      ],
+      "notes": "MQ-based account inquiry service. Reads ACCOUNT-RECORD via CICS READ INTO, then extracts ACCT-ID for inclusion in MQ reply message."
+    }
+  ],
+  "summary": {
+    "total_programs": 32,
+    "field_aware": 20,
+    "structurally_affected": 11,
+    "dead_copy": 1,
+    "core_programs": 27,
+    "optional_programs": 5,
+    "commented_out_copies_noted": [
+      {"program": "app/cbl/COCRDSLC.cbl", "copybooks": ["CVACT01Y (line 231)", "CVACT03Y (line 237)"]},
+      {"program": "app/cbl/COCRDUPC.cbl", "copybooks": ["CVACT01Y (line 350)", "CVACT03Y (line 356)"]}
+    ]
+  }
+}

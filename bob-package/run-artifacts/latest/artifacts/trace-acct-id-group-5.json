@@ -1,0 +1,218 @@
+{
+  "programs": [
+    {
+      "path": "app/cbl/COTRN00C.cbl",
+      "tier": "STRUCTURALLY-AFFECTED",
+      "hits": [],
+      "structural_evidence": [
+        {
+          "line": 61,
+          "source_line": "       COPY COCOM01Y.",
+          "note": "COPYs COCOM01Y which declares CARDDEMO-COMMAREA (01-level group containing CDEMO-ACCT-ID at offset 10 CDEMO-ACCOUNT-INFO)."
+        },
+        {
+          "line": 111,
+          "source_line": "               MOVE DFHCOMMAREA(1:EIBCALEN) TO CARDDEMO-COMMAREA",
+          "note": "CARDDEMO-COMMAREA loaded as an opaque whole block from the CICS commarea on entry."
+        },
+        {
+          "line": 140,
+          "source_line": "                     COMMAREA (CARDDEMO-COMMAREA)",
+          "note": "CARDDEMO-COMMAREA passed whole via CICS RETURN COMMAREA – CDEMO-ACCT-ID flows out opaquely."
+        },
+        {
+          "line": 194,
+          "source_line": "                            COMMAREA(CARDDEMO-COMMAREA)",
+          "note": "CARDDEMO-COMMAREA passed whole via CICS XCTL to COTRN01C – CDEMO-ACCT-ID flows out opaquely."
+        },
+        {
+          "line": 520,
+          "source_line": "               COMMAREA(CARDDEMO-COMMAREA)",
+          "note": "CARDDEMO-COMMAREA passed whole via CICS XCTL in RETURN-TO-PREV-SCREEN – CDEMO-ACCT-ID flows out opaquely."
+        }
+      ],
+      "newly_discovered_aliases": [],
+      "near_miss_signals": [],
+      "uncertain": [],
+      "notes": "Program COPYs COCOM01Y (which declares CDEMO-ACCT-ID inside CARDDEMO-COMMAREA). CARDDEMO-COMMAREA is moved in whole on entry and passed out whole in every XCTL/RETURN COMMAREA clause. CDEMO-ACCT-ID is never named individually anywhere in the source. No other alias-relevant copybooks are COPYed."
+    },
+    {
+      "path": "app/cbl/COTRN01C.cbl",
+      "tier": "STRUCTURALLY-AFFECTED",
+      "hits": [],
+      "structural_evidence": [
+        {
+          "line": 52,
+          "source_line": "       COPY COCOM01Y.",
+          "note": "COPYs COCOM01Y which declares CARDDEMO-COMMAREA containing CDEMO-ACCT-ID."
+        },
+        {
+          "line": 98,
+          "source_line": "               MOVE DFHCOMMAREA(1:EIBCALEN) TO CARDDEMO-COMMAREA",
+          "note": "CARDDEMO-COMMAREA loaded as an opaque whole block from the CICS commarea on entry."
+        },
+        {
+          "line": 138,
+          "source_line": "                     COMMAREA (CARDDEMO-COMMAREA)",
+          "note": "CARDDEMO-COMMAREA passed whole via CICS RETURN COMMAREA – CDEMO-ACCT-ID flows out opaquely."
+        },
+        {
+          "line": 207,
+          "source_line": "               COMMAREA(CARDDEMO-COMMAREA)",
+          "note": "CARDDEMO-COMMAREA passed whole via CICS XCTL in RETURN-TO-PREV-SCREEN – CDEMO-ACCT-ID flows out opaquely."
+        }
+      ],
+      "newly_discovered_aliases": [],
+      "near_miss_signals": [],
+      "uncertain": [],
+      "notes": "Program COPYs COCOM01Y (which declares CDEMO-ACCT-ID inside CARDDEMO-COMMAREA). CARDDEMO-COMMAREA is moved in whole on entry and passed out whole in every XCTL/RETURN COMMAREA clause. CDEMO-ACCT-ID is never named individually. No other alias-relevant copybooks are COPYed (CVTRA05Y does not declare any of the tracked aliases)."
+    },
+    {
+      "path": "app/cbl/COTRN02C.cbl",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 206,
+          "source_line": "                   MOVE WS-ACCT-ID-N            TO XREF-ACCT-ID",
+          "access_kind": "MOVE-TARGET",
+          "note": "WS-ACCT-ID-N (NUMVAL of screen field ACTIDINI) is moved INTO XREF-ACCT-ID to set the key for the CXACAIX alternate-index read."
+        },
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 207,
+          "source_line": "                                                ACTIDINI OF COTRN2AI",
+          "access_kind": "MOVE-TARGET",
+          "note": "Same MOVE statement (continuation line): WS-ACCT-ID-N also written back to screen field ACTIDINI in the same MOVE. The target XREF-ACCT-ID is on line 206."
+        },
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 223,
+          "source_line": "                   MOVE XREF-ACCT-ID         TO ACTIDINI OF COTRN2AI",
+          "access_kind": "MOVE-SOURCE",
+          "note": "After READ-CCXREF-FILE returns, XREF-ACCT-ID (populated from the xref record) is moved to the screen display field ACTIDINI – i.e. the account id looked up from the card-number path is surfaced to the user."
+        },
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 582,
+          "source_line": "                RIDFLD    (XREF-ACCT-ID)",
+          "access_kind": "READ",
+          "note": "XREF-ACCT-ID used as RIDFLD for CICS READ on CXACAIX alternate-index file (account-id-based lookup); record is read INTO CARD-XREF-RECORD."
+        },
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 583,
+          "source_line": "                KEYLENGTH (LENGTH OF XREF-ACCT-ID)",
+          "access_kind": "READ",
+          "note": "KEYLENGTH operand of the same CICS READ; confirms the key length is derived from XREF-ACCT-ID."
+        }
+      ],
+      "structural_evidence": [
+        {
+          "line": 71,
+          "source_line": "       COPY COCOM01Y.",
+          "note": "COPYs COCOM01Y (CARDDEMO-COMMAREA / CDEMO-ACCT-ID). CARDDEMO-COMMAREA is used whole in XCTL/RETURN COMMAREA but CDEMO-ACCT-ID is never named individually."
+        },
+        {
+          "line": 119,
+          "source_line": "               MOVE DFHCOMMAREA(1:EIBCALEN) TO CARDDEMO-COMMAREA",
+          "note": "CARDDEMO-COMMAREA loaded whole on entry."
+        },
+        {
+          "line": 158,
+          "source_line": "                     COMMAREA (CARDDEMO-COMMAREA)",
+          "note": "CARDDEMO-COMMAREA passed whole in CICS RETURN – CDEMO-ACCT-ID flows out opaquely."
+        },
+        {
+          "line": 89,
+          "source_line": "       COPY CVACT01Y.",
+          "note": "COPYs CVACT01Y (ACCOUNT-RECORD / ACCT-ID). ACCOUNT-RECORD and ACCT-ID are NEVER referenced anywhere in the program body — this COPY is dead for this file."
+        }
+      ],
+      "newly_discovered_aliases": [
+        {
+          "identifier": "WS-ACCT-ID-N",
+          "confirmed_by": "MOVE",
+          "evidence_line": 206,
+          "evidence_text": "                   MOVE WS-ACCT-ID-N            TO XREF-ACCT-ID",
+          "note": "WS-ACCT-ID-N PIC 9(11) (line 55) is computed from the user-entered account-id screen field and then MOVEd directly into the confirmed alias XREF-ACCT-ID. It carries the account-id value and is a confirmed local alias. It is used only in lines 55 (declaration), 204 (COMPUTE assignment), and 206 (MOVE to XREF-ACCT-ID); no independent further references."
+        }
+      ],
+      "near_miss_signals": [],
+      "uncertain": [],
+      "notes": "FIELD-AWARE via XREF-ACCT-ID (from COPY CVACT03Y). XREF-ACCT-ID is used as a CICS READ RIDFLD key and in MOVEs for account-id lookup by account-id (CXACAIX AIX) and by card-number (CCXREF). CVACT01Y is also COPYed but its record (ACCOUNT-RECORD) and field (ACCT-ID) are completely unreferenced — dead copy for this program. COCOM01Y is COPYed and CARDDEMO-COMMAREA is used whole (STRUCTURALLY-AFFECTED for CDEMO-ACCT-ID path) but since the program is already FIELD-AWARE the overall tier is FIELD-AWARE."
+    },
+    {
+      "path": "app/cbl/COUSR00C.cbl",
+      "tier": "STRUCTURALLY-AFFECTED",
+      "hits": [],
+      "structural_evidence": [
+        {
+          "line": 66,
+          "source_line": "       COPY COCOM01Y.",
+          "note": "COPYs COCOM01Y which declares CARDDEMO-COMMAREA containing CDEMO-ACCT-ID."
+        },
+        {
+          "line": 114,
+          "source_line": "               MOVE DFHCOMMAREA(1:EIBCALEN) TO CARDDEMO-COMMAREA",
+          "note": "CARDDEMO-COMMAREA loaded as opaque whole block from the CICS commarea on entry."
+        },
+        {
+          "line": 143,
+          "source_line": "                     COMMAREA (CARDDEMO-COMMAREA)",
+          "note": "CARDDEMO-COMMAREA passed whole via CICS RETURN COMMAREA."
+        },
+        {
+          "line": 198,
+          "source_line": "                            COMMAREA(CARDDEMO-COMMAREA)",
+          "note": "CARDDEMO-COMMAREA passed whole via CICS XCTL to COUSR02C."
+        },
+        {
+          "line": 208,
+          "source_line": "                            COMMAREA(CARDDEMO-COMMAREA)",
+          "note": "CARDDEMO-COMMAREA passed whole via CICS XCTL to COUSR03C."
+        },
+        {
+          "line": 516,
+          "source_line": "               COMMAREA(CARDDEMO-COMMAREA)",
+          "note": "CARDDEMO-COMMAREA passed whole via CICS XCTL in RETURN-TO-PREV-SCREEN."
+        }
+      ],
+      "newly_discovered_aliases": [],
+      "near_miss_signals": [],
+      "uncertain": [],
+      "notes": "Program COPYs COCOM01Y (CDEMO-ACCT-ID inside CARDDEMO-COMMAREA). CARDDEMO-COMMAREA is used as an opaque whole in every XCTL/RETURN; CDEMO-ACCT-ID is never named individually. No alias-relevant copybooks other than COCOM01Y are COPYed. Purely a user-management (USRSEC) program with no account-id logic."
+    },
+    {
+      "path": "app/cbl/COUSR01C.cbl",
+      "tier": "STRUCTURALLY-AFFECTED",
+      "hits": [],
+      "structural_evidence": [
+        {
+          "line": 46,
+          "source_line": "       COPY COCOM01Y.",
+          "note": "COPYs COCOM01Y which declares CARDDEMO-COMMAREA containing CDEMO-ACCT-ID."
+        },
+        {
+          "line": 82,
+          "source_line": "               MOVE DFHCOMMAREA(1:EIBCALEN) TO CARDDEMO-COMMAREA",
+          "note": "CARDDEMO-COMMAREA loaded as opaque whole block from the CICS commarea on entry."
+        },
+        {
+          "line": 109,
+          "source_line": "                     COMMAREA (CARDDEMO-COMMAREA)",
+          "note": "CARDDEMO-COMMAREA passed whole via CICS RETURN COMMAREA."
+        },
+        {
+          "line": 177,
+          "source_line": "               COMMAREA(CARDDEMO-COMMAREA)",
+          "note": "CARDDEMO-COMMAREA passed whole via CICS XCTL in RETURN-TO-PREV-SCREEN."
+        }
+      ],
+      "newly_discovered_aliases": [],
+      "near_miss_signals": [],
+      "uncertain": [],
+      "notes": "Program COPYs COCOM01Y (CDEMO-ACCT-ID inside CARDDEMO-COMMAREA). CARDDEMO-COMMAREA is used as an opaque whole in every XCTL/RETURN; CDEMO-ACCT-ID is never named individually. No alias-relevant copybooks other than COCOM01Y are COPYed. Purely a user-add (USRSEC WRITE) program with no account-id logic."
+    }
+  ]
+}

@@ -1,0 +1,503 @@
+{
+  "verdicts": [
+    {
+      "program": "app/cbl/CBACT01C.cbl",
+      "claim_type": "hit",
+      "alias": "FD-ACCT-ID",
+      "line": 32,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 32: '                  RECORD KEY   IS FD-ACCT-ID' — col 7 is space (active). FD-ACCT-ID appears as exact token (not inside a literal, not substring of longer name). Governing construct is SELECT/RECORD KEY which establishes it as the KSDS key; access kind READ is correct for a RECORD KEY declaration feeding sequential reads."
+    },
+    {
+      "program": "app/cbl/CBACT01C.cbl",
+      "claim_type": "hit",
+      "alias": "ACCT-ID",
+      "line": 201,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 201: '           DISPLAY \\'ACCT-ID                 :\\'   ACCT-ID' — col 7 is space (active). The first occurrence of ACCT-ID is inside single quotes (literal label); the second occurrence at the end of the line is outside any literal and is the exact token ACCT-ID. Access kind DISPLAY confirmed."
+    },
+    {
+      "program": "app/cbl/CBACT01C.cbl",
+      "claim_type": "hit",
+      "alias": "ACCT-ID",
+      "line": 216,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 216: '            MOVE   ACCT-ID                 TO   OUT-ACCT-ID.' — col 7 is space (active). ACCT-ID is exact token on the MOVE source side. Access kind MOVE-SOURCE confirmed."
+    },
+    {
+      "program": "app/cbl/CBACT01C.cbl",
+      "claim_type": "hit",
+      "alias": "ACCT-ID",
+      "line": 254,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 254: '            MOVE   ACCT-ID         TO   ARR-ACCT-ID.' — col 7 is space (active). ACCT-ID is exact token on the MOVE source side. Access kind MOVE-SOURCE confirmed."
+    },
+    {
+      "program": "app/cbl/CBACT01C.cbl",
+      "claim_type": "hit",
+      "alias": "ACCT-ID",
+      "line": 277,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 277: '            MOVE   ACCT-ID            TO VB1-ACCT-ID' — col 7 is space (active). ACCT-ID is exact token on the MOVE source side; continuation line 278 adds VB2-ACCT-ID as second target. Access kind MOVE-SOURCE confirmed."
+    },
+    {
+      "program": "app/cbl/COACTUPC.cbl",
+      "claim_type": "hit",
+      "alias": "CC-ACCT-ID",
+      "line": 1053,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 1053: '                MOVE LOW-VALUES           TO CC-ACCT-ID' — col 7 is space (active). CC-ACCT-ID is exact token on the MOVE target side. Access kind MOVE-TARGET confirmed."
+    },
+    {
+      "program": "app/cbl/COACTUPC.cbl",
+      "claim_type": "hit",
+      "alias": "CC-ACCT-ID",
+      "line": 1056,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 1056: '                MOVE ACCTSIDI OF CACTUPAI TO CC-ACCT-ID' — col 7 is space (active). CC-ACCT-ID is exact token on MOVE target side. Access kind MOVE-TARGET confirmed."
+    },
+    {
+      "program": "app/cbl/COACTUPC.cbl",
+      "claim_type": "hit",
+      "alias": "CC-ACCT-ID",
+      "line": 1787,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 1787: '            IF CC-ACCT-ID   EQUAL LOW-VALUES' — col 7 is space (active). CC-ACCT-ID is exact token in IF condition. Access kind COMPARE confirmed."
+    },
+    {
+      "program": "app/cbl/COACTUPC.cbl",
+      "claim_type": "hit",
+      "alias": "CC-ACCT-ID",
+      "line": 1788,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 1788: '            OR CC-ACCT-ID   EQUAL SPACES' — col 7 is space (active). CC-ACCT-ID is exact token in OR condition. Access kind COMPARE confirmed."
+    },
+    {
+      "program": "app/cbl/COACTUPC.cbl",
+      "claim_type": "hit",
+      "alias": "CC-ACCT-ID",
+      "line": 1801,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 1801: '            MOVE CC-ACCT-ID              TO ACUP-NEW-ACCT-ID' — col 7 is space (active). CC-ACCT-ID is exact token on MOVE source side. Access kind MOVE-SOURCE confirmed."
+    },
+    {
+      "program": "app/cbl/COACTUPC.cbl",
+      "claim_type": "hit",
+      "alias": "CC-ACCT-ID",
+      "line": 1802,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 1802: '            IF CC-ACCT-ID   IS NOT NUMERIC' — col 7 is space (active). CC-ACCT-ID is exact token in IF condition. Access kind COMPARE confirmed."
+    },
+    {
+      "program": "app/cbl/COACTUPC.cbl",
+      "claim_type": "hit",
+      "alias": "CC-ACCT-ID-N",
+      "line": 1803,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 1803: '            OR CC-ACCT-ID-N EQUAL ZEROS' — col 7 is space (active). CC-ACCT-ID-N is exact token in OR condition. Access kind COMPARE confirmed."
+    },
+    {
+      "program": "app/cbl/COACTUPC.cbl",
+      "claim_type": "hit",
+      "alias": "CC-ACCT-ID",
+      "line": 1815,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 1815: '               MOVE CC-ACCT-ID TO CDEMO-ACCT-ID' — col 7 is space (active). CC-ACCT-ID is exact token on MOVE source side. Access kind MOVE-SOURCE confirmed."
+    },
+    {
+      "program": "app/cbl/COACTUPC.cbl",
+      "claim_type": "hit",
+      "alias": "CDEMO-ACCT-ID",
+      "line": 983,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 983: '                               CDEMO-ACCT-ID' — col 7 is space (active). CDEMO-ACCT-ID is exact token as an argument in an INITIALIZE statement (continuation of the INITIALIZE verb on line 981). Claimed access kind WRITE is imprecise; INITIALIZE sets the field to its default/low value. Corrected to WRITE (INITIALIZE is an initialisation write).",
+      "corrected_access_kind": "WRITE"
+    },
+    {
+      "program": "app/cbl/COACTUPC.cbl",
+      "claim_type": "hit",
+      "alias": "CDEMO-ACCT-ID",
+      "line": 1794,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 1794: '               MOVE ZEROES               TO CDEMO-ACCT-ID' — col 7 is space (active). CDEMO-ACCT-ID is exact token on MOVE target side. Access kind MOVE-TARGET confirmed."
+    },
+    {
+      "program": "app/cbl/COACTUPC.cbl",
+      "claim_type": "hit",
+      "alias": "CDEMO-ACCT-ID",
+      "line": 1812,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 1812: '               MOVE ZEROES               TO CDEMO-ACCT-ID' — col 7 is space (active). CDEMO-ACCT-ID is exact token on MOVE target side. Access kind MOVE-TARGET confirmed."
+    },
+    {
+      "program": "app/cbl/COACTUPC.cbl",
+      "claim_type": "hit",
+      "alias": "CDEMO-ACCT-ID",
+      "line": 1815,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 1815: '               MOVE CC-ACCT-ID TO CDEMO-ACCT-ID' — col 7 is space (active). CDEMO-ACCT-ID is exact token on MOVE target side. Access kind MOVE-TARGET confirmed."
+    },
+    {
+      "program": "app/cbl/COACTUPC.cbl",
+      "claim_type": "hit",
+      "alias": "CDEMO-ACCT-ID",
+      "line": 2629,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 2629: '                      MOVE ZEROES       TO CDEMO-ACCT-ID' — col 7 is space (active). CDEMO-ACCT-ID is exact token on MOVE target side. Access kind MOVE-TARGET confirmed."
+    },
+    {
+      "program": "app/cbl/COACTUPC.cbl",
+      "claim_type": "hit",
+      "alias": "CC-ACCT-ID-N",
+      "line": 2703,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 2703: '               IF CC-ACCT-ID-N = 0' — col 7 is space (active). CC-ACCT-ID-N is exact token in IF condition. Access kind COMPARE confirmed."
+    },
+    {
+      "program": "app/cbl/COACTUPC.cbl",
+      "claim_type": "hit",
+      "alias": "CC-ACCT-ID",
+      "line": 2707,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 2707: '                  MOVE CC-ACCT-ID                TO ACCTSIDO OF CACTUPAO' — col 7 is space (active). CC-ACCT-ID is exact token on MOVE source side. Access kind MOVE-SOURCE confirmed."
+    },
+    {
+      "program": "app/cbl/COACTUPC.cbl",
+      "claim_type": "hit",
+      "alias": "CC-ACCT-ID-N",
+      "line": 2712,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 2712: '                 WHEN CC-ACCT-ID-N =  0' — col 7 is space (active). CC-ACCT-ID-N is exact token in WHEN condition of EVALUATE. Access kind COMPARE confirmed."
+    },
+    {
+      "program": "app/cbl/COACTUPC.cbl",
+      "claim_type": "hit",
+      "alias": "CC-ACCT-ID",
+      "line": 3614,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 3614: '            MOVE CC-ACCT-ID              TO ACUP-OLD-ACCT-ID' with continuation line 3615 '                                            WS-CARD-RID-ACCT-ID' — col 7 is space (active). CC-ACCT-ID is exact token on MOVE source side. Access kind MOVE-SOURCE confirmed."
+    },
+    {
+      "program": "app/cbl/COACTUPC.cbl",
+      "claim_type": "hit",
+      "alias": "ACCT-ID",
+      "line": 3805,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 3805: '            MOVE ACCT-ID                   TO CDEMO-ACCT-ID' — col 7 is space (active). ACCT-ID is exact token on MOVE source side. Access kind MOVE-SOURCE confirmed."
+    },
+    {
+      "program": "app/cbl/COACTUPC.cbl",
+      "claim_type": "hit",
+      "alias": "ACCT-ID",
+      "line": 3817,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 3817: '            MOVE ACCT-ID                  TO ACUP-OLD-ACCT-ID' — col 7 is space (active). ACCT-ID is exact token on MOVE source side. Access kind MOVE-SOURCE confirmed."
+    },
+    {
+      "program": "app/cbl/COACTUPC.cbl",
+      "claim_type": "hit",
+      "alias": "CC-ACCT-ID",
+      "line": 3892,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 3892: '            MOVE CC-ACCT-ID              TO WS-CARD-RID-ACCT-ID' — col 7 is space (active). CC-ACCT-ID is exact token on MOVE source side. Access kind MOVE-SOURCE confirmed."
+    },
+    {
+      "program": "app/cbl/COACTUPC.cbl",
+      "claim_type": "hit",
+      "alias": "ACUP-NEW-ACCT-ID",
+      "line": 3960,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 3960: '            MOVE ACUP-NEW-ACCT-ID         TO ACCT-UPDATE-ID' — col 7 is space (active). ACUP-NEW-ACCT-ID is exact token on MOVE source side. Access kind MOVE-SOURCE confirmed."
+    },
+    {
+      "program": "app/cbl/COCRDUPC.cbl",
+      "claim_type": "hit",
+      "alias": "CDEMO-ACCT-ID",
+      "line": 460,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 460: '                        MOVE ZEROS          TO CDEMO-ACCT-ID' — col 7 is space (active). CDEMO-ACCT-ID is exact token on MOVE target side. Access kind MOVE-TARGET confirmed."
+    },
+    {
+      "program": "app/cbl/COCRDUPC.cbl",
+      "claim_type": "hit",
+      "alias": "CDEMO-ACCT-ID",
+      "line": 490,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 490: '                    MOVE CDEMO-ACCT-ID       TO CC-ACCT-ID-N' — col 7 is space (active). CDEMO-ACCT-ID is exact token on MOVE source side. Access kind MOVE-SOURCE confirmed."
+    },
+    {
+      "program": "app/cbl/COCRDUPC.cbl",
+      "claim_type": "hit",
+      "alias": "CC-ACCT-ID-N",
+      "line": 490,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 490: '                    MOVE CDEMO-ACCT-ID       TO CC-ACCT-ID-N' — col 7 is space (active). CC-ACCT-ID-N is exact token on MOVE target side. Access kind MOVE-TARGET confirmed."
+    },
+    {
+      "program": "app/cbl/COCRDUPC.cbl",
+      "claim_type": "hit",
+      "alias": "CDEMO-ACCT-ID",
+      "line": 521,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 521: '                               CDEMO-ACCT-ID' — col 7 is space (active). CDEMO-ACCT-ID is exact token as a continuation argument in the INITIALIZE statement starting at line 519. Claimed access kind WRITE (via INITIALIZE) confirmed.",
+      "corrected_access_kind": "WRITE"
+    },
+    {
+      "program": "app/cbl/COCRDUPC.cbl",
+      "claim_type": "hit",
+      "alias": "CC-ACCT-ID",
+      "line": 591,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 591: '                MOVE LOW-VALUES           TO  CC-ACCT-ID' — col 7 is space (active). CC-ACCT-ID is exact token on MOVE target side. Access kind MOVE-TARGET confirmed."
+    },
+    {
+      "program": "app/cbl/COCRDUPC.cbl",
+      "claim_type": "hit",
+      "alias": "CC-ACCT-ID",
+      "line": 594,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 594: '                MOVE ACCTSIDI OF CCRDUPAI TO  CC-ACCT-ID' — col 7 is space (active). CC-ACCT-ID is exact token on MOVE target side. Access kind MOVE-TARGET confirmed."
+    },
+    {
+      "program": "app/cbl/COCRDUPC.cbl",
+      "claim_type": "hit",
+      "alias": "CDEMO-ACCT-ID",
+      "line": 671,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 671: '            MOVE CCUP-OLD-ACCTID     TO CDEMO-ACCT-ID' — col 7 is space (active). CDEMO-ACCT-ID is exact token on MOVE target side. Access kind MOVE-TARGET confirmed."
+    },
+    {
+      "program": "app/cbl/COCRDUPC.cbl",
+      "claim_type": "hit",
+      "alias": "CC-ACCT-ID",
+      "line": 725,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 725: '            IF CC-ACCT-ID   EQUAL LOW-VALUES' — col 7 is space (active). CC-ACCT-ID is exact token in IF condition. Access kind COMPARE confirmed."
+    },
+    {
+      "program": "app/cbl/COCRDUPC.cbl",
+      "claim_type": "hit",
+      "alias": "CC-ACCT-ID",
+      "line": 726,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 726: '            OR CC-ACCT-ID   EQUAL SPACES' — col 7 is space (active). CC-ACCT-ID is exact token in OR condition. Access kind COMPARE confirmed."
+    },
+    {
+      "program": "app/cbl/COCRDUPC.cbl",
+      "claim_type": "hit",
+      "alias": "CC-ACCT-ID-N",
+      "line": 727,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 727: '            OR CC-ACCT-ID-N EQUAL ZEROS' — col 7 is space (active). CC-ACCT-ID-N is exact token in OR condition. Access kind COMPARE confirmed."
+    },
+    {
+      "program": "app/cbl/COCRDUPC.cbl",
+      "claim_type": "hit",
+      "alias": "CDEMO-ACCT-ID",
+      "line": 733,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 733: '               MOVE ZEROES       TO CDEMO-ACCT-ID' — col 7 is space (active). CDEMO-ACCT-ID is exact token on MOVE target side. Access kind MOVE-TARGET confirmed."
+    },
+    {
+      "program": "app/cbl/COCRDUPC.cbl",
+      "claim_type": "hit",
+      "alias": "CC-ACCT-ID",
+      "line": 740,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 740: '            IF CC-ACCT-ID  IS NOT NUMERIC' — col 7 is space (active). CC-ACCT-ID is exact token in IF condition. Access kind COMPARE confirmed."
+    },
+    {
+      "program": "app/cbl/COCRDUPC.cbl",
+      "claim_type": "hit",
+      "alias": "CDEMO-ACCT-ID",
+      "line": 748,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 748: '               MOVE ZERO       TO CDEMO-ACCT-ID' — col 7 is space (active). CDEMO-ACCT-ID is exact token on MOVE target side. Access kind MOVE-TARGET confirmed."
+    },
+    {
+      "program": "app/cbl/COCRDUPC.cbl",
+      "claim_type": "hit",
+      "alias": "CC-ACCT-ID",
+      "line": 752,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 752: '               MOVE CC-ACCT-ID TO CDEMO-ACCT-ID' — col 7 is space (active). CC-ACCT-ID is exact token on MOVE source side. Access kind MOVE-SOURCE confirmed."
+    },
+    {
+      "program": "app/cbl/COCRDUPC.cbl",
+      "claim_type": "hit",
+      "alias": "CDEMO-ACCT-ID",
+      "line": 752,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 752: '               MOVE CC-ACCT-ID TO CDEMO-ACCT-ID' — col 7 is space (active). CDEMO-ACCT-ID is exact token on MOVE target side. Access kind MOVE-TARGET confirmed."
+    },
+    {
+      "program": "app/cbl/COCRDUPC.cbl",
+      "claim_type": "hit",
+      "alias": "CDEMO-ACCT-ID",
+      "line": 1015,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 1015: '                      MOVE ZEROES       TO CDEMO-ACCT-ID' — col 7 is space (active). CDEMO-ACCT-ID is exact token on MOVE target side. Access kind MOVE-TARGET confirmed."
+    },
+    {
+      "program": "app/cbl/COCRDUPC.cbl",
+      "claim_type": "hit",
+      "alias": "CC-ACCT-ID-N",
+      "line": 1087,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 1087: '               IF CC-ACCT-ID-N = 0' — col 7 is space (active). CC-ACCT-ID-N is exact token in IF condition. Access kind COMPARE confirmed."
+    },
+    {
+      "program": "app/cbl/COCRDUPC.cbl",
+      "claim_type": "hit",
+      "alias": "CC-ACCT-ID",
+      "line": 1090,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 1090: '                  MOVE CC-ACCT-ID          TO ACCTSIDO OF CCRDUPAO' — col 7 is space (active). CC-ACCT-ID is exact token on MOVE source side. Access kind MOVE-SOURCE confirmed."
+    },
+    {
+      "program": "app/cbl/COCRDUPC.cbl",
+      "claim_type": "hit",
+      "alias": "CC-ACCT-ID",
+      "line": 1346,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 1346: '            MOVE CC-ACCT-ID              TO CCUP-OLD-ACCTID' — col 7 is space (active). CC-ACCT-ID is exact token on MOVE source side. Access kind MOVE-SOURCE confirmed."
+    },
+    {
+      "program": "app/cbl/COCRDUPC.cbl",
+      "claim_type": "hit",
+      "alias": "CC-ACCT-ID-N",
+      "line": 1463,
+      "verdict": "ACCEPTED",
+      "evidence": "Line 1463: '            MOVE CC-ACCT-ID-N                TO CARD-UPDATE-ACCT-ID' — col 7 is space (active). CC-ACCT-ID-N is exact token on MOVE source side. Access kind MOVE-SOURCE confirmed."
+    }
+  ],
+  "alias_verdicts": [
+    {
+      "program": "app/cbl/CBACT01C.cbl",
+      "alias_name": "FD-ACCT-ID",
+      "verdict": "ACCEPTED",
+      "evidence": "Line 32 (col 7 = space): 'RECORD KEY IS FD-ACCT-ID' — establishes FD-ACCT-ID as the KSDS key of ACCTFILE-FILE. Line 166 (col 7 = space): 'READ ACCTFILE-FILE INTO ACCOUNT-RECORD' confirms the file feeds ACCOUNT-RECORD which contains ACCT-ID. FD-ACCT-ID PIC 9(11) mirrors ACCT-ID PIC 9(11). Alias chain confirmed."
+    },
+    {
+      "program": "app/cbl/CBACT01C.cbl",
+      "alias_name": "OUT-ACCT-ID",
+      "verdict": "ACCEPTED",
+      "evidence": "Line 216 (col 7 = space): 'MOVE ACCT-ID TO OUT-ACCT-ID' — confirmed alias via direct MOVE from ACCT-ID (PIC 9(11)) to OUT-ACCT-ID (PIC 9(11)). Shape-compatible."
+    },
+    {
+      "program": "app/cbl/CBACT01C.cbl",
+      "alias_name": "ARR-ACCT-ID",
+      "verdict": "ACCEPTED",
+      "evidence": "Line 254 (col 7 = space): 'MOVE ACCT-ID TO ARR-ACCT-ID' — confirmed alias via direct MOVE from ACCT-ID (PIC 9(11)) to ARR-ACCT-ID (PIC 9(11)). Shape-compatible."
+    },
+    {
+      "program": "app/cbl/CBACT01C.cbl",
+      "alias_name": "VB1-ACCT-ID",
+      "verdict": "ACCEPTED",
+      "evidence": "Line 277 (col 7 = space): 'MOVE ACCT-ID TO VB1-ACCT-ID' — confirmed alias via direct MOVE from ACCT-ID (PIC 9(11)) to VB1-ACCT-ID (PIC 9(11)). Shape-compatible."
+    },
+    {
+      "program": "app/cbl/CBACT01C.cbl",
+      "alias_name": "VB2-ACCT-ID",
+      "verdict": "ACCEPTED",
+      "evidence": "Line 278 (col 7 = space): continuation of MOVE ACCT-ID on line 277 — 'VB2-ACCT-ID.' is the second target in the same MOVE statement. Confirmed alias via direct MOVE from ACCT-ID (PIC 9(11)). Shape-compatible."
+    },
+    {
+      "program": "app/cbl/COACTUPC.cbl",
+      "alias_name": "WS-CARD-RID-ACCT-ID",
+      "verdict": "ACCEPTED",
+      "evidence": "Line 3614-3615 (col 7 = space): 'MOVE CC-ACCT-ID TO ACUP-OLD-ACCT-ID / WS-CARD-RID-ACCT-ID' — CC-ACCT-ID is itself a confirmed alias; MOVE feeds WS-CARD-RID-ACCT-ID (PIC 9(11)) from an alias. Line 3892 (col 7 = space): 'MOVE CC-ACCT-ID TO WS-CARD-RID-ACCT-ID' — second active feed. WS-CARD-RID-ACCT-ID then used as RIDFLD for CICS READs. Alias chain confirmed."
+    },
+    {
+      "program": "app/cbl/COACTUPC.cbl",
+      "alias_name": "WS-CARD-RID-ACCT-ID-X",
+      "verdict": "ACCEPTED",
+      "evidence": "REDEFINES WS-CARD-RID-ACCT-ID (confirmed alias) as PIC X(11). Used as RIDFLD at lines 3656, 3705, 3897 (all col 7 = space). REDEFINES relationship verified in Working Storage; PIC X(11) redefines PIC 9(11) — same width, compatible for CICS key passing."
+    },
+    {
+      "program": "app/cbl/COACTUPC.cbl",
+      "alias_name": "ACUP-OLD-ACCT-ID",
+      "verdict": "ACCEPTED",
+      "evidence": "Line 3817 (col 7 = space): 'MOVE ACCT-ID TO ACUP-OLD-ACCT-ID' — direct MOVE from top-level alias ACCT-ID (PIC 9(11)). Also fed from CC-ACCT-ID at line 3614. Both confirming lines verified active. Shape PIC 9(11) compatible."
+    },
+    {
+      "program": "app/cbl/COACTUPC.cbl",
+      "alias_name": "ACUP-OLD-ACCT-ID-X",
+      "verdict": "ACCEPTED",
+      "evidence": "REDEFINES ACUP-OLD-ACCT-ID (confirmed alias) as PIC X(11). Same-width REDEFINES of a confirmed alias; consistent pattern with WS-CARD-RID-ACCT-ID-X. Shape-compatible."
+    },
+    {
+      "program": "app/cbl/COACTUPC.cbl",
+      "alias_name": "ACUP-NEW-ACCT-ID",
+      "verdict": "ACCEPTED",
+      "evidence": "Line 1801 (col 7 = space): 'MOVE CC-ACCT-ID TO ACUP-NEW-ACCT-ID' — CC-ACCT-ID is a confirmed alias (PIC X(11)). Line 3960 (col 7 = space): 'MOVE ACUP-NEW-ACCT-ID TO ACCT-UPDATE-ID' — used downstream. PIC 9(11) shape confirmed."
+    },
+    {
+      "program": "app/cbl/COACTUPC.cbl",
+      "alias_name": "ACUP-NEW-ACCT-ID-X",
+      "verdict": "ACCEPTED",
+      "evidence": "REDEFINES ACUP-NEW-ACCT-ID (confirmed alias) as PIC X(11). Fed at line 1053 continuation (MOVE LOW-VALUES TO CC-ACCT-ID / ACUP-NEW-ACCT-ID-X) and line 1057 (same pattern). Same-width REDEFINES of confirmed alias; shape-compatible."
+    },
+    {
+      "program": "app/cbl/COCRDUPC.cbl",
+      "alias_name": "CARD-UPDATE-ACCT-ID",
+      "verdict": "ACCEPTED",
+      "evidence": "Line 1463 (col 7 = space): 'MOVE CC-ACCT-ID-N TO CARD-UPDATE-ACCT-ID' — CC-ACCT-ID-N is a confirmed alias (PIC 9(11)). CARD-UPDATE-ACCT-ID PIC 9(11) confirmed by context. Shape-compatible; alias chain confirmed."
+    }
+  ],
+  "near_miss_verdicts": [
+    {
+      "program": "app/cbl/COACTUPC.cbl",
+      "name": "CUST-ACCT-ID-X",
+      "claimed_kind": "different-entity",
+      "verdict": "CONFIRMED",
+      "evidence": "Line 358 (col 7 = space): '10  CUST-ACCT-ID-X  PIC X(11)' — a Working Storage output-edit variable under CICS-OUTPUT-EDIT-VARS. No MOVE from any confirmed ACCT-ID alias into CUST-ACCT-ID-X found in the file. Separate entity used for display formatting, not carrying the ACCOUNT-RECORD ACCT-ID value."
+    },
+    {
+      "program": "app/cbl/COACTUPC.cbl",
+      "name": "CUST-ACCT-ID-N",
+      "claimed_kind": "different-entity",
+      "verdict": "CONFIRMED",
+      "evidence": "Line 359 (col 7 = space): '10  CUST-ACCT-ID-N REDEFINES CUST-ACCT-ID-X  PIC 9(11)' — REDEFINES of CUST-ACCT-ID-X, itself a different-entity. No MOVE from any confirmed ACCT-ID alias into CUST-ACCT-ID-N or CUST-ACCT-ID-X found. Separate output-edit entity."
+    },
+    {
+      "program": "app/cbl/COACTUPC.cbl",
+      "name": "ACCT-UPDATE-ID",
+      "claimed_kind": "different-entity",
+      "verdict": "CONFIRMED",
+      "evidence": "Line 422 (col 7 = space): '15  ACCT-UPDATE-ID  PIC 9(11)' inside ACCT-UPDATE-RECORD — a field in an update-record structure. It receives ACUP-NEW-ACCT-ID at line 3960, which is a downstream write-out; the field is part of the write payload (ACCT-UPDATE-RECORD written to the account file), not a working copy of ACCT-ID from which data flows back. Classified as different-entity (write-target record field) is correct."
+    },
+    {
+      "program": "app/cbl/COCRDUPC.cbl",
+      "name": "CARD-ACCT-ID-X",
+      "claimed_kind": "different-entity",
+      "verdict": "CONFIRMED",
+      "evidence": "Line 104 (col 7 = space): '10  CARD-ACCT-ID-X  PIC X(11)' under CICS-OUTPUT-EDIT-VARS — a local output-edit variable for displaying card account data. This is a display/edit buffer distinct from the copybook CARD-ACCT-ID in CVACT02Y/CARD-RECORD. No MOVE from any confirmed ACCT-ID alias into this field observed."
+    },
+    {
+      "program": "app/cbl/COCRDUPC.cbl",
+      "name": "CARD-ACCT-ID-N",
+      "claimed_kind": "different-entity",
+      "verdict": "CONFIRMED",
+      "evidence": "Line 105 (col 7 = space): '10  CARD-ACCT-ID-N REDEFINES CARD-ACCT-ID-X  PIC 9(11)' — REDEFINES of CARD-ACCT-ID-X (different-entity above). Same output-edit buffer. No MOVE from confirmed ACCT-ID alias into either field found."
+    },
+    {
+      "program": "app/cbl/COCRDUPC.cbl",
+      "name": "WS-CARD-RID-ACCT-ID",
+      "claimed_kind": "different-entity",
+      "verdict": "CONFIRMED",
+      "evidence": "Lines 1379 and 1424 both have col 7 = '*' (commented out): both contain '* MOVE CC-ACCT-ID-N TO WS-CARD-RID-ACCT-ID' and are dead code. Searched ALL references to WS-CARD-RID-ACCT-ID in COCRDUPC: only lines 130-132 (data definition), 1379 (comment), and 1424 (comment) mention the field directly. In active code, line 1380 shows 'MOVE CC-CARD-NUM TO WS-CARD-RID-CARDNUM' and RIDFLD at lines 1384/1430 uses WS-CARD-RID-CARDNUM (the card-number key), NOT WS-CARD-RID-ACCT-ID. WS-CARD-RID-ACCT-ID is never written to or read from in any active statement in COCRDUPC. Near-miss classification (different-entity) confirmed. CONTRAST WITH COACTUPC: in COACTUPC, WS-CARD-RID-ACCT-ID is actively fed by 'MOVE CC-ACCT-ID TO WS-CARD-RID-ACCT-ID' at lines 3615 and 3892 (both col 7 = space, both active), and is subsequently used as the RIDFLD for account-file lookups — making it a genuine alias. In COCRDUPC the program searches by card number rather than account number, so the equivalent MOVE was written but then commented out, leaving the field unused."
+    }
+  ],
+  "summary": {
+    "total_hits_claimed": 46,
+    "accepted": 46,
+    "rejected": 0,
+    "uncertain": 0,
+    "total_aliases_claimed": 12,
+    "aliases_accepted": 12,
+    "aliases_rejected": 0,
+    "near_misses_confirmed": 6,
+    "near_misses_overturned": 0
+  }
+}

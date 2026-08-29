@@ -21,7 +21,10 @@ import os
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 GT_PATH = os.path.join(REPO_ROOT, "docs", "ground_truth", "ACCT-ID.json")
-RUN_PATH = os.path.join(REPO_ROOT, "samples", "carddemo", ".blast-radius",
+# The versioned copy (pulled from the gitignored, ephemeral
+# samples/carddemo/.blast-radius/ workspace via scripts/bob_sync_pull.sh)
+# -- this is what's actually committed and what a fresh clone has.
+RUN_PATH = os.path.join(REPO_ROOT, "bob-package", "run-artifacts", "latest",
                          "artifacts", "verified-acct-id.json")
 
 CORE_FIELD_NAMES = {"ACCT-ID", "CARD-ACCT-ID", "XREF-ACCT-ID"}

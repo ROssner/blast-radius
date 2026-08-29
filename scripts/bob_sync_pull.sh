@@ -21,7 +21,12 @@ if [ -d "$SRC/reports" ]; then
 fi
 
 if [ -d "$SRC/artifacts" ]; then
-  cp -rv "$SRC/artifacts" bob-package/run-artifacts/latest
+  # Clear the destination first: `cp -r src dst` copies INTO an existing
+  # dst directory rather than replacing it, which silently produced a
+  # nested run-artifacts/latest/artifacts/artifacts/ on a repeat pull.
+  rm -rf bob-package/run-artifacts/latest
+  mkdir -p bob-package/run-artifacts/latest
+  cp -rv "$SRC/artifacts" bob-package/run-artifacts/latest/artifacts
 fi
 
 echo

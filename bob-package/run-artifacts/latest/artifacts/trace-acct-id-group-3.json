@@ -1,0 +1,582 @@
+{
+  "programs": [
+    {
+      "path": "app/cbl/COACTUPC.cbl",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {
+          "alias": "CC-ACCT-ID",
+          "line": 1053,
+          "access_kind": "MOVE-TARGET",
+          "snippet": "               MOVE LOW-VALUES           TO CC-ACCT-ID",
+          "note": "Screen field ACCTSIDI set to LOW-VALUES branch; CC-ACCT-ID cleared alongside ACUP-NEW-ACCT-ID-X"
+        },
+        {
+          "alias": "CC-ACCT-ID",
+          "line": 1056,
+          "access_kind": "MOVE-TARGET",
+          "snippet": "               MOVE ACCTSIDI OF CACTUPAI TO CC-ACCT-ID",
+          "note": "Receives account ID from BMS input field ACCTSIDI; parallel move also populates ACUP-NEW-ACCT-ID-X"
+        },
+        {
+          "alias": "CC-ACCT-ID",
+          "line": 1787,
+          "access_kind": "COMPARE",
+          "snippet": "           IF CC-ACCT-ID   EQUAL LOW-VALUES",
+          "note": "Validation check: account not supplied => set INPUT-ERROR and FLG-ACCTFILTER-BLANK"
+        },
+        {
+          "alias": "CC-ACCT-ID",
+          "line": 1788,
+          "access_kind": "COMPARE",
+          "snippet": "           OR CC-ACCT-ID   EQUAL SPACES",
+          "note": "Continuation of blank-check for CC-ACCT-ID"
+        },
+        {
+          "alias": "CC-ACCT-ID",
+          "line": 1801,
+          "access_kind": "MOVE-SOURCE",
+          "snippet": "           MOVE CC-ACCT-ID              TO ACUP-NEW-ACCT-ID",
+          "note": "Stages user-entered account ID into local alias ACUP-NEW-ACCT-ID for further validation"
+        },
+        {
+          "alias": "CC-ACCT-ID",
+          "line": 1802,
+          "access_kind": "COMPARE",
+          "snippet": "           IF CC-ACCT-ID   IS NOT NUMERIC",
+          "note": "Numeric validation; if non-numeric, clears CDEMO-ACCT-ID and exits"
+        },
+        {
+          "alias": "CC-ACCT-ID-N",
+          "line": 1803,
+          "access_kind": "COMPARE",
+          "snippet": "           OR CC-ACCT-ID-N EQUAL ZEROS",
+          "note": "REDEFINES sibling of CC-ACCT-ID used for zero-value check (alias by REDEFINES)"
+        },
+        {
+          "alias": "CC-ACCT-ID",
+          "line": 1815,
+          "access_kind": "MOVE-SOURCE",
+          "snippet": "              MOVE CC-ACCT-ID TO CDEMO-ACCT-ID",
+          "note": "Valid path: copies user account ID into CDEMO-ACCT-ID commarea field"
+        },
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "line": 983,
+          "access_kind": "WRITE",
+          "snippet": "                              CDEMO-ACCT-ID",
+          "note": "INITIALIZE CDEMO-ACCT-ID as part of resetting commarea after update commit or failure"
+        },
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "line": 1794,
+          "access_kind": "MOVE-TARGET",
+          "snippet": "              MOVE ZEROES               TO CDEMO-ACCT-ID",
+          "note": "Clears CDEMO-ACCT-ID to zeros when account field is blank"
+        },
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "line": 1812,
+          "access_kind": "MOVE-TARGET",
+          "snippet": "              MOVE ZEROES               TO CDEMO-ACCT-ID",
+          "note": "Clears CDEMO-ACCT-ID to zeros when account field is not numeric"
+        },
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "line": 1815,
+          "access_kind": "MOVE-TARGET",
+          "snippet": "              MOVE CC-ACCT-ID TO CDEMO-ACCT-ID",
+          "note": "Receives validated CC-ACCT-ID value"
+        },
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "line": 2629,
+          "access_kind": "MOVE-TARGET",
+          "snippet": "                      MOVE ZEROES       TO CDEMO-ACCT-ID",
+          "note": "Resets CDEMO-ACCT-ID to zeros on ACUP-CHANGES-OKAYED-AND-DONE / ACUP-CHANGES-FAILED path"
+        },
+        {
+          "alias": "CC-ACCT-ID-N",
+          "line": 2703,
+          "access_kind": "COMPARE",
+          "snippet": "               IF CC-ACCT-ID-N = 0",
+          "note": "Screen display logic: if CC-ACCT-ID-N is zero, suppress the account field display"
+        },
+        {
+          "alias": "CC-ACCT-ID",
+          "line": 2707,
+          "access_kind": "MOVE-SOURCE",
+          "snippet": "                  MOVE CC-ACCT-ID                TO ACCTSIDO OF CACTUPAO",
+          "note": "Displays account ID on update screen"
+        },
+        {
+          "alias": "CC-ACCT-ID-N",
+          "line": 2712,
+          "access_kind": "COMPARE",
+          "snippet": "                WHEN CC-ACCT-ID-N =  0",
+          "note": "EVALUATE branch to show initial values when account ID is zero"
+        },
+        {
+          "alias": "CC-ACCT-ID",
+          "line": 3614,
+          "access_kind": "MOVE-SOURCE",
+          "snippet": "           MOVE CC-ACCT-ID              TO ACUP-OLD-ACCT-ID",
+          "note": "Saves current (input) account ID into ACUP-OLD-ACCT-ID and WS-CARD-RID-ACCT-ID before file lookups"
+        },
+        {
+          "alias": "CC-ACCT-ID",
+          "line": 3892,
+          "access_kind": "MOVE-SOURCE",
+          "snippet": "           MOVE CC-ACCT-ID              TO WS-CARD-RID-ACCT-ID",
+          "note": "Stages account ID into WS-CARD-RID-ACCT-ID for RIDFLD in account file READ (for update)"
+        },
+        {
+          "alias": "ACCT-ID",
+          "line": 3805,
+          "access_kind": "MOVE-SOURCE",
+          "snippet": "           MOVE ACCT-ID                   TO CDEMO-ACCT-ID",
+          "note": "After successful account READ INTO ACCOUNT-RECORD, copies ACCT-ID to commarea CDEMO-ACCT-ID"
+        },
+        {
+          "alias": "ACCT-ID",
+          "line": 3817,
+          "access_kind": "MOVE-SOURCE",
+          "snippet": "           MOVE ACCT-ID                  TO ACUP-OLD-ACCT-ID",
+          "note": "Stores ACCT-ID from file into ACUP-OLD-ACCT-ID (the 'before-image' for change detection)"
+        }
+      ],
+      "newly_discovered_aliases": [
+        {
+          "name": "ACUP-OLD-ACCT-ID",
+          "declared_at_line": 672,
+          "pic": "9(11)",
+          "evidence": "MOVE CC-ACCT-ID TO ACUP-OLD-ACCT-ID at line 3614; MOVE ACCT-ID TO ACUP-OLD-ACCT-ID at line 3817. Declared as REDEFINES of ACUP-OLD-ACCT-ID-X (PIC X(11)) at line 671."
+        },
+        {
+          "name": "ACUP-OLD-ACCT-ID-X",
+          "declared_at_line": 671,
+          "pic": "X(11)",
+          "evidence": "REDEFINES sibling of ACUP-OLD-ACCT-ID; used in COMPARE at line 1684: IF ACUP-NEW-ACCT-ID-X = ACUP-OLD-ACCT-ID-X"
+        },
+        {
+          "name": "ACUP-NEW-ACCT-ID",
+          "declared_at_line": 760,
+          "pic": "9(11)",
+          "evidence": "MOVE CC-ACCT-ID TO ACUP-NEW-ACCT-ID at line 1801; MOVE ZEROES TO ACUP-NEW-ACCT-ID at line 1795. Declared as REDEFINES of ACUP-NEW-ACCT-ID-X at line 759. Later MOVE ACUP-NEW-ACCT-ID TO ACCT-UPDATE-ID at line 3960."
+        },
+        {
+          "name": "ACUP-NEW-ACCT-ID-X",
+          "declared_at_line": 759,
+          "pic": "X(11)",
+          "evidence": "REDEFINES sibling of ACUP-NEW-ACCT-ID; populated directly from screen at lines 1053/1056 (MOVE ACCTSIDI TO ... ACUP-NEW-ACCT-ID-X). Used in COMPARE at line 1684."
+        },
+        {
+          "name": "WS-CARD-RID-ACCT-ID",
+          "declared_at_line": 381,
+          "pic": "9(11)",
+          "evidence": "MOVE CC-ACCT-ID TO WS-CARD-RID-ACCT-ID at line 3615; MOVE CC-ACCT-ID TO WS-CARD-RID-ACCT-ID at line 3892. WS-CARD-RID-ACCT-ID-X is its REDEFINES sibling used as RIDFLD."
+        },
+        {
+          "name": "WS-CARD-RID-ACCT-ID-X",
+          "declared_at_line": 382,
+          "pic": "X(11)",
+          "evidence": "REDEFINES sibling of WS-CARD-RID-ACCT-ID; used as RIDFLD in EXEC CICS READ at lines 3656, 3705, 3897."
+        },
+        {
+          "name": "ACCT-UPDATE-ID",
+          "declared_at_line": 422,
+          "pic": "9(11)",
+          "evidence": "MOVE ACUP-NEW-ACCT-ID TO ACCT-UPDATE-ID at line 3960. ACCT-UPDATE-RECORD is then REWRITEn to ACCTDAT at line 4066."
+        }
+      ],
+      "near_miss_signals": [
+        {
+          "identifier": "CUST-ACCT-ID-X",
+          "line": 358,
+          "reason": "different-entity — declared in CICS-OUTPUT-EDIT-VARS as a local edit buffer (PIC X(11)); no MOVE from any confirmed alias was found in the code; it appears to be a dead local variable in this program"
+        }
+      ],
+      "notes": "COACTUPC is the account-update program. It copies CVACT01Y (ACCT-ID), CVACT03Y (XREF-ACCT-ID), COCOM01Y (CDEMO-ACCT-ID), and CVCRD01Y (CC-ACCT-ID/CC-ACCT-ID-N). XREF-ACCT-ID from CVACT03Y is copied but not directly referenced by name (the CXACAIX read uses WS-CARD-RID-ACCT-ID-X as RIDFLD, not XREF-ACCT-ID directly). The program builds a complete ACCT-UPDATE-RECORD from ACUP-NEW-* fields and REWRITEs to ACCTDAT."
+    },
+    {
+      "path": "app/cbl/COACTVWC.cbl",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {
+          "alias": "CC-ACCT-ID",
+          "line": 468,
+          "access_kind": "MOVE-SOURCE",
+          "snippet": "                MOVE CC-ACCT-ID   TO ACCTSIDO OF CACTVWAO",
+          "note": "Displays account ID on the account view screen output field ACCTSIDO"
+        },
+        {
+          "alias": "CC-ACCT-ID",
+          "line": 630,
+          "access_kind": "MOVE-TARGET",
+          "snippet": "               MOVE LOW-VALUES           TO  CC-ACCT-ID",
+          "note": "Clears CC-ACCT-ID to LOW-VALUES when screen input is blank/asterisk"
+        },
+        {
+          "alias": "CC-ACCT-ID",
+          "line": 632,
+          "access_kind": "MOVE-TARGET",
+          "snippet": "               MOVE ACCTSIDI OF CACTVWAI TO  CC-ACCT-ID",
+          "note": "Receives account ID from BMS input field ACCTSIDI"
+        },
+        {
+          "alias": "CC-ACCT-ID",
+          "line": 653,
+          "access_kind": "COMPARE",
+          "snippet": "           IF CC-ACCT-ID   EQUAL LOW-VALUES",
+          "note": "Validation: blank check for account filter"
+        },
+        {
+          "alias": "CC-ACCT-ID",
+          "line": 654,
+          "access_kind": "COMPARE",
+          "snippet": "           OR CC-ACCT-ID   EQUAL SPACES",
+          "note": "Continuation of blank-check for CC-ACCT-ID"
+        },
+        {
+          "alias": "CC-ACCT-ID",
+          "line": 666,
+          "access_kind": "COMPARE",
+          "snippet": "           IF CC-ACCT-ID  IS NOT NUMERIC",
+          "note": "Numeric validation of user-entered account ID"
+        },
+        {
+          "alias": "CC-ACCT-ID",
+          "line": 667,
+          "access_kind": "COMPARE",
+          "snippet": "           OR CC-ACCT-ID  EQUAL ZEROES",
+          "note": "Continuation: zero-value check on CC-ACCT-ID"
+        },
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "line": 660,
+          "access_kind": "MOVE-TARGET",
+          "snippet": "              MOVE ZEROES       TO CDEMO-ACCT-ID",
+          "note": "Clears CDEMO-ACCT-ID when account field is blank"
+        },
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "line": 675,
+          "access_kind": "MOVE-TARGET",
+          "snippet": "              MOVE ZERO       TO CDEMO-ACCT-ID",
+          "note": "Clears CDEMO-ACCT-ID when account field is non-numeric or zero"
+        },
+        {
+          "alias": "CC-ACCT-ID",
+          "line": 678,
+          "access_kind": "MOVE-SOURCE",
+          "snippet": "              MOVE CC-ACCT-ID TO CDEMO-ACCT-ID",
+          "note": "Valid path: copies validated account ID into CDEMO-ACCT-ID commarea field"
+        },
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "line": 678,
+          "access_kind": "MOVE-TARGET",
+          "snippet": "              MOVE CC-ACCT-ID TO CDEMO-ACCT-ID",
+          "note": "CDEMO-ACCT-ID receives validated CC-ACCT-ID for use in file lookups"
+        },
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "line": 691,
+          "access_kind": "MOVE-SOURCE",
+          "snippet": "           MOVE CDEMO-ACCT-ID TO WS-CARD-RID-ACCT-ID",
+          "note": "Stages CDEMO-ACCT-ID into WS-CARD-RID-ACCT-ID for use as RIDFLD in CXACAIX and ACCTDAT reads"
+        }
+      ],
+      "newly_discovered_aliases": [
+        {
+          "name": "WS-CARD-RID-ACCT-ID",
+          "declared_at_line": 78,
+          "pic": "9(11)",
+          "evidence": "MOVE CDEMO-ACCT-ID TO WS-CARD-RID-ACCT-ID at line 691. WS-CARD-RID-ACCT-ID-X (REDEFINES) used as RIDFLD in EXEC CICS READ at lines 729 and 778.",
+          "note": "Confirmed alias: receives CDEMO-ACCT-ID then used as file read key"
+        },
+        {
+          "name": "WS-CARD-RID-ACCT-ID-X",
+          "declared_at_line": 79,
+          "pic": "X(11)",
+          "evidence": "REDEFINES sibling of WS-CARD-RID-ACCT-ID; used as RIDFLD in EXEC CICS READ (CXACAIX at line 729, ACCTDAT at line 778); also appears in STRING error messages at lines 749, 798.",
+          "note": "Alias by REDEFINES of WS-CARD-RID-ACCT-ID"
+        }
+      ],
+      "near_miss_signals": [],
+      "notes": "COACTVWC is the account-view program. Copies CVACT01Y, CVACT02Y, CVACT03Y, COCOM01Y, CVCRD01Y. CARD-ACCT-ID (from CVACT02Y) and XREF-ACCT-ID (from CVACT03Y) are copied into the working-storage namespace but are never individually named in the procedure division of this file; the CXACAIX read uses WS-CARD-RID-ACCT-ID-X as key. ACCOUNT-RECORD (CVACT01Y) is read INTO and its fields are displayed to screen, but ACCT-ID itself is not individually referenced — the display moves use ACCT-ACTIVE-STATUS, ACCT-CURR-BAL etc., not ACCT-ID."
+    },
+    {
+      "path": "app/cbl/COADM01C.cbl",
+      "tier": "STRUCTURALLY-AFFECTED",
+      "hits": [],
+      "structural_evidence": [
+        {
+          "line": 90,
+          "source_line": "                MOVE DFHCOMMAREA(1:EIBCALEN) TO CARDDEMO-COMMAREA",
+          "note": "CARDDEMO-COMMAREA (from COPY COCOM01Y) is loaded as an opaque block from DFHCOMMAREA"
+        },
+        {
+          "line": 113,
+          "source_line": "                      COMMAREA (CARDDEMO-COMMAREA)",
+          "note": "CARDDEMO-COMMAREA passed whole in EXEC CICS RETURN — CDEMO-ACCT-ID travels in this block"
+        },
+        {
+          "line": 147,
+          "source_line": "                       COMMAREA(CARDDEMO-COMMAREA)",
+          "note": "CARDDEMO-COMMAREA passed whole in EXEC CICS XCTL to admin option program"
+        },
+        {
+          "line": 282,
+          "source_line": "                      COMMAREA (CARDDEMO-COMMAREA)",
+          "note": "CARDDEMO-COMMAREA passed whole in EXEC CICS RETURN from PGMIDERR handler"
+        }
+      ],
+      "newly_discovered_aliases": [],
+      "near_miss_signals": [],
+      "notes": "COADM01C is the admin menu program. It copies only COCOM01Y (which declares CDEMO-ACCT-ID inside CARDDEMO-COMMAREA). CDEMO-ACCT-ID is never named individually in any statement. However, CARDDEMO-COMMAREA is loaded from DFHCOMMAREA on entry and passed as a whole block in every XCTL/RETURN call. The account ID travels through this program in an opaque commarea block without being individually inspected or modified."
+    },
+    {
+      "path": "app/cbl/COBIL00C.cbl",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {
+          "alias": "ACCT-ID",
+          "line": 170,
+          "access_kind": "MOVE-TARGET",
+          "snippet": "               MOVE ACTIDINI  OF COBIL0AI TO ACCT-ID",
+          "note": "Receives user-entered account ID from BMS field ACTIDINI; parallel MOVE also sets XREF-ACCT-ID on next line"
+        },
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 171,
+          "access_kind": "MOVE-TARGET",
+          "snippet": "                                             XREF-ACCT-ID",
+          "note": "Continuation of MOVE on line 170; ACTIDINI also moves into XREF-ACCT-ID simultaneously"
+        },
+        {
+          "alias": "ACCT-ID",
+          "line": 349,
+          "access_kind": "READ",
+          "snippet": "                RIDFLD    (ACCT-ID)",
+          "note": "ACCT-ID used as RIDFLD in EXEC CICS READ DATASET(ACCTDAT) INTO(ACCOUNT-RECORD); READ with UPDATE lock"
+        },
+        {
+          "alias": "ACCT-ID",
+          "line": 350,
+          "access_kind": "READ",
+          "snippet": "                KEYLENGTH (LENGTH OF ACCT-ID)",
+          "note": "KEYLENGTH clause referencing ACCT-ID length for the same ACCTDAT read"
+        },
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 414,
+          "access_kind": "READ",
+          "snippet": "                RIDFLD    (XREF-ACCT-ID)",
+          "note": "XREF-ACCT-ID used as RIDFLD in EXEC CICS READ DATASET(CXACAIX) INTO(CARD-XREF-RECORD); reads card-xref by account AIX"
+        },
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 415,
+          "access_kind": "READ",
+          "snippet": "                KEYLENGTH (LENGTH OF XREF-ACCT-ID)",
+          "note": "KEYLENGTH clause referencing XREF-ACCT-ID length for CXACAIX read"
+        }
+      ],
+      "newly_discovered_aliases": [],
+      "near_miss_signals": [],
+      "notes": "COBIL00C is the bill payment program. Copies CVACT01Y (ACCT-ID in ACCOUNT-RECORD), CVACT03Y (XREF-ACCT-ID in CARD-XREF-RECORD), COCOM01Y. Both ACCT-ID and XREF-ACCT-ID are loaded from the same screen field ACTIDINI in a single MOVE (line 170-171). ACCT-ID is used as the file key for ACCTDAT READ (with UPDATE) and subsequent REWRITE after balance adjustment. XREF-ACCT-ID is used as the AIX key for the CXACAIX read. CDEMO-ACCT-ID from COCOM01Y is never individually referenced. ACCOUNT-RECORD is written back via EXEC CICS REWRITE FROM(ACCOUNT-RECORD) at line 381."
+    },
+    {
+      "path": "app/cbl/COCRDLIC.cbl",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {
+          "alias": "CC-ACCT-ID",
+          "line": 969,
+          "access_kind": "MOVE-TARGET",
+          "snippet": "           MOVE ACCTSIDI OF CCRDLIAI  TO CC-ACCT-ID",
+          "note": "Receives account filter from BMS input field ACCTSIDI into CC-ACCT-ID"
+        },
+        {
+          "alias": "CC-ACCT-ID",
+          "line": 1007,
+          "access_kind": "COMPARE",
+          "snippet": "           IF CC-ACCT-ID   EQUAL LOW-VALUES",
+          "note": "Blank-check: CC-ACCT-ID is LOW-VALUES"
+        },
+        {
+          "alias": "CC-ACCT-ID",
+          "line": 1008,
+          "access_kind": "COMPARE",
+          "snippet": "           OR CC-ACCT-ID   EQUAL SPACES",
+          "note": "Blank-check continuation"
+        },
+        {
+          "alias": "CC-ACCT-ID-N",
+          "line": 1009,
+          "access_kind": "COMPARE",
+          "snippet": "           OR CC-ACCT-ID-N EQUAL ZEROS",
+          "note": "REDEFINES sibling CC-ACCT-ID-N checked for zero; alias by REDEFINES"
+        },
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "line": 1011,
+          "access_kind": "MOVE-TARGET",
+          "snippet": "              MOVE ZEROES       TO CDEMO-ACCT-ID",
+          "note": "Clears CDEMO-ACCT-ID when account filter is blank"
+        },
+        {
+          "alias": "CC-ACCT-ID",
+          "line": 1017,
+          "access_kind": "COMPARE",
+          "snippet": "           IF CC-ACCT-ID  IS NOT NUMERIC",
+          "note": "Numeric validation of account filter"
+        },
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "line": 1024,
+          "access_kind": "MOVE-TARGET",
+          "snippet": "               MOVE ZERO       TO CDEMO-ACCT-ID",
+          "note": "Clears CDEMO-ACCT-ID when account filter is non-numeric"
+        },
+        {
+          "alias": "CC-ACCT-ID",
+          "line": 1027,
+          "access_kind": "MOVE-SOURCE",
+          "snippet": "               MOVE CC-ACCT-ID TO CDEMO-ACCT-ID",
+          "note": "Valid path: copies validated CC-ACCT-ID into CDEMO-ACCT-ID for downstream use"
+        },
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "line": 1027,
+          "access_kind": "MOVE-TARGET",
+          "snippet": "               MOVE CC-ACCT-ID TO CDEMO-ACCT-ID",
+          "note": "CDEMO-ACCT-ID receives valid account filter"
+        },
+        {
+          "alias": "CC-ACCT-ID",
+          "line": 847,
+          "access_kind": "MOVE-SOURCE",
+          "snippet": "                     MOVE CC-ACCT-ID   TO ACCTSIDO OF CCRDLIAO",
+          "note": "Displays account filter value on screen output"
+        },
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "line": 849,
+          "access_kind": "COMPARE",
+          "snippet": "                   WHEN CDEMO-ACCT-ID = 0",
+          "note": "Screen attribute logic: if CDEMO-ACCT-ID is zero, clear screen field to LOW-VALUES"
+        },
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "line": 852,
+          "access_kind": "MOVE-SOURCE",
+          "snippet": "                     MOVE CDEMO-ACCT-ID TO ACCTSIDO OF CCRDLIAO",
+          "note": "Displays CDEMO-ACCT-ID (from commarea) in screen output field"
+        },
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "line": 532,
+          "access_kind": "MOVE-TARGET",
+          "snippet": "                                          TO CDEMO-ACCT-ID",
+          "note": "MOVE WS-ROW-ACCTNO(I-SELECTED) TO CDEMO-ACCT-ID — selected card's account number stored in commarea before XCTL to card detail program"
+        },
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "line": 560,
+          "access_kind": "MOVE-TARGET",
+          "snippet": "                                          TO CDEMO-ACCT-ID",
+          "note": "MOVE WS-ROW-ACCTNO(I-SELECTED) TO CDEMO-ACCT-ID — selected card's account number stored before XCTL to card update program"
+        },
+        {
+          "alias": "CARD-ACCT-ID",
+          "line": 1167,
+          "access_kind": "MOVE-SOURCE",
+          "snippet": "                       MOVE CARD-ACCT-ID TO",
+          "note": "CARD-ACCT-ID from CARD-RECORD (CVACT02Y) moved to WS-ROW-ACCTNO(WS-SCRN-COUNTER) — populates screen row array"
+        },
+        {
+          "alias": "CARD-ACCT-ID",
+          "line": 1174,
+          "access_kind": "MOVE-SOURCE",
+          "snippet": "                          MOVE CARD-ACCT-ID",
+          "note": "CARD-ACCT-ID moved to WS-CA-FIRST-CARD-ACCT-ID for pagination bookmark (first record on page)"
+        },
+        {
+          "alias": "CARD-ACCT-ID",
+          "line": 1194,
+          "access_kind": "MOVE-SOURCE",
+          "snippet": "                       MOVE CARD-ACCT-ID     TO WS-CA-LAST-CARD-ACCT-ID",
+          "note": "CARD-ACCT-ID moved to WS-CA-LAST-CARD-ACCT-ID for pagination (last record on full page)"
+        },
+        {
+          "alias": "CARD-ACCT-ID",
+          "line": 1212,
+          "access_kind": "MOVE-SOURCE",
+          "snippet": "                               MOVE CARD-ACCT-ID TO",
+          "note": "CARD-ACCT-ID moved to WS-CA-LAST-CARD-ACCT-ID after look-ahead read to check for next page"
+        },
+        {
+          "alias": "CARD-ACCT-ID",
+          "line": 1236,
+          "access_kind": "MOVE-SOURCE",
+          "snippet": "                   MOVE CARD-ACCT-ID     TO WS-CA-LAST-CARD-ACCT-ID",
+          "note": "CARD-ACCT-ID moved to WS-CA-LAST-CARD-ACCT-ID at end-of-file"
+        },
+        {
+          "alias": "CARD-ACCT-ID",
+          "line": 1340,
+          "access_kind": "MOVE-SOURCE",
+          "snippet": "                       MOVE CARD-ACCT-ID",
+          "note": "CARD-ACCT-ID moved to WS-ROW-ACCTNO(WS-SCRN-COUNTER) in backward-browse loop"
+        },
+        {
+          "alias": "CARD-ACCT-ID",
+          "line": 1350,
+          "access_kind": "MOVE-SOURCE",
+          "snippet": "                          MOVE CARD-ACCT-ID",
+          "note": "CARD-ACCT-ID moved to WS-CA-FIRST-CARD-ACCT-ID as first-page bookmark during backward browse"
+        },
+        {
+          "alias": "CARD-ACCT-ID",
+          "line": 1386,
+          "access_kind": "COMPARE",
+          "snippet": "               IF  CARD-ACCT-ID = CC-ACCT-ID",
+          "note": "Filter: CARD-ACCT-ID from current CARD-RECORD compared against CC-ACCT-ID user filter to decide whether to include record"
+        }
+      ],
+      "newly_discovered_aliases": [
+        {
+          "name": "WS-ROW-ACCTNO",
+          "declared_at_line": 258,
+          "pic": "X(11)",
+          "evidence": "MOVE CARD-ACCT-ID TO WS-ROW-ACCTNO(WS-SCRN-COUNTER) at lines 1167-1168 and 1340-1341. Later MOVE WS-ROW-ACCTNO(I-SELECTED) TO CDEMO-ACCT-ID at lines 531-532 and 559-560.",
+          "note": "Screen row array element; receives CARD-ACCT-ID per record and later feeds CDEMO-ACCT-ID for XCTL navigation"
+        },
+        {
+          "name": "WS-CA-FIRST-CARD-ACCT-ID",
+          "declared_at_line": 235,
+          "pic": "9(11)",
+          "evidence": "MOVE CARD-ACCT-ID TO WS-CA-FIRST-CARD-ACCT-ID at lines 1174-1175 and 1350-1351.",
+          "note": "Pagination bookmark storing account ID of first card on displayed page; stored in WS-THIS-PROGCOMMAREA"
+        },
+        {
+          "name": "WS-CA-LAST-CARD-ACCT-ID",
+          "declared_at_line": 232,
+          "pic": "9(11)",
+          "evidence": "MOVE CARD-ACCT-ID TO WS-CA-LAST-CARD-ACCT-ID at lines 1194, 1213, 1236.",
+          "note": "Pagination bookmark storing account ID of last card on displayed page; stored in WS-THIS-PROGCOMMAREA"
+        }
+      ],
+      "near_miss_signals": [
+        {
+          "identifier": "CARD-ACCT-ID-X",
+          "line": 99,
+          "reason": "different-entity — declared as a local output-edit buffer (PIC X(11)) in CICS-OUTPUT-EDIT-VARS; no MOVE from any confirmed alias found in the procedure division; appears to be declared but never fed (dead-never-fed)"
+        }
+      ],
+      "notes": "COCRDLIC is the credit card list program. Copies CVACT02Y (CARD-ACCT-ID in CARD-RECORD), COCOM01Y (CDEMO-ACCT-ID), CVCRD01Y (CC-ACCT-ID/CC-ACCT-ID-N). Does NOT copy CVACT01Y or CVACT03Y. CARD-RECORD is browsed forward and backward; CARD-ACCT-ID from each read is used to populate screen rows and pagination keys. The account filter CC-ACCT-ID is compared against CARD-ACCT-ID in 9500-FILTER-RECORDS. When a row is selected, WS-ROW-ACCTNO feeds CDEMO-ACCT-ID before XCTL to card-detail or card-update programs."
+    }
+  ]
+}

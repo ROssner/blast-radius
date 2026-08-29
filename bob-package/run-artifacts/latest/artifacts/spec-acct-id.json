@@ -1,0 +1,43 @@
+{
+  "change_request": "We need to extend the account identifier field to support longer account numbers for the new branch integration.",
+  "resolved_field": "ACCT-ID",
+  "aliases": [
+    {"name": "ACCT-ID",         "copybook": "CVACT01Y", "record": "ACCOUNT-RECORD",       "pic": "9(11)"},
+    {"name": "CARD-ACCT-ID",    "copybook": "CVACT02Y", "record": "CARD-RECORD",           "pic": "9(11)"},
+    {"name": "XREF-ACCT-ID",    "copybook": "CVACT03Y", "record": "CARD-XREF-RECORD",      "pic": "9(11)"},
+    {"name": "CDEMO-ACCT-ID",   "copybook": "COCOM01Y", "record": "CARDDEMO-COMMAREA",     "pic": "9(11)"},
+    {"name": "CC-ACCT-ID",      "copybook": "CVCRD01Y", "record": "CC-WORK-AREAS",         "pic": "X(11)"},
+    {"name": "CC-ACCT-ID-N",    "copybook": "CVCRD01Y", "record": "CC-WORK-AREAS",         "pic": "9(11)", "note": "REDEFINES CC-ACCT-ID"},
+    {"name": "TRANCAT-ACCT-ID", "copybook": "CVTRA01Y", "record": "TRAN-CAT-BAL-RECORD",   "pic": "9(11)"}
+  ],
+  "candidate_programs": [
+    "app/cbl/CBACT01C.cbl",
+    "app/cbl/CBACT02C.cbl",
+    "app/cbl/CBACT03C.cbl",
+    "app/cbl/CBACT04C.cbl",
+    "app/cbl/CBEXPORT.cbl",
+    "app/cbl/CBIMPORT.cbl",
+    "app/cbl/CBSTM03A.CBL",
+    "app/cbl/CBTRN01C.cbl",
+    "app/cbl/CBTRN02C.cbl",
+    "app/cbl/CBTRN03C.cbl",
+    "app/cbl/COACTUPC.cbl",
+    "app/cbl/COACTVWC.cbl",
+    "app/cbl/COADM01C.cbl",
+    "app/cbl/COBIL00C.cbl",
+    "app/cbl/COCRDLIC.cbl",
+    "app/cbl/COCRDSLC.cbl",
+    "app/cbl/COCRDUPC.cbl",
+    "app/cbl/COMEN01C.cbl",
+    "app/cbl/CORPT00C.cbl",
+    "app/cbl/COSGN00C.cbl",
+    "app/cbl/COTRN00C.cbl",
+    "app/cbl/COTRN01C.cbl",
+    "app/cbl/COTRN02C.cbl",
+    "app/cbl/COUSR00C.cbl",
+    "app/cbl/COUSR01C.cbl",
+    "app/cbl/COUSR02C.cbl",
+    "app/cbl/COUSR03C.cbl"
+  ],
+  "resolution_notes": "The phrase 'account identifier field' maps to ACCT-ID (PIC 9(11)) in CVACT01Y/ACCOUNT-RECORD as the primary account key. Aliases confirmed in copybooks: CARD-ACCT-ID (CVACT02Y, card's account FK), XREF-ACCT-ID (CVACT03Y, xref's account FK), CDEMO-ACCT-ID (COCOM01Y commarea, carries the account ID between CICS programs), CC-ACCT-ID/CC-ACCT-ID-N (CVCRD01Y, working-area display and REDEFINES pair), TRANCAT-ACCT-ID (CVTRA01Y, transaction category balance record key). Excluded near-miss: CUST-EFT-ACCOUNT-ID (CVCUS01Y, PIC X(10)) — this is a customer EFT bank-account number, a different domain and different shape. CBTRN03C COPYs CVACT03Y (active) so it's a candidate. CBSTM03A COPYs CVACT01Y and CVACT03Y (active). All 27 candidates are core module only per user scope instruction."
+}

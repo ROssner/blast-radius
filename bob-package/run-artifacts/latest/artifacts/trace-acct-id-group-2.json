@@ -1,0 +1,268 @@
+{
+  "programs": [
+    {
+      "path": "app/cbl/CBIMPORT.cbl",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {
+          "alias": "ACCT-ID",
+          "line": 328,
+          "access_kind": "MOVE-TARGET",
+          "snippet": "           MOVE EXP-ACCT-ID TO ACCT-ID",
+          "note": "Receives account-ID value from export record field EXP-ACCT-ID during account record construction; ACCOUNT-RECORD is then written to ACCOUNT-OUTPUT at line 341."
+        },
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 359,
+          "access_kind": "MOVE-TARGET",
+          "snippet": "           MOVE EXP-XREF-ACCT-ID TO XREF-ACCT-ID",
+          "note": "Receives xref account-ID from export field EXP-XREF-ACCT-ID; CARD-XREF-RECORD written to XREF-OUTPUT at line 361."
+        },
+        {
+          "alias": "CARD-ACCT-ID",
+          "line": 408,
+          "access_kind": "MOVE-TARGET",
+          "snippet": "           MOVE EXP-CARD-ACCT-ID TO CARD-ACCT-ID",
+          "note": "Receives card account-ID from export field EXP-CARD-ACCT-ID; CARD-RECORD written to CARD-OUTPUT at line 414."
+        }
+      ],
+      "newly_discovered_aliases": [
+        {
+          "name": "EXP-ACCT-ID",
+          "declared_at_line": 48,
+          "pic": "9(11)",
+          "evidence": "CVEXPORT.cpy line 48 declares EXP-ACCT-ID PIC 9(11) under EXPORT-ACCOUNT-DATA. MOVE EXP-ACCT-ID TO ACCT-ID at CBIMPORT line 328 flows its value into confirmed alias ACCT-ID — making EXP-ACCT-ID a MOVE-SOURCE alias for ACCT-ID in this program."
+        },
+        {
+          "name": "EXP-XREF-ACCT-ID",
+          "declared_at_line": 87,
+          "pic": "9(11) COMP",
+          "evidence": "CVEXPORT.cpy line 87 declares EXP-XREF-ACCT-ID PIC 9(11) COMP under EXPORT-CARD-XREF-DATA. MOVE EXP-XREF-ACCT-ID TO XREF-ACCT-ID at CBIMPORT line 359 flows value into confirmed alias XREF-ACCT-ID."
+        },
+        {
+          "name": "EXP-CARD-ACCT-ID",
+          "declared_at_line": 95,
+          "pic": "9(11) COMP",
+          "evidence": "CVEXPORT.cpy line 95 declares EXP-CARD-ACCT-ID PIC 9(11) COMP under EXPORT-CARD-DATA. MOVE EXP-CARD-ACCT-ID TO CARD-ACCT-ID at CBIMPORT line 408 flows value into confirmed alias CARD-ACCT-ID."
+        }
+      ],
+      "near_miss_signals": [],
+      "uncertain": [],
+      "notes": "Program COPYs CVACT01Y (FD ACCOUNT-OUTPUT, line 89), CVACT03Y (FD XREF-OUTPUT, line 94), CVACT02Y (FD CARD-OUTPUT, line 104), and CVEXPORT (WORKING-STORAGE, line 113). The FD-section records for ACCOUNT-OUTPUT, XREF-OUTPUT, and CARD-OUTPUT are the copybook 01-level records (ACCOUNT-RECORD, CARD-XREF-RECORD, CARD-RECORD) used as WRITE targets. Three distinct known aliases are named and written. EXP-ACCT-ID, EXP-XREF-ACCT-ID, and EXP-CARD-ACCT-ID confirmed as source-side local aliases via MOVE chains. Lines 327, 356 are col-7 '*' comments — correctly excluded."
+    },
+    {
+      "path": "app/cbl/CBSTM03A.CBL",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 396,
+          "access_kind": "MOVE-SOURCE",
+          "snippet": "           MOVE XREF-ACCT-ID TO WS-M03B-KEY.",
+          "note": "Value copied into WS-M03B-KEY to form the lookup key for the ACCTFILE keyed READ performed via subroutine CBSTM03B."
+        },
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 398,
+          "access_kind": "READ",
+          "snippet": "           COMPUTE WS-M03B-KEY-LN = LENGTH OF XREF-ACCT-ID.",
+          "note": "LENGTH OF reference used to set the key length for the ACCTFILE subroutine call — confirms field is operationally referenced."
+        },
+        {
+          "alias": "ACCT-ID",
+          "line": 483,
+          "access_kind": "MOVE-SOURCE",
+          "snippet": "           MOVE ACCT-ID TO ST-ACCT-ID.",
+          "note": "Copies account ID into local statement-print field ST-ACCT-ID for inclusion in plain-text statement output (ST-LINE7 written at line 495)."
+        },
+        {
+          "alias": "ACCT-ID",
+          "line": 529,
+          "access_kind": "MOVE-SOURCE",
+          "snippet": "           MOVE ACCT-ID TO L11-ACCT.",
+          "note": "Copies account ID into HTML statement field L11-ACCT for inclusion in HTML report header written at line 530."
+        }
+      ],
+      "structural_evidence": [
+        {
+          "line": 364,
+          "source_line": "           MOVE WS-M03B-FLDT TO CARD-XREF-RECORD.",
+          "note": "Whole CARD-XREF-RECORD (from CVACT03Y) loaded from subroutine data buffer — enables subsequent individual field use of XREF-ACCT-ID at lines 396/398."
+        },
+        {
+          "line": 412,
+          "source_line": "           MOVE WS-M03B-FLDT TO ACCOUNT-RECORD.",
+          "note": "Whole ACCOUNT-RECORD (from CVACT01Y) loaded from subroutine data buffer — enables subsequent individual field use of ACCT-ID at lines 483/529."
+        }
+      ],
+      "newly_discovered_aliases": [
+        {
+          "name": "ST-ACCT-ID",
+          "declared_at_line": 109,
+          "pic": "X(20)",
+          "evidence": "Declared at line 109 inside STATEMENT-LINES group (PIC X(20)). Receives ACCT-ID value via MOVE at line 483. Used as MOVE-SOURCE operand in STRING at line 615 to build HTML basic-details line. Confirmed alias by MOVE from ACCT-ID."
+        },
+        {
+          "name": "L11-ACCT",
+          "declared_at_line": 215,
+          "pic": "X(20)",
+          "evidence": "Declared at line 215 inside HTML-L11 group (PIC X(20)). Receives ACCT-ID value via MOVE at line 529. Written as part of HTML header at line 530. Confirmed alias by MOVE from ACCT-ID."
+        }
+      ],
+      "near_miss_signals": [],
+      "uncertain": [],
+      "notes": "Program COPYs CVACT03Y (line 53) and CVACT01Y (line 57) in WORKING-STORAGE. CARD-XREF-RECORD and ACCOUNT-RECORD are populated via whole-record MOVE from subroutine buffer (lines 364, 412), then individual alias fields are named. XREF-ACCT-ID used at 396/398 for key-based lookup; ACCT-ID used at 483/529 for statement display. Two local display aliases (ST-ACCT-ID, L11-ACCT) confirmed. Line 615 references ST-ACCT-ID as a STRING operand (real code reference, not a literal)."
+    },
+    {
+      "path": "app/cbl/CBTRN01C.cbl",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 175,
+          "access_kind": "MOVE-SOURCE",
+          "snippet": "                     MOVE XREF-ACCT-ID TO ACCT-ID",
+          "note": "Copies xref-derived account ID into ACCT-ID to prepare key for account file lookup (PERFORM 3000-READ-ACCOUNT immediately follows)."
+        },
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 237,
+          "access_kind": "DISPLAY",
+          "snippet": "                  DISPLAY 'ACCOUNT ID : ' XREF-ACCT-ID",
+          "note": "Displays the account ID alongside card number and customer ID on successful XREF read — diagnostic/trace output."
+        },
+        {
+          "alias": "ACCT-ID",
+          "line": 175,
+          "access_kind": "MOVE-TARGET",
+          "snippet": "                     MOVE XREF-ACCT-ID TO ACCT-ID",
+          "note": "ACCT-ID receives value from XREF-ACCT-ID; subsequently used as the account file lookup key at line 242."
+        },
+        {
+          "alias": "ACCT-ID",
+          "line": 178,
+          "access_kind": "DISPLAY",
+          "snippet": "                         DISPLAY 'ACCOUNT ' ACCT-ID ' NOT FOUND'",
+          "note": "Displays ACCT-ID in error message when account read fails (WS-ACCT-READ-STATUS != 0)."
+        },
+        {
+          "alias": "ACCT-ID",
+          "line": 242,
+          "access_kind": "MOVE-SOURCE",
+          "snippet": "           MOVE ACCT-ID TO FD-ACCT-ID",
+          "note": "Copies ACCT-ID into FD-ACCT-ID (FILE SECTION key field for ACCOUNT-FILE) immediately before keyed READ at line 243."
+        }
+      ],
+      "newly_discovered_aliases": [
+        {
+          "name": "FD-ACCT-ID",
+          "declared_at_line": 88,
+          "pic": "9(11)",
+          "evidence": "Declared in FD ACCOUNT-FILE record (FD-ACCTFILE-REC) at line 88. Receives ACCT-ID via MOVE at line 242; used as RECORD KEY for ACCOUNT-FILE indexed READ at lines 243-244. Confirmed alias by MOVE from ACCT-ID. CBTRN01C performs only READ (input mode), no WRITE/REWRITE of ACCOUNT-RECORD observed."
+        }
+      ],
+      "near_miss_signals": [],
+      "uncertain": [],
+      "notes": "COPYs CVACT03Y (CARD-XREF-RECORD / XREF-ACCT-ID) at line 109 and CVACT01Y (ACCOUNT-RECORD / ACCT-ID) at line 119. Also COPYs CVACT02Y (CARD-RECORD / CARD-ACCT-ID) at line 114 — CARD-ACCT-ID is never individually named in this program's procedure code; the CARD-FILE is opened INPUT but no READ INTO CARD-RECORD is executed (file opened but apparently unused in this stub). ACCOUNT-FILE opened INPUT-only; no WRITE or REWRITE statements found in this program."
+    },
+    {
+      "path": "app/cbl/CBTRN02C.cbl",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 394,
+          "access_kind": "MOVE-SOURCE",
+          "snippet": "           MOVE XREF-ACCT-ID TO FD-ACCT-ID",
+          "note": "Copies XREF-derived account ID into FD-ACCT-ID (ACCOUNT-FILE key) before keyed READ INTO ACCOUNT-RECORD at line 395."
+        },
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 469,
+          "access_kind": "MOVE-SOURCE",
+          "snippet": "           MOVE XREF-ACCT-ID TO FD-TRANCAT-ACCT-ID",
+          "note": "Sets the FD-level account ID key component of FD-TRAN-CAT-KEY before READ TCATBAL-FILE INTO TRAN-CAT-BAL-RECORD at line 474."
+        },
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 505,
+          "access_kind": "MOVE-SOURCE",
+          "snippet": "           MOVE XREF-ACCT-ID TO TRANCAT-ACCT-ID",
+          "note": "Populates TRANCAT-ACCT-ID (from CVTRA01Y / TRAN-CAT-BAL-RECORD) to create a new TCATBAL record when one does not exist. TRAN-CAT-BAL-RECORD written at line 510."
+        },
+        {
+          "alias": "TRANCAT-ACCT-ID",
+          "line": 505,
+          "access_kind": "MOVE-TARGET",
+          "snippet": "           MOVE XREF-ACCT-ID TO TRANCAT-ACCT-ID",
+          "note": "TRANCAT-ACCT-ID (PIC 9(11) in TRAN-CAT-BAL-RECORD from CVTRA01Y) receives value from XREF-ACCT-ID — matches the given alias TRANCAT-ACCT-ID."
+        }
+      ],
+      "structural_evidence": [
+        {
+          "line": 554,
+          "source_line": "           REWRITE FD-ACCTFILE-REC FROM  ACCOUNT-RECORD",
+          "note": "Whole ACCOUNT-RECORD (CVACT01Y) rewritten to ACCOUNT-FILE after balance updates to ACCT-CURR-BAL, ACCT-CURR-CYC-CREDIT, ACCT-CURR-CYC-DEBIT at lines 547-551. ACCT-ID is carried implicitly as part of the record but not individually named during the rewrite."
+        },
+        {
+          "line": 510,
+          "source_line": "           WRITE FD-TRAN-CAT-BAL-RECORD FROM TRAN-CAT-BAL-RECORD",
+          "note": "Whole TRAN-CAT-BAL-RECORD (CVTRA01Y) written after TRANCAT-ACCT-ID is set at line 505."
+        },
+        {
+          "line": 528,
+          "source_line": "           REWRITE FD-TRAN-CAT-BAL-RECORD FROM TRAN-CAT-BAL-RECORD",
+          "note": "Whole TRAN-CAT-BAL-RECORD (CVTRA01Y) rewritten during balance update path."
+        }
+      ],
+      "newly_discovered_aliases": [
+        {
+          "name": "FD-ACCT-ID",
+          "declared_at_line": 88,
+          "pic": "9(11)",
+          "evidence": "Declared in FD ACCOUNT-FILE record (FD-ACCTFILE-REC) at line 88 of CBTRN02C. Receives XREF-ACCT-ID via MOVE at line 394; serves as RECORD KEY for ACCOUNT-FILE keyed READ at line 395. Confirmed alias by MOVE from XREF-ACCT-ID (a given alias)."
+        },
+        {
+          "name": "FD-TRANCAT-ACCT-ID",
+          "declared_at_line": 94,
+          "pic": "9(11)",
+          "evidence": "Declared in FD TCATBAL-FILE record (FD-TRAN-CAT-BAL-RECORD / FD-TRAN-CAT-KEY) at line 94 of CBTRN02C. Receives XREF-ACCT-ID via MOVE at line 469; forms part of composite RECORD KEY FD-TRAN-CAT-KEY for TCATBAL-FILE. Confirmed alias by MOVE from XREF-ACCT-ID."
+        }
+      ],
+      "near_miss_signals": [],
+      "uncertain": [],
+      "notes": "COPYs CVACT03Y (CARD-XREF-RECORD / XREF-ACCT-ID) at line 112, CVACT01Y (ACCOUNT-RECORD / ACCT-ID) at line 121, CVTRA01Y (TRAN-CAT-BAL-RECORD / TRANCAT-ACCT-ID) at line 126. ACCOUNT-FILE opened I-O (line 311); TCATBAL-FILE opened I-O (line 329). The given alias TRANCAT-ACCT-ID (from CVTRA01Y) is explicitly named at line 505. ACCT-ID from ACCOUNT-RECORD is not individually named in the procedure code of this program — the balance fields (ACCT-CURR-BAL etc.) are named but ACCT-ID itself is not; the account record is read by key FD-ACCT-ID and rewritten as a whole block. Line 401 comment (DISPLAY ACCT-CREDIT-LIMIT) has col-7 '*' — excluded."
+    },
+    {
+      "path": "app/cbl/CBTRN03C.cbl",
+      "tier": "FIELD-AWARE",
+      "hits": [
+        {
+          "alias": "XREF-ACCT-ID",
+          "line": 364,
+          "access_kind": "MOVE-SOURCE",
+          "snippet": "           MOVE XREF-ACCT-ID TO TRAN-REPORT-ACCOUNT-ID",
+          "note": "Copies XREF-derived account ID into local report field TRAN-REPORT-ACCOUNT-ID for inclusion in TRANSACTION-DETAIL-REPORT written to the report file at line 371."
+        }
+      ],
+      "structural_evidence": [
+        {
+          "line": 485,
+          "source_line": "           READ XREF-FILE INTO CARD-XREF-RECORD",
+          "note": "CARD-XREF-RECORD (from CVACT03Y / XREF-ACCT-ID) is loaded whole via keyed READ; XREF-ACCT-ID is subsequently used individually at line 364."
+        }
+      ],
+      "newly_discovered_aliases": [
+        {
+          "name": "TRAN-REPORT-ACCOUNT-ID",
+          "declared_at_line": 18,
+          "pic": "X(11)",
+          "evidence": "Declared in CVTRA07Y copybook (TRANSACTION-DETAIL-REPORT group, line 18 of that copybook). Receives XREF-ACCT-ID value via MOVE at CBTRN03C line 364. Used as part of TRANSACTION-DETAIL-REPORT which is written to REPORT-FILE at line 371. Confirmed alias by MOVE from XREF-ACCT-ID."
+        }
+      ],
+      "near_miss_signals": [],
+      "uncertain": [],
+      "notes": "COPYs CVACT03Y (CARD-XREF-RECORD / XREF-ACCT-ID) at line 98. Does NOT copy CVACT01Y, CVACT02Y, CVTRA01Y, or COCOM01Y — no ACCT-ID, CARD-ACCT-ID, or TRANCAT-ACCT-ID in scope. XREF-ACCT-ID is the only alias named in procedure code. The READ XREF-FILE INTO CARD-XREF-RECORD at line 485 populates the whole xref record; XREF-ACCT-ID is then moved to the report detail field at line 364 (1120-WRITE-DETAIL paragraph). No account file is opened or read in this program."
+    }
+  ]
+}

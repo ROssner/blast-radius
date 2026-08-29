@@ -1,0 +1,66 @@
+{
+  "programs": [
+    {
+      "path": "app/cbl/COUSR02C.cbl",
+      "tier": "STRUCTURALLY-AFFECTED",
+      "hits": [],
+      "structural_evidence": [
+        {
+          "line": 49,
+          "source_line": "       COPY COCOM01Y.",
+          "note": "Brings in CARDDEMO-COMMAREA which declares CDEMO-ACCT-ID (PIC 9(11)) at offset CDEMO-ACCOUNT-INFO"
+        },
+        {
+          "line": 94,
+          "source_line": "                MOVE DFHCOMMAREA(1:EIBCALEN) TO CARDDEMO-COMMAREA",
+          "note": "Whole-record MOVE INTO CARDDEMO-COMMAREA; CDEMO-ACCT-ID travels with the record but is not named individually"
+        },
+        {
+          "line": 137,
+          "source_line": "                      COMMAREA (CARDDEMO-COMMAREA)",
+          "note": "EXEC CICS RETURN COMMAREA(CARDDEMO-COMMAREA) — whole record passed back to CICS; CDEMO-ACCT-ID included opaquely"
+        },
+        {
+          "line": 260,
+          "source_line": "                COMMAREA(CARDDEMO-COMMAREA)",
+          "note": "EXEC CICS XCTL COMMAREA(CARDDEMO-COMMAREA) — whole record transferred to target program; CDEMO-ACCT-ID included opaquely"
+        }
+      ],
+      "newly_discovered_aliases": [],
+      "near_miss_signals": [],
+      "uncertain": [],
+      "notes": "COPYs COCOM01Y which declares CARDDEMO-COMMAREA containing CDEMO-ACCT-ID. The record is used three times as an opaque whole (one MOVE-INTO from DFHCOMMAREA, one CICS RETURN COMMAREA, one CICS XCTL COMMAREA) but CDEMO-ACCT-ID — and all other ACCT-ID aliases — are never named individually anywhere in the file. This program is a user-management (update) function; account ID is carried in the commarea for context routing only."
+    },
+    {
+      "path": "app/cbl/COUSR03C.cbl",
+      "tier": "STRUCTURALLY-AFFECTED",
+      "hits": [],
+      "structural_evidence": [
+        {
+          "line": 49,
+          "source_line": "       COPY COCOM01Y.",
+          "note": "Brings in CARDDEMO-COMMAREA which declares CDEMO-ACCT-ID (PIC 9(11)) at offset CDEMO-ACCOUNT-INFO"
+        },
+        {
+          "line": 94,
+          "source_line": "                MOVE DFHCOMMAREA(1:EIBCALEN) TO CARDDEMO-COMMAREA",
+          "note": "Whole-record MOVE INTO CARDDEMO-COMMAREA; CDEMO-ACCT-ID travels with the record but is not named individually"
+        },
+        {
+          "line": 136,
+          "source_line": "                      COMMAREA (CARDDEMO-COMMAREA)",
+          "note": "EXEC CICS RETURN COMMAREA(CARDDEMO-COMMAREA) — whole record passed back to CICS; CDEMO-ACCT-ID included opaquely"
+        },
+        {
+          "line": 207,
+          "source_line": "                COMMAREA(CARDDEMO-COMMAREA)",
+          "note": "EXEC CICS XCTL COMMAREA(CARDDEMO-COMMAREA) — whole record transferred to target program; CDEMO-ACCT-ID included opaquely"
+        }
+      ],
+      "newly_discovered_aliases": [],
+      "near_miss_signals": [],
+      "uncertain": [],
+      "notes": "COPYs COCOM01Y which declares CARDDEMO-COMMAREA containing CDEMO-ACCT-ID. The record is used three times as an opaque whole (one MOVE-INTO from DFHCOMMAREA, one CICS RETURN COMMAREA, one CICS XCTL COMMAREA) but CDEMO-ACCT-ID — and all other ACCT-ID aliases — are never named individually anywhere in the file. This program is a user-management (delete) function; account ID is carried in the commarea for context routing only."
+    }
+  ]
+}
