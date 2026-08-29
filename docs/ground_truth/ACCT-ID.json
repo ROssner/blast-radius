@@ -59,7 +59,54 @@
         }
       ],
       "also_structural": [],
-      "dead_copy_footnotes": []
+      "dead_copy_footnotes": [],
+      "alias_hits": [
+        {
+          "alias": "ARR-ACCT-ID",
+          "lines": [
+            73,
+            254
+          ],
+          "evidence": "local WS (output record), per-program -- app/cbl/CBACT01C.cbl:254 MOVE ACCT-ID TO ARR-ACCT-ID",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        },
+        {
+          "alias": "FD-ACCT-ID",
+          "lines": [
+            32,
+            54
+          ],
+          "evidence": "local FD, per-program -- explicit MOVE in CBTRN01C.cbl:242, CBTRN02C.cbl:394, CBACT04C.cbl:202; in CBACT01C.cbl fed only via 'READ ACCTFILE-FILE INTO ACCOUNT-RECORD' (line 166), a whole-record positional copy from a record containing ACCT-ID -- qualifies under the 2026-08-29 READ INTO extension, not an explicit field-level MOVE",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        },
+        {
+          "alias": "OUT-ACCT-ID",
+          "lines": [
+            58,
+            216
+          ],
+          "evidence": "local WS (output record), per-program -- app/cbl/CBACT01C.cbl:216 MOVE ACCT-ID TO OUT-ACCT-ID",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        },
+        {
+          "alias": "VB1-ACCT-ID",
+          "lines": [
+            124,
+            277
+          ],
+          "evidence": "local WS (output record), per-program -- app/cbl/CBACT01C.cbl:277 MOVE ACCT-ID TO VB1-ACCT-ID VB2-ACCT-ID",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        },
+        {
+          "alias": "VB2-ACCT-ID",
+          "lines": [
+            127,
+            278
+          ],
+          "evidence": "local WS (output record), per-program -- same statement as VB1-ACCT-ID, app/cbl/CBACT01C.cbl:277-278",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        }
+      ]
     },
     {
       "path": "cbl/CBACT02C.cbl",
@@ -121,7 +168,51 @@
         }
       ],
       "also_structural": [],
-      "dead_copy_footnotes": []
+      "dead_copy_footnotes": [],
+      "alias_hits": [
+        {
+          "alias": "FD-ACCT-ID",
+          "lines": [
+            44,
+            86,
+            202,
+            375
+          ],
+          "evidence": "local FD, per-program -- explicit MOVE in CBTRN01C.cbl:242, CBTRN02C.cbl:394, CBACT04C.cbl:202; in CBACT01C.cbl fed only via 'READ ACCTFILE-FILE INTO ACCOUNT-RECORD' (line 166), a whole-record positional copy from a record containing ACCT-ID -- qualifies under the 2026-08-29 READ INTO extension, not an explicit field-level MOVE",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        },
+        {
+          "alias": "FD-TRANCAT-ACCT-ID",
+          "lines": [
+            64
+          ],
+          "evidence": "local FD, per-program -- app/cbl/CBTRN02C.cbl:469 MOVE XREF-ACCT-ID TO FD-TRANCAT-ACCT-ID",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        },
+        {
+          "alias": "FD-XREF-ACCT-ID",
+          "lines": [
+            38,
+            73,
+            204,
+            395,
+            397
+          ],
+          "evidence": "local FD, per-program -- app/cbl/CBACT04C.cbl:204 MOVE TRANCAT-ACCT-ID TO FD-XREF-ACCT-ID",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        },
+        {
+          "alias": "TRANCAT-ACCT-ID",
+          "lines": [
+            194,
+            201,
+            202,
+            204
+          ],
+          "evidence": "CVTRA01Y (COPY, shared) -- app/cbl/CBTRN02C.cbl:505 MOVE XREF-ACCT-ID TO TRANCAT-ACCT-ID",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        }
+      ]
     },
     {
       "path": "cbl/CBEXPORT.cbl",
@@ -158,7 +249,33 @@
         }
       ],
       "also_structural": [],
-      "dead_copy_footnotes": []
+      "dead_copy_footnotes": [],
+      "alias_hits": [
+        {
+          "alias": "EXP-ACCT-ID",
+          "lines": [
+            351
+          ],
+          "evidence": "CVEXPORT (COPY, shared) -- app/cbl/CBEXPORT.cbl:351 / CBIMPORT.cbl:328",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        },
+        {
+          "alias": "EXP-CARD-ACCT-ID",
+          "lines": [
+            536
+          ],
+          "evidence": "CVEXPORT (COPY, shared) -- app/cbl/CBEXPORT.cbl:536 / CBIMPORT.cbl:408",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        },
+        {
+          "alias": "EXP-XREF-ACCT-ID",
+          "lines": [
+            417
+          ],
+          "evidence": "CVEXPORT (COPY, shared) -- app/cbl/CBEXPORT.cbl:417 / CBIMPORT.cbl:359",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        }
+      ]
     },
     {
       "path": "cbl/CBIMPORT.cbl",
@@ -188,7 +305,33 @@
         }
       ],
       "also_structural": [],
-      "dead_copy_footnotes": []
+      "dead_copy_footnotes": [],
+      "alias_hits": [
+        {
+          "alias": "EXP-ACCT-ID",
+          "lines": [
+            328
+          ],
+          "evidence": "CVEXPORT (COPY, shared) -- app/cbl/CBEXPORT.cbl:351 / CBIMPORT.cbl:328",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        },
+        {
+          "alias": "EXP-CARD-ACCT-ID",
+          "lines": [
+            408
+          ],
+          "evidence": "CVEXPORT (COPY, shared) -- app/cbl/CBEXPORT.cbl:536 / CBIMPORT.cbl:408",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        },
+        {
+          "alias": "EXP-XREF-ACCT-ID",
+          "lines": [
+            359
+          ],
+          "evidence": "CVEXPORT (COPY, shared) -- app/cbl/CBEXPORT.cbl:417 / CBIMPORT.cbl:359",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        }
+      ]
     },
     {
       "path": "cbl/CBSTM03A.CBL",
@@ -225,7 +368,19 @@
         }
       ],
       "also_structural": [],
-      "dead_copy_footnotes": []
+      "dead_copy_footnotes": [],
+      "alias_hits": [
+        {
+          "alias": "ST-ACCT-ID",
+          "lines": [
+            109,
+            483,
+            615
+          ],
+          "evidence": "local WS, per-program -- app/cbl/CBSTM03A.CBL:483 MOVE ACCT-ID TO ST-ACCT-ID",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        }
+      ]
     },
     {
       "path": "cbl/CBTRN01C.cbl",
@@ -269,7 +424,20 @@
         }
       ],
       "also_structural": [],
-      "dead_copy_footnotes": []
+      "dead_copy_footnotes": [],
+      "alias_hits": [
+        {
+          "alias": "FD-ACCT-ID",
+          "lines": [
+            55,
+            88,
+            242,
+            244
+          ],
+          "evidence": "local FD, per-program -- explicit MOVE in CBTRN01C.cbl:242, CBTRN02C.cbl:394, CBACT04C.cbl:202; in CBACT01C.cbl fed only via 'READ ACCTFILE-FILE INTO ACCOUNT-RECORD' (line 166), a whole-record positional copy from a record containing ACCT-ID -- qualifies under the 2026-08-29 READ INTO extension, not an explicit field-level MOVE",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        }
+      ]
     },
     {
       "path": "cbl/CBTRN02C.cbl",
@@ -299,7 +467,36 @@
         }
       ],
       "also_structural": [],
-      "dead_copy_footnotes": []
+      "dead_copy_footnotes": [],
+      "alias_hits": [
+        {
+          "alias": "FD-ACCT-ID",
+          "lines": [
+            54,
+            88,
+            394
+          ],
+          "evidence": "local FD, per-program -- explicit MOVE in CBTRN01C.cbl:242, CBTRN02C.cbl:394, CBACT04C.cbl:202; in CBACT01C.cbl fed only via 'READ ACCTFILE-FILE INTO ACCOUNT-RECORD' (line 166), a whole-record positional copy from a record containing ACCT-ID -- qualifies under the 2026-08-29 READ INTO extension, not an explicit field-level MOVE",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        },
+        {
+          "alias": "FD-TRANCAT-ACCT-ID",
+          "lines": [
+            94,
+            469
+          ],
+          "evidence": "local FD, per-program -- app/cbl/CBTRN02C.cbl:469 MOVE XREF-ACCT-ID TO FD-TRANCAT-ACCT-ID",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        },
+        {
+          "alias": "TRANCAT-ACCT-ID",
+          "lines": [
+            505
+          ],
+          "evidence": "CVTRA01Y (COPY, shared) -- app/cbl/CBTRN02C.cbl:505 MOVE XREF-ACCT-ID TO TRANCAT-ACCT-ID",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        }
+      ]
     },
     {
       "path": "cbl/CBTRN03C.cbl",
@@ -338,12 +535,124 @@
         }
       ],
       "also_structural": [],
-      "dead_copy_footnotes": []
+      "dead_copy_footnotes": [],
+      "alias_hits": [
+        {
+          "alias": "ACUP-NEW-ACCT-ID",
+          "lines": [
+            760,
+            1795,
+            1801,
+            3960
+          ],
+          "evidence": "local WS, per-program -- app/cbl/COACTUPC.cbl:1801 MOVE CC-ACCT-ID TO ACUP-NEW-ACCT-ID",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        },
+        {
+          "alias": "ACUP-NEW-ACCT-ID-X",
+          "lines": [
+            759,
+            761,
+            1054,
+            1057,
+            1684
+          ],
+          "evidence": "local WS, per-program, REDEFINES ACUP-NEW-ACCT-ID -- app/cbl/COACTUPC.cbl:759-761",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        },
+        {
+          "alias": "ACUP-OLD-ACCT-ID",
+          "lines": [
+            672,
+            3614,
+            3817
+          ],
+          "evidence": "local WS, per-program -- app/cbl/COACTUPC.cbl:3817 MOVE ACCT-ID TO ACUP-OLD-ACCT-ID",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        },
+        {
+          "alias": "ACUP-OLD-ACCT-ID-X",
+          "lines": [
+            671,
+            673,
+            1684
+          ],
+          "evidence": "local WS, per-program, REDEFINES ACUP-OLD-ACCT-ID -- app/cbl/COACTUPC.cbl:671-673",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        },
+        {
+          "alias": "CC-ACCT-ID",
+          "lines": [
+            1053,
+            1056,
+            1787,
+            1788,
+            1801,
+            1802,
+            1815,
+            2707,
+            3614,
+            3892
+          ],
+          "evidence": "CVCRD01Y (COPY, shared) -- app/cbl/COCRDUPC.cbl:752 MOVE CC-ACCT-ID TO CDEMO-ACCT-ID",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        },
+        {
+          "alias": "CC-ACCT-ID-N",
+          "lines": [
+            1803,
+            2703,
+            2712
+          ],
+          "evidence": "CVCRD01Y (COPY, shared), REDEFINES CC-ACCT-ID -- app/cbl/COCRDUPC.cbl:490 MOVE CDEMO-ACCT-ID TO CC-ACCT-ID-N",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        },
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "lines": [
+            983,
+            1794,
+            1812,
+            1815,
+            2629,
+            3805
+          ],
+          "evidence": "COCOM01Y (COPY, shared) -- app/cbl/COACTUPC.cbl:3805 MOVE ACCT-ID TO CDEMO-ACCT-ID",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        },
+        {
+          "alias": "WS-CARD-RID-ACCT-ID",
+          "lines": [
+            381,
+            383,
+            3615,
+            3892
+          ],
+          "evidence": "local WS, per-program, split verdict -- alias in COPAUS0C.cbl:868, COPAUA0C.cbl:523, COACTUPC.cbl:3892, COACTVWC.cbl:691 (all explicit MOVE from an alias); dead in COCRDLIC/COCRDSLC/COCRDUPC (only candidate bridge is commented out, column 7 = '*'); excluded from scoring in COACCT01.cbl (fed by WS-KEY, itself never assigned via any MOVE in that file)",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        },
+        {
+          "alias": "WS-CARD-RID-ACCT-ID-X",
+          "lines": [
+            382,
+            3656,
+            3657,
+            3676,
+            3705,
+            3706,
+            3725,
+            3897,
+            3898
+          ],
+          "evidence": "REDEFINES WS-CARD-RID-ACCT-ID; mirrors its per-program verdict exactly",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        }
+      ]
     },
     {
       "path": "cbl/COACTVWC.cbl",
       "module": "core",
-      "tier": "STRUCTURALLY-AFFECTED",
+      "tier": "FIELD-AWARE",
       "hits": [],
       "structural_evidence": [
         {
@@ -384,7 +693,60 @@
           "evidence": [],
           "note": "COPY CVACT02Y is active (line 248) but CARD-RECORD is never referenced anywhere else in this file -- not read, not written, not displayed. This alias is effectively unaffected in this program despite the COPY being present."
         }
-      ]
+      ],
+      "alias_hits": [
+        {
+          "alias": "CC-ACCT-ID",
+          "lines": [
+            468,
+            630,
+            632,
+            653,
+            654,
+            666,
+            667,
+            678
+          ],
+          "evidence": "CVCRD01Y (COPY, shared) -- app/cbl/COCRDUPC.cbl:752 MOVE CC-ACCT-ID TO CDEMO-ACCT-ID",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        },
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "lines": [
+            660,
+            675,
+            678,
+            691
+          ],
+          "evidence": "COCOM01Y (COPY, shared) -- app/cbl/COACTUPC.cbl:3805 MOVE ACCT-ID TO CDEMO-ACCT-ID",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        },
+        {
+          "alias": "WS-CARD-RID-ACCT-ID",
+          "lines": [
+            78,
+            80,
+            691
+          ],
+          "evidence": "local WS, per-program, split verdict -- alias in COPAUS0C.cbl:868, COPAUA0C.cbl:523, COACTUPC.cbl:3892, COACTVWC.cbl:691 (all explicit MOVE from an alias); dead in COCRDLIC/COCRDSLC/COCRDUPC (only candidate bridge is commented out, column 7 = '*'); excluded from scoring in COACCT01.cbl (fed by WS-KEY, itself never assigned via any MOVE in that file)",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        },
+        {
+          "alias": "WS-CARD-RID-ACCT-ID-X",
+          "lines": [
+            79,
+            729,
+            730,
+            749,
+            778,
+            779,
+            798
+          ],
+          "evidence": "REDEFINES WS-CARD-RID-ACCT-ID; mirrors its per-program verdict exactly",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        }
+      ],
+      "tier_before_reclassification": "STRUCTURALLY-AFFECTED"
     },
     {
       "path": "cbl/COBIL00C.cbl",
@@ -500,12 +862,71 @@
         }
       ],
       "also_structural": [],
-      "dead_copy_footnotes": []
+      "dead_copy_footnotes": [],
+      "alias_hits": [
+        {
+          "alias": "CC-ACCT-ID",
+          "lines": [
+            847,
+            969,
+            1007,
+            1008,
+            1017,
+            1027,
+            1386
+          ],
+          "evidence": "CVCRD01Y (COPY, shared) -- app/cbl/COCRDUPC.cbl:752 MOVE CC-ACCT-ID TO CDEMO-ACCT-ID",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        },
+        {
+          "alias": "CC-ACCT-ID-N",
+          "lines": [
+            1009
+          ],
+          "evidence": "CVCRD01Y (COPY, shared), REDEFINES CC-ACCT-ID -- app/cbl/COCRDUPC.cbl:490 MOVE CDEMO-ACCT-ID TO CC-ACCT-ID-N",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        },
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "lines": [
+            532,
+            560,
+            849,
+            852,
+            1011,
+            1024,
+            1027
+          ],
+          "evidence": "COCOM01Y (COPY, shared) -- app/cbl/COACTUPC.cbl:3805 MOVE ACCT-ID TO CDEMO-ACCT-ID",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        },
+        {
+          "alias": "WS-CA-FIRST-CARD-ACCT-ID",
+          "lines": [
+            235,
+            1175,
+            1351
+          ],
+          "evidence": "local WS, per-program -- app/cbl/COCRDLIC.cbl:1174-75 MOVE CARD-ACCT-ID TO WS-CA-FIRST-CARD-ACCT-ID",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        },
+        {
+          "alias": "WS-CA-LAST-CARD-ACCT-ID",
+          "lines": [
+            232,
+            1194,
+            1213,
+            1236
+          ],
+          "evidence": "local WS, per-program -- app/cbl/COCRDLIC.cbl:1194 MOVE CARD-ACCT-ID TO WS-CA-LAST-CARD-ACCT-ID",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        }
+      ]
     },
     {
       "path": "cbl/COCRDSLC.cbl",
       "module": "core",
-      "tier": "STRUCTURALLY-AFFECTED",
+      "tier": "FIELD-AWARE",
       "hits": [],
       "structural_evidence": [
         {
@@ -532,12 +953,50 @@
           ],
           "note": "This program declares CARD-ACCT-ID-X/CARD-ACCT-ID-N (CICS-OUTPUT-EDIT-VARS, lines 73-74) and WS-CARD-RID-ACCT-ID (lines 99-101), which look like aliases but are NOT populated from the copybook's CARD-ACCT-ID field -- CARD-ACCT-ID-X/-N are declared but never referenced again anywhere in the file (dead fields), and WS-CARD-RID-ACCT-ID's only assignment (line 739, 'MOVE CC-ACCT-ID-N TO WS-CARD-RID-ACCT-ID') is commented out (indicator column 7 = '*'). Verified via `grep -n WS-CARD-RID-ACCT-ID` plus manual column-7 check."
         }
-      ]
+      ],
+      "alias_hits": [
+        {
+          "alias": "CC-ACCT-ID",
+          "lines": [
+            465,
+            617,
+            619,
+            651,
+            652,
+            665,
+            676
+          ],
+          "evidence": "CVCRD01Y (COPY, shared) -- app/cbl/COCRDUPC.cbl:752 MOVE CC-ACCT-ID TO CDEMO-ACCT-ID",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        },
+        {
+          "alias": "CC-ACCT-ID-N",
+          "lines": [
+            342,
+            653
+          ],
+          "evidence": "CVCRD01Y (COPY, shared), REDEFINES CC-ACCT-ID -- app/cbl/COCRDUPC.cbl:490 MOVE CDEMO-ACCT-ID TO CC-ACCT-ID-N",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        },
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "lines": [
+            342,
+            462,
+            659,
+            673,
+            676
+          ],
+          "evidence": "COCOM01Y (COPY, shared) -- app/cbl/COACTUPC.cbl:3805 MOVE ACCT-ID TO CDEMO-ACCT-ID",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        }
+      ],
+      "tier_before_reclassification": "STRUCTURALLY-AFFECTED"
     },
     {
       "path": "cbl/COCRDUPC.cbl",
       "module": "core",
-      "tier": "STRUCTURALLY-AFFECTED",
+      "tier": "FIELD-AWARE",
       "hits": [],
       "structural_evidence": [
         {
@@ -563,7 +1022,60 @@
             }
           ]
         }
-      ]
+      ],
+      "alias_hits": [
+        {
+          "alias": "CARD-UPDATE-ACCT-ID",
+          "lines": [
+            316,
+            1463
+          ],
+          "evidence": "local WS, per-program -- app/cbl/COCRDUPC.cbl:1463 MOVE CC-ACCT-ID-N TO CARD-UPDATE-ACCT-ID",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        },
+        {
+          "alias": "CC-ACCT-ID",
+          "lines": [
+            591,
+            594,
+            725,
+            726,
+            740,
+            752,
+            1090,
+            1346
+          ],
+          "evidence": "CVCRD01Y (COPY, shared) -- app/cbl/COCRDUPC.cbl:752 MOVE CC-ACCT-ID TO CDEMO-ACCT-ID",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        },
+        {
+          "alias": "CC-ACCT-ID-N",
+          "lines": [
+            490,
+            727,
+            1087,
+            1463
+          ],
+          "evidence": "CVCRD01Y (COPY, shared), REDEFINES CC-ACCT-ID -- app/cbl/COCRDUPC.cbl:490 MOVE CDEMO-ACCT-ID TO CC-ACCT-ID-N",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        },
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "lines": [
+            460,
+            490,
+            521,
+            671,
+            733,
+            748,
+            752,
+            1015
+          ],
+          "evidence": "COCOM01Y (COPY, shared) -- app/cbl/COACTUPC.cbl:3805 MOVE ACCT-ID TO CDEMO-ACCT-ID",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        }
+      ],
+      "tier_before_reclassification": "STRUCTURALLY-AFFECTED"
     },
     {
       "path": "cbl/COTRN02C.cbl",
@@ -608,6 +1120,18 @@
           "copy_line": 89,
           "note": "Active `COPY CVACT01Y.` at line 89, but ACCOUNT-RECORD never appears anywhere else in the file, and none of the 12 ACCT-* fields declared in CVACT01Y (ACCT-ID, ACCT-ACTIVE-STATUS, ACCT-CURR-BAL, ACCT-CREDIT-LIMIT, ACCT-CASH-CREDIT-LIMIT, ACCT-OPEN-DATE, ACCT-EXPIRAION-DATE, ACCT-REISSUE-DATE, ACCT-CURR-CYC-CREDIT, ACCT-CURR-CYC-DEBIT, ACCT-ADDR-ZIP, ACCT-GROUP-ID) is referenced anywhere in the file. This program's overall tier for the wide field stays FIELD-AWARE (it genuinely uses XREF-ACCT-ID from CVACT03Y) -- this footnote covers the ACCT-ID/CVACT01Y relationship specifically, which is a dead copy."
         }
+      ],
+      "alias_hits": [
+        {
+          "alias": "WS-ACCT-ID-N",
+          "lines": [
+            55,
+            204,
+            206
+          ],
+          "evidence": "local WS, per-program -- app/cbl/COTRN02C.cbl:206 MOVE WS-ACCT-ID-N TO XREF-ACCT-ID",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        }
       ]
     },
     {
@@ -645,7 +1169,43 @@
         }
       ],
       "also_structural": [],
-      "dead_copy_footnotes": []
+      "dead_copy_footnotes": [],
+      "alias_hits": [
+        {
+          "alias": "PA-ACCT-ID",
+          "lines": [
+            619,
+            623,
+            805,
+            911,
+            915
+          ],
+          "evidence": "local WS, per-program -- app/app-authorization-ims-db2-mq/cbl/COPAUA0C.cbl:619 MOVE XREF-ACCT-ID TO PA-ACCT-ID",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        },
+        {
+          "alias": "WS-CARD-RID-ACCT-ID",
+          "lines": [
+            77,
+            79,
+            523
+          ],
+          "evidence": "local WS, per-program, split verdict -- alias in COPAUS0C.cbl:868, COPAUA0C.cbl:523, COACTUPC.cbl:3892, COACTVWC.cbl:691 (all explicit MOVE from an alias); dead in COCRDLIC/COCRDSLC/COCRDUPC (only candidate bridge is commented out, column 7 = '*'); excluded from scoring in COACCT01.cbl (fed by WS-KEY, itself never assigned via any MOVE in that file)",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        },
+        {
+          "alias": "WS-CARD-RID-ACCT-ID-X",
+          "lines": [
+            78,
+            527,
+            528,
+            546,
+            559
+          ],
+          "evidence": "REDEFINES WS-CARD-RID-ACCT-ID; mirrors its per-program verdict exactly",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        }
+      ]
     },
     {
       "path": "app-authorization-ims-db2-mq/cbl/COPAUS0C.cbl",
@@ -661,7 +1221,73 @@
         }
       ],
       "also_structural": [],
-      "dead_copy_footnotes": []
+      "dead_copy_footnotes": [],
+      "alias_hits": [
+        {
+          "alias": "CDEMO-ACCT-ID",
+          "lines": [
+            207,
+            208,
+            284,
+            971
+          ],
+          "evidence": "COCOM01Y (COPY, shared) -- app/cbl/COACTUPC.cbl:3805 MOVE ACCT-ID TO CDEMO-ACCT-ID",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        },
+        {
+          "alias": "PA-ACCT-ID",
+          "lines": [
+            971,
+            976
+          ],
+          "evidence": "local WS, per-program -- app/app-authorization-ims-db2-mq/cbl/COPAUA0C.cbl:619 MOVE XREF-ACCT-ID TO PA-ACCT-ID",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        },
+        {
+          "alias": "WS-ACCT-ID",
+          "lines": [
+            44,
+            208,
+            212,
+            228,
+            231,
+            265,
+            274,
+            283,
+            349,
+            817,
+            838
+          ],
+          "evidence": "local WS, per-program -- app/app-vsam-mq/cbl/COACCT01.cbl:408 MOVE ACCT-ID TO WS-ACCT-ID; app/app-authorization-ims-db2-mq/cbl/COPAUS0C.cbl:208 MOVE CDEMO-ACCT-ID TO WS-ACCT-ID",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        },
+        {
+          "alias": "WS-CARD-RID-ACCT-ID",
+          "lines": [
+            70,
+            72,
+            868
+          ],
+          "evidence": "local WS, per-program, split verdict -- alias in COPAUS0C.cbl:868, COPAUA0C.cbl:523, COACTUPC.cbl:3892, COACTVWC.cbl:691 (all explicit MOVE from an alias); dead in COCRDLIC/COCRDSLC/COCRDUPC (only candidate bridge is commented out, column 7 = '*'); excluded from scoring in COACCT01.cbl (fed by WS-KEY, itself never assigned via any MOVE in that file)",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        },
+        {
+          "alias": "WS-CARD-RID-ACCT-ID-X",
+          "lines": [
+            71,
+            817,
+            820,
+            821,
+            853,
+            871,
+            872,
+            888,
+            903
+          ],
+          "evidence": "REDEFINES WS-CARD-RID-ACCT-ID; mirrors its per-program verdict exactly",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        }
+      ]
     },
     {
       "path": "app-transaction-type-db2/cbl/COTRTLIC.cbl",
@@ -692,145 +1318,27 @@
         }
       ],
       "also_structural": [],
-      "dead_copy_footnotes": []
+      "dead_copy_footnotes": [],
+      "alias_hits": [
+        {
+          "alias": "WS-ACCT-ID",
+          "lines": [
+            134,
+            408
+          ],
+          "evidence": "local WS, per-program -- app/app-vsam-mq/cbl/COACCT01.cbl:408 MOVE ACCT-ID TO WS-ACCT-ID; app/app-authorization-ims-db2-mq/cbl/COPAUS0C.cbl:208 MOVE CDEMO-ACCT-ID TO WS-ACCT-ID",
+          "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md"
+        }
+      ]
     }
   ],
   "near_misses": {
-    "summary": "271 lines across 31 distinct locally-declared identifiers contain ACCT-ID, CARD-ACCT-ID, or XREF-ACCT-ID as a substring without being that exact field -- these are working-storage shadow/edit/commarea variables (e.g. CDEMO-ACCT-ID, CC-ACCT-ID, WS-CARD-RID-ACCT-ID) that a naive substring grep for 'ACCT-ID' would wrongly attribute to the copybook field. None of these are false positives in the sense of being irrelevant to the real-world account-id value -- most are genuinely downstream copies of it -- but they are not the field itself and a precision metric should not credit a tool for finding them as if it had found ACCT-ID/CARD-ACCT-ID/XREF-ACCT-ID.",
+    "summary": "After the 2026-08-29 alias-rule reclassification (see docs/ground_truth/CHANGELOG.md), 23 lines across 6 distinct identifiers remain genuine near misses -- declared but demonstrably never fed by anything, dead code rather than a different entity. This is the precision test set: a tool should find zero of these.",
     "distinct_identifiers": [
       {
-        "identifier": "CC-ACCT-ID",
-        "total_occurrences": 40,
-        "programs": [
-          {
-            "path": "cbl/COACTUPC.cbl",
-            "lines": [
-              1053,
-              1056,
-              1787,
-              1788,
-              1801,
-              1802,
-              1815,
-              2707,
-              3614,
-              3892
-            ]
-          },
-          {
-            "path": "cbl/COACTVWC.cbl",
-            "lines": [
-              468,
-              630,
-              632,
-              653,
-              654,
-              666,
-              667,
-              678
-            ]
-          },
-          {
-            "path": "cbl/COCRDLIC.cbl",
-            "lines": [
-              847,
-              969,
-              1007,
-              1008,
-              1017,
-              1027,
-              1386
-            ]
-          },
-          {
-            "path": "cbl/COCRDSLC.cbl",
-            "lines": [
-              465,
-              617,
-              619,
-              651,
-              652,
-              665,
-              676
-            ]
-          },
-          {
-            "path": "cbl/COCRDUPC.cbl",
-            "lines": [
-              591,
-              594,
-              725,
-              726,
-              740,
-              752,
-              1090,
-              1346
-            ]
-          }
-        ]
-      },
-      {
         "identifier": "WS-CARD-RID-ACCT-ID-X",
-        "total_occurrences": 36,
+        "total_occurrences": 3,
         "programs": [
-          {
-            "path": "app-authorization-ims-db2-mq/cbl/COPAUA0C.cbl",
-            "lines": [
-              78,
-              527,
-              528,
-              546,
-              559
-            ]
-          },
-          {
-            "path": "app-authorization-ims-db2-mq/cbl/COPAUS0C.cbl",
-            "lines": [
-              71,
-              817,
-              820,
-              821,
-              853,
-              871,
-              872,
-              888,
-              903
-            ]
-          },
-          {
-            "path": "app-vsam-mq/cbl/COACCT01.cbl",
-            "lines": [
-              127,
-              398,
-              399
-            ]
-          },
-          {
-            "path": "cbl/COACTUPC.cbl",
-            "lines": [
-              382,
-              3656,
-              3657,
-              3676,
-              3705,
-              3706,
-              3725,
-              3897,
-              3898
-            ]
-          },
-          {
-            "path": "cbl/COACTVWC.cbl",
-            "lines": [
-              79,
-              729,
-              730,
-              749,
-              778,
-              779,
-              798
-            ]
-          },
           {
             "path": "cbl/COCRDLIC.cbl",
             "lines": [
@@ -852,120 +1360,9 @@
         ]
       },
       {
-        "identifier": "CDEMO-ACCT-ID",
-        "total_occurrences": 34,
-        "programs": [
-          {
-            "path": "app-authorization-ims-db2-mq/cbl/COPAUS0C.cbl",
-            "lines": [
-              207,
-              208,
-              284,
-              971
-            ]
-          },
-          {
-            "path": "cbl/COACTUPC.cbl",
-            "lines": [
-              983,
-              1794,
-              1812,
-              1815,
-              2629,
-              3805
-            ]
-          },
-          {
-            "path": "cbl/COACTVWC.cbl",
-            "lines": [
-              660,
-              675,
-              678,
-              691
-            ]
-          },
-          {
-            "path": "cbl/COCRDLIC.cbl",
-            "lines": [
-              532,
-              560,
-              849,
-              852,
-              1011,
-              1024,
-              1027
-            ]
-          },
-          {
-            "path": "cbl/COCRDSLC.cbl",
-            "lines": [
-              342,
-              462,
-              659,
-              673,
-              676
-            ]
-          },
-          {
-            "path": "cbl/COCRDUPC.cbl",
-            "lines": [
-              460,
-              490,
-              521,
-              671,
-              733,
-              748,
-              752,
-              1015
-            ]
-          }
-        ]
-      },
-      {
         "identifier": "WS-CARD-RID-ACCT-ID",
-        "total_occurrences": 24,
+        "total_occurrences": 8,
         "programs": [
-          {
-            "path": "app-authorization-ims-db2-mq/cbl/COPAUA0C.cbl",
-            "lines": [
-              77,
-              79,
-              523
-            ]
-          },
-          {
-            "path": "app-authorization-ims-db2-mq/cbl/COPAUS0C.cbl",
-            "lines": [
-              70,
-              72,
-              868
-            ]
-          },
-          {
-            "path": "app-vsam-mq/cbl/COACCT01.cbl",
-            "lines": [
-              126,
-              128,
-              394
-            ]
-          },
-          {
-            "path": "cbl/COACTUPC.cbl",
-            "lines": [
-              381,
-              383,
-              3615,
-              3892
-            ]
-          },
-          {
-            "path": "cbl/COACTVWC.cbl",
-            "lines": [
-              78,
-              80,
-              691
-            ]
-          },
           {
             "path": "cbl/COCRDLIC.cbl",
             "lines": [
@@ -992,83 +1389,13 @@
         ]
       },
       {
-        "identifier": "FD-ACCT-ID",
-        "total_occurrences": 13,
-        "programs": [
-          {
-            "path": "cbl/CBACT01C.cbl",
-            "lines": [
-              32,
-              54
-            ]
-          },
-          {
-            "path": "cbl/CBACT04C.cbl",
-            "lines": [
-              44,
-              86,
-              202,
-              375
-            ]
-          },
-          {
-            "path": "cbl/CBTRN01C.cbl",
-            "lines": [
-              55,
-              88,
-              242,
-              244
-            ]
-          },
-          {
-            "path": "cbl/CBTRN02C.cbl",
-            "lines": [
-              54,
-              88,
-              394
-            ]
-          }
-        ]
-      },
-      {
-        "identifier": "WS-ACCT-ID",
-        "total_occurrences": 13,
-        "programs": [
-          {
-            "path": "app-authorization-ims-db2-mq/cbl/COPAUS0C.cbl",
-            "lines": [
-              44,
-              208,
-              212,
-              228,
-              231,
-              265,
-              274,
-              283,
-              349,
-              817,
-              838
-            ]
-          },
-          {
-            "path": "app-vsam-mq/cbl/COACCT01.cbl",
-            "lines": [
-              134,
-              408
-            ]
-          }
-        ]
-      },
-      {
         "identifier": "CARD-ACCT-ID-X",
-        "total_occurrences": 12,
+        "total_occurrences": 6,
         "programs": [
           {
             "path": "cbl/COCRDLIC.cbl",
             "lines": [
               99,
-              99,
-              100,
               100
             ]
           },
@@ -1076,8 +1403,6 @@
             "path": "cbl/COCRDSLC.cbl",
             "lines": [
               73,
-              73,
-              74,
               74
             ]
           },
@@ -1085,389 +1410,31 @@
             "path": "cbl/COCRDUPC.cbl",
             "lines": [
               104,
-              104,
-              105,
               105
-            ]
-          }
-        ]
-      },
-      {
-        "identifier": "FD-XREF-ACCT-ID",
-        "total_occurrences": 10,
-        "programs": [
-          {
-            "path": "cbl/CBACT04C.cbl",
-            "lines": [
-              38,
-              38,
-              73,
-              73,
-              204,
-              204,
-              395,
-              395,
-              397,
-              397
-            ]
-          }
-        ]
-      },
-      {
-        "identifier": "CC-ACCT-ID-N",
-        "total_occurrences": 10,
-        "programs": [
-          {
-            "path": "cbl/COACTUPC.cbl",
-            "lines": [
-              1803,
-              2703,
-              2712
-            ]
-          },
-          {
-            "path": "cbl/COCRDLIC.cbl",
-            "lines": [
-              1009
-            ]
-          },
-          {
-            "path": "cbl/COCRDSLC.cbl",
-            "lines": [
-              342,
-              653
-            ]
-          },
-          {
-            "path": "cbl/COCRDUPC.cbl",
-            "lines": [
-              490,
-              727,
-              1087,
-              1463
-            ]
-          }
-        ]
-      },
-      {
-        "identifier": "WS-CA-LAST-CARD-ACCT-ID",
-        "total_occurrences": 8,
-        "programs": [
-          {
-            "path": "cbl/COCRDLIC.cbl",
-            "lines": [
-              232,
-              232,
-              1194,
-              1194,
-              1213,
-              1213,
-              1236,
-              1236
-            ]
-          }
-        ]
-      },
-      {
-        "identifier": "PA-ACCT-ID",
-        "total_occurrences": 7,
-        "programs": [
-          {
-            "path": "app-authorization-ims-db2-mq/cbl/COPAUA0C.cbl",
-            "lines": [
-              619,
-              623,
-              805,
-              911,
-              915
-            ]
-          },
-          {
-            "path": "app-authorization-ims-db2-mq/cbl/COPAUS0C.cbl",
-            "lines": [
-              971,
-              976
             ]
           }
         ]
       },
       {
         "identifier": "CARD-ACCT-ID-N",
-        "total_occurrences": 6,
+        "total_occurrences": 3,
         "programs": [
           {
             "path": "cbl/COCRDLIC.cbl",
             "lines": [
-              100,
               100
             ]
           },
           {
             "path": "cbl/COCRDSLC.cbl",
             "lines": [
-              74,
               74
             ]
           },
           {
             "path": "cbl/COCRDUPC.cbl",
             "lines": [
-              105,
               105
-            ]
-          }
-        ]
-      },
-      {
-        "identifier": "WS-CA-FIRST-CARD-ACCT-ID",
-        "total_occurrences": 6,
-        "programs": [
-          {
-            "path": "cbl/COCRDLIC.cbl",
-            "lines": [
-              235,
-              235,
-              1175,
-              1175,
-              1351,
-              1351
-            ]
-          }
-        ]
-      },
-      {
-        "identifier": "TRANCAT-ACCT-ID",
-        "total_occurrences": 5,
-        "programs": [
-          {
-            "path": "cbl/CBACT04C.cbl",
-            "lines": [
-              194,
-              201,
-              202,
-              204
-            ]
-          },
-          {
-            "path": "cbl/CBTRN02C.cbl",
-            "lines": [
-              505
-            ]
-          }
-        ]
-      },
-      {
-        "identifier": "ACUP-NEW-ACCT-ID-X",
-        "total_occurrences": 5,
-        "programs": [
-          {
-            "path": "cbl/COACTUPC.cbl",
-            "lines": [
-              759,
-              761,
-              1054,
-              1057,
-              1684
-            ]
-          }
-        ]
-      },
-      {
-        "identifier": "EXP-XREF-ACCT-ID",
-        "total_occurrences": 4,
-        "programs": [
-          {
-            "path": "cbl/CBEXPORT.cbl",
-            "lines": [
-              417,
-              417
-            ]
-          },
-          {
-            "path": "cbl/CBIMPORT.cbl",
-            "lines": [
-              359,
-              359
-            ]
-          }
-        ]
-      },
-      {
-        "identifier": "EXP-CARD-ACCT-ID",
-        "total_occurrences": 4,
-        "programs": [
-          {
-            "path": "cbl/CBEXPORT.cbl",
-            "lines": [
-              536,
-              536
-            ]
-          },
-          {
-            "path": "cbl/CBIMPORT.cbl",
-            "lines": [
-              408,
-              408
-            ]
-          }
-        ]
-      },
-      {
-        "identifier": "ACUP-NEW-ACCT-ID",
-        "total_occurrences": 4,
-        "programs": [
-          {
-            "path": "cbl/COACTUPC.cbl",
-            "lines": [
-              760,
-              1795,
-              1801,
-              3960
-            ]
-          }
-        ]
-      },
-      {
-        "identifier": "FD-TRANCAT-ACCT-ID",
-        "total_occurrences": 3,
-        "programs": [
-          {
-            "path": "cbl/CBACT04C.cbl",
-            "lines": [
-              64
-            ]
-          },
-          {
-            "path": "cbl/CBTRN02C.cbl",
-            "lines": [
-              94,
-              469
-            ]
-          }
-        ]
-      },
-      {
-        "identifier": "ST-ACCT-ID",
-        "total_occurrences": 3,
-        "programs": [
-          {
-            "path": "cbl/CBSTM03A.CBL",
-            "lines": [
-              109,
-              483,
-              615
-            ]
-          }
-        ]
-      },
-      {
-        "identifier": "ACUP-OLD-ACCT-ID-X",
-        "total_occurrences": 3,
-        "programs": [
-          {
-            "path": "cbl/COACTUPC.cbl",
-            "lines": [
-              671,
-              673,
-              1684
-            ]
-          }
-        ]
-      },
-      {
-        "identifier": "ACUP-OLD-ACCT-ID",
-        "total_occurrences": 3,
-        "programs": [
-          {
-            "path": "cbl/COACTUPC.cbl",
-            "lines": [
-              672,
-              3614,
-              3817
-            ]
-          }
-        ]
-      },
-      {
-        "identifier": "WS-ACCT-ID-N",
-        "total_occurrences": 3,
-        "programs": [
-          {
-            "path": "cbl/COTRN02C.cbl",
-            "lines": [
-              55,
-              204,
-              206
-            ]
-          }
-        ]
-      },
-      {
-        "identifier": "OUT-ACCT-ID",
-        "total_occurrences": 2,
-        "programs": [
-          {
-            "path": "cbl/CBACT01C.cbl",
-            "lines": [
-              58,
-              216
-            ]
-          }
-        ]
-      },
-      {
-        "identifier": "ARR-ACCT-ID",
-        "total_occurrences": 2,
-        "programs": [
-          {
-            "path": "cbl/CBACT01C.cbl",
-            "lines": [
-              73,
-              254
-            ]
-          }
-        ]
-      },
-      {
-        "identifier": "VB1-ACCT-ID",
-        "total_occurrences": 2,
-        "programs": [
-          {
-            "path": "cbl/CBACT01C.cbl",
-            "lines": [
-              124,
-              277
-            ]
-          }
-        ]
-      },
-      {
-        "identifier": "VB2-ACCT-ID",
-        "total_occurrences": 2,
-        "programs": [
-          {
-            "path": "cbl/CBACT01C.cbl",
-            "lines": [
-              127,
-              278
-            ]
-          }
-        ]
-      },
-      {
-        "identifier": "EXP-ACCT-ID",
-        "total_occurrences": 2,
-        "programs": [
-          {
-            "path": "cbl/CBEXPORT.cbl",
-            "lines": [
-              351
-            ]
-          },
-          {
-            "path": "cbl/CBIMPORT.cbl",
-            "lines": [
-              328
             ]
           }
         ]
@@ -1486,19 +1453,6 @@
         ]
       },
       {
-        "identifier": "CARD-UPDATE-ACCT-ID",
-        "total_occurrences": 2,
-        "programs": [
-          {
-            "path": "cbl/COCRDUPC.cbl",
-            "lines": [
-              316,
-              1463
-            ]
-          }
-        ]
-      },
-      {
         "identifier": "CUST-ACCT-ID-N",
         "total_occurrences": 1,
         "programs": [
@@ -1512,5 +1466,37 @@
       }
     ]
   },
-  "uncertain": []
+  "uncertain": [],
+  "excluded_from_scoring": {
+    "summary": "6 lines, from WS-CARD-RID-ACCT-ID and its -X redefine in COACCT01.cbl, are excluded from both the true-positive and false-positive count. Plausible (labeled 'ACCT ID' in a DISPLAY, used identically to confirmed alias-fed keys elsewhere) but not provable from an explicit MOVE within this file alone -- scoring them either way would misrepresent what was actually verified.",
+    "entries": [
+      {
+        "identifier": "WS-CARD-RID-ACCT-ID-X",
+        "path": "app-vsam-mq/cbl/COACCT01.cbl",
+        "lines": [
+          127,
+          398,
+          399
+        ],
+        "reason": "fed by WS-KEY, itself never assigned via any MOVE in this file -- plausible but unprovable"
+      },
+      {
+        "identifier": "WS-CARD-RID-ACCT-ID",
+        "path": "app-vsam-mq/cbl/COACCT01.cbl",
+        "lines": [
+          126,
+          128,
+          394
+        ],
+        "reason": "fed by WS-KEY, itself never assigned via any MOVE in this file -- plausible but unprovable"
+      }
+    ]
+  },
+  "definitions": {
+    "adopted": "2026-08-29",
+    "supersedes": "the original near-miss-by-substring-only classification used through 2026-08-28",
+    "rule": "A field is an ALIAS of the target if the target's value flows into it via an explicit MOVE (either direction -- both operands must co-widen together or the narrower one truncates at runtime), or if it REDEFINES a field that is itself alias-confirmed (same storage, so any MOVE feeding one feeds both). A field is a NEAR MISS only if it is a genuinely different entity -- different data, different meaning -- regardless of name similarity. A field that is declared but demonstrably never fed by anything is also a near miss (dead code, not a different entity -- just no entity).",
+    "read_into_extension": "2026-08-29 extension: a field fed by a whole-record READ ... INTO from a record that contains the target field is also an ALIAS, even with no field-level MOVE naming it. Rationale: widening the source record's field requires widening the receiving record's corresponding field too, or the READ misaligns/truncates on that field -- the identical risk a literal MOVE poses, via positional record I/O instead of a field-level statement.",
+    "excluded_from_scoring_rule": "A candidate that is plausibly fed by the target but whose feed cannot be traced to an explicit MOVE from the target or a confirmed alias within the file being checked is EXCLUDED FROM SCORING entirely -- counted as neither a true positive nor a false positive -- rather than guessed either way."
+  }
 }

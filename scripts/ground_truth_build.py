@@ -14,6 +14,7 @@ Regenerates docs/ground_truth/ACCT-ID.json and docs/ground_truth/ACCT-ADDR-ZIP.j
 """
 import json
 import os
+import re
 import collections
 import subprocess
 import sys
@@ -270,13 +271,23 @@ def build_wide():
             "dead_copy_evidence": entries,
         })
 
-    # near misses: distinct locally-derived identifiers, not the true aliases
+    # near misses: distinct locally-derived identifiers, not the true aliases.
+    # Dedup on (token, path, line): a single physical line can match more than
+    # one of the three search targets as a substring of the same identifier
+    # (e.g. CARD-ACCT-ID-X contains both ACCT-ID and CARD-ACCT-ID), which
+    # otherwise double-counts that line for the same identifier.
     true_targets_upper = {t.upper() for t in WIDE_TARGETS}
+    seen_token_path_line = set()
     by_token = collections.defaultdict(list)
     for path, pdata in data.items():
         for h in pdata["hits"]:
-            if h["match_type"] == "substring" and h["token"].upper() not in true_targets_upper:
-                by_token[h["token"].upper()].append({"path": path, "line": h["line"], "source_line": h["source_line"]})
+            if h["match_type"] != "substring" or h["token"].upper() in true_targets_upper:
+                continue
+            key = (h["token"].upper(), path, h["line"])
+            if key in seen_token_path_line:
+                continue
+            seen_token_path_line.add(key)
+            by_token[h["token"].upper()].append({"path": path, "line": h["line"], "source_line": h["source_line"]})
 
     near_misses = []
     for tok in sorted(by_token, key=lambda t: -len(by_token[t])):
@@ -333,6 +344,275 @@ def build_wide():
         "uncertain": WIDE_UNCERTAIN,
     }
     return result
+
+
+# ---------------------------------------------------------------------------
+# RECLASSIFICATION (2026-08-29): the alias rule
+#
+# Adopted after reviewing Bob's own SPEC output (spec-acct-id.json), which
+# treats commarea/work-area carriers fed by an explicit MOVE as aliases.
+# Applied here independently -- verified against source, not copied from
+# Bob's claims or the prior near-miss list. See docs/ground_truth/CHANGELOG.md
+# for the full rationale. This is a separate, explicit transformation pass
+# over build_wide()'s original output, not a rewrite of the original
+# extraction/classification logic above.
+#
+# RULE: a field is an ALIAS of the target if the target's value flows into
+# it via an explicit MOVE (in either direction -- both operands of a MOVE
+# must co-widen or the narrower one truncates), OR if it REDEFINES a field
+# that is itself alias-confirmed (they share the same storage, so one MOVE
+# feeds both), OR if it receives the target's value via a whole-record
+# READ ... INTO from a record that contains the target field (the 2026-08-29
+# extension: a field-width change to the source record requires a matching
+# change to every receiving record's corresponding field, or the READ
+# misaligns/truncates on that field -- the same risk a literal MOVE poses,
+# just via positional record I/O instead of a field-level statement).
+#
+# A field stays a NEAR MISS only if it is a genuinely different, unrelated
+# entity (different real-world data), OR if it is declared but demonstrably
+# never fed by anything (dead code -- not a "different entity", just no
+# entity at all).
+#
+# EXCLUDED FROM SCORING: WS-CARD-RID-ACCT-ID and its -X redefine, in the one
+# program (COACCT01.cbl) where their only feed is WS-KEY, itself never
+# assigned via any MOVE in that file. Plausible but unprovable from this
+# file alone. Counted as neither a true positive nor a false positive.
+# ---------------------------------------------------------------------------
+
+# identifier -> 'alias' (every occurrence reclassifies) | per-program dict
+# mapping program path substring -> 'alias' | 'dead' | 'excluded'
+ALIAS_VERDICTS = {
+    'CC-ACCT-ID': 'alias', 'CDEMO-ACCT-ID': 'alias', 'WS-ACCT-ID': 'alias',
+    'FD-XREF-ACCT-ID': 'alias', 'CC-ACCT-ID-N': 'alias',
+    'WS-CA-LAST-CARD-ACCT-ID': 'alias', 'PA-ACCT-ID': 'alias',
+    'WS-CA-FIRST-CARD-ACCT-ID': 'alias', 'TRANCAT-ACCT-ID': 'alias',
+    'ACUP-NEW-ACCT-ID-X': 'alias', 'EXP-XREF-ACCT-ID': 'alias',
+    'EXP-CARD-ACCT-ID': 'alias', 'ACUP-NEW-ACCT-ID': 'alias',
+    'FD-TRANCAT-ACCT-ID': 'alias', 'ST-ACCT-ID': 'alias',
+    'ACUP-OLD-ACCT-ID-X': 'alias', 'ACUP-OLD-ACCT-ID': 'alias',
+    'WS-ACCT-ID-N': 'alias', 'OUT-ACCT-ID': 'alias', 'ARR-ACCT-ID': 'alias',
+    'VB1-ACCT-ID': 'alias', 'VB2-ACCT-ID': 'alias', 'EXP-ACCT-ID': 'alias',
+    'CARD-UPDATE-ACCT-ID': 'alias',
+    # decision 1 (READ INTO extension): all four programs now alias, incl. CBACT01C
+    'FD-ACCT-ID': 'alias',
+    # decision 3: genuinely dead everywhere they're declared
+    'CARD-ACCT-ID-X': 'dead', 'CARD-ACCT-ID-N': 'dead',
+    'CUST-ACCT-ID-X': 'dead', 'CUST-ACCT-ID-N': 'dead',
+    # decision 2: per-program split, verified against source
+    'WS-CARD-RID-ACCT-ID': {
+        'COPAUA0C.cbl': 'alias', 'COPAUS0C.cbl': 'alias',
+        'COACTUPC.cbl': 'alias', 'COACTVWC.cbl': 'alias',
+        'COCRDLIC.cbl': 'dead', 'COCRDSLC.cbl': 'dead', 'COCRDUPC.cbl': 'dead',
+        'COACCT01.cbl': 'excluded',
+    },
+    'WS-CARD-RID-ACCT-ID-X': {
+        'COPAUA0C.cbl': 'alias', 'COPAUS0C.cbl': 'alias',
+        'COACTUPC.cbl': 'alias', 'COACTVWC.cbl': 'alias',
+        'COCRDLIC.cbl': 'dead', 'COCRDSLC.cbl': 'dead', 'COCRDUPC.cbl': 'dead',
+        'COACCT01.cbl': 'excluded',
+    },
+}
+
+# Evidence citation for the newly-confirmed alias identifiers (not per-line --
+# see CHANGELOG.md for why access-kind is not hand-classified per line at
+# this volume).
+ALIAS_EVIDENCE = {
+    'CC-ACCT-ID': "CVCRD01Y (COPY, shared) -- app/cbl/COCRDUPC.cbl:752 MOVE CC-ACCT-ID TO CDEMO-ACCT-ID",
+    'CDEMO-ACCT-ID': "COCOM01Y (COPY, shared) -- app/cbl/COACTUPC.cbl:3805 MOVE ACCT-ID TO CDEMO-ACCT-ID",
+    'WS-ACCT-ID': "local WS, per-program -- app/app-vsam-mq/cbl/COACCT01.cbl:408 MOVE ACCT-ID TO WS-ACCT-ID; app/app-authorization-ims-db2-mq/cbl/COPAUS0C.cbl:208 MOVE CDEMO-ACCT-ID TO WS-ACCT-ID",
+    'FD-XREF-ACCT-ID': "local FD, per-program -- app/cbl/CBACT04C.cbl:204 MOVE TRANCAT-ACCT-ID TO FD-XREF-ACCT-ID",
+    'CC-ACCT-ID-N': "CVCRD01Y (COPY, shared), REDEFINES CC-ACCT-ID -- app/cbl/COCRDUPC.cbl:490 MOVE CDEMO-ACCT-ID TO CC-ACCT-ID-N",
+    'WS-CA-LAST-CARD-ACCT-ID': "local WS, per-program -- app/cbl/COCRDLIC.cbl:1194 MOVE CARD-ACCT-ID TO WS-CA-LAST-CARD-ACCT-ID",
+    'PA-ACCT-ID': "local WS, per-program -- app/app-authorization-ims-db2-mq/cbl/COPAUA0C.cbl:619 MOVE XREF-ACCT-ID TO PA-ACCT-ID",
+    'WS-CA-FIRST-CARD-ACCT-ID': "local WS, per-program -- app/cbl/COCRDLIC.cbl:1174-75 MOVE CARD-ACCT-ID TO WS-CA-FIRST-CARD-ACCT-ID",
+    'TRANCAT-ACCT-ID': "CVTRA01Y (COPY, shared) -- app/cbl/CBTRN02C.cbl:505 MOVE XREF-ACCT-ID TO TRANCAT-ACCT-ID",
+    'ACUP-NEW-ACCT-ID-X': "local WS, per-program, REDEFINES ACUP-NEW-ACCT-ID -- app/cbl/COACTUPC.cbl:759-761",
+    'EXP-XREF-ACCT-ID': "CVEXPORT (COPY, shared) -- app/cbl/CBEXPORT.cbl:417 / CBIMPORT.cbl:359",
+    'EXP-CARD-ACCT-ID': "CVEXPORT (COPY, shared) -- app/cbl/CBEXPORT.cbl:536 / CBIMPORT.cbl:408",
+    'ACUP-NEW-ACCT-ID': "local WS, per-program -- app/cbl/COACTUPC.cbl:1801 MOVE CC-ACCT-ID TO ACUP-NEW-ACCT-ID",
+    'FD-TRANCAT-ACCT-ID': "local FD, per-program -- app/cbl/CBTRN02C.cbl:469 MOVE XREF-ACCT-ID TO FD-TRANCAT-ACCT-ID",
+    'ST-ACCT-ID': "local WS, per-program -- app/cbl/CBSTM03A.CBL:483 MOVE ACCT-ID TO ST-ACCT-ID",
+    'ACUP-OLD-ACCT-ID-X': "local WS, per-program, REDEFINES ACUP-OLD-ACCT-ID -- app/cbl/COACTUPC.cbl:671-673",
+    'ACUP-OLD-ACCT-ID': "local WS, per-program -- app/cbl/COACTUPC.cbl:3817 MOVE ACCT-ID TO ACUP-OLD-ACCT-ID",
+    'WS-ACCT-ID-N': "local WS, per-program -- app/cbl/COTRN02C.cbl:206 MOVE WS-ACCT-ID-N TO XREF-ACCT-ID",
+    'OUT-ACCT-ID': "local WS (output record), per-program -- app/cbl/CBACT01C.cbl:216 MOVE ACCT-ID TO OUT-ACCT-ID",
+    'ARR-ACCT-ID': "local WS (output record), per-program -- app/cbl/CBACT01C.cbl:254 MOVE ACCT-ID TO ARR-ACCT-ID",
+    'VB1-ACCT-ID': "local WS (output record), per-program -- app/cbl/CBACT01C.cbl:277 MOVE ACCT-ID TO VB1-ACCT-ID VB2-ACCT-ID",
+    'VB2-ACCT-ID': "local WS (output record), per-program -- same statement as VB1-ACCT-ID, app/cbl/CBACT01C.cbl:277-278",
+    'EXP-ACCT-ID': "CVEXPORT (COPY, shared) -- app/cbl/CBEXPORT.cbl:351 / CBIMPORT.cbl:328",
+    'CARD-UPDATE-ACCT-ID': "local WS, per-program -- app/cbl/COCRDUPC.cbl:1463 MOVE CC-ACCT-ID-N TO CARD-UPDATE-ACCT-ID",
+    'FD-ACCT-ID': (
+        "local FD, per-program -- explicit MOVE in CBTRN01C.cbl:242, CBTRN02C.cbl:394, "
+        "CBACT04C.cbl:202; in CBACT01C.cbl fed only via 'READ ACCTFILE-FILE INTO "
+        "ACCOUNT-RECORD' (line 166), a whole-record positional copy from a record "
+        "containing ACCT-ID -- qualifies under the 2026-08-29 READ INTO extension, not "
+        "an explicit field-level MOVE"
+    ),
+    'WS-CARD-RID-ACCT-ID': (
+        "local WS, per-program, split verdict -- alias in COPAUS0C.cbl:868, "
+        "COPAUA0C.cbl:523, COACTUPC.cbl:3892, COACTVWC.cbl:691 (all explicit MOVE from "
+        "an alias); dead in COCRDLIC/COCRDSLC/COCRDUPC (only candidate bridge is "
+        "commented out, column 7 = '*'); excluded from scoring in COACCT01.cbl (fed by "
+        "WS-KEY, itself never assigned via any MOVE in that file)"
+    ),
+    'WS-CARD-RID-ACCT-ID-X': "REDEFINES WS-CARD-RID-ACCT-ID; mirrors its per-program verdict exactly",
+}
+
+
+def classify_access_kind_auto(source_line: str, alias: str) -> str:
+    """Lightweight pattern classifier for the newly-reclassified alias hits.
+    Not a substitute for the hand classification given to the original 47
+    hits -- see CHANGELOG.md for why this volume (233 lines) is classified
+    this way instead."""
+    s = source_line.upper()
+    a = alias.upper()
+    if re.search(r"^\s*\d*\s*(FILLER\s+)?REDEFINES\b", s) or re.search(r"\bPIC\b", s) and "MOVE" not in s and "TO " not in s:
+        return "DECLARATION"
+    if re.search(r"RIDFLD|RECORD KEY IS|KEYLENGTH", s):
+        return "READ"
+    if "DISPLAY" in s:
+        return "DISPLAY"
+    if re.search(r"\bIF\b|\bEQUAL\b|\bWHEN\b", s):
+        return "COMPARE"
+    mv = re.search(r"MOVE\s+(.*?)\s+TO\s+(.*)", s)
+    if mv:
+        src, tgt = mv.group(1), mv.group(2)
+        if a in src and a not in tgt:
+            return "MOVE-SOURCE"
+        if a in tgt:
+            return "MOVE-TARGET"
+    if " TO " in s and s.strip().endswith(a):
+        return "MOVE-TARGET (continuation)"
+    return "UNCLASSIFIED (wrapped statement -- see source_line, needs manual read)"
+
+
+def apply_2026_08_29_reclassification(wide_result):
+    """Second, explicit transformation pass over build_wide()'s original
+    output. Does not alter the original extraction/classification data --
+    reads the near_misses list it already produced (itself built from the
+    unmodified extractor) and re-buckets each identifier's lines per
+    ALIAS_VERDICTS, verified against source in the 2026-08-29 review."""
+    by_prog_new_hits = collections.defaultdict(lambda: collections.defaultdict(list))
+    remaining_near_miss = []
+    excluded_uncertain = []
+
+    for nm in wide_result["near_misses"]["distinct_identifiers"]:
+        ident = nm["identifier"]
+        verdict = ALIAS_VERDICTS.get(ident)
+        if verdict is None:
+            raise SystemExit(f"UNCLASSIFIED IDENTIFIER in reclassification pass: {ident}")
+
+        if verdict == "dead":
+            remaining_near_miss.append(nm)
+            continue
+
+        if verdict == "alias":
+            for prog in nm["programs"]:
+                for line in prog["lines"]:
+                    by_prog_new_hits[prog["path"]][ident].append(line)
+            continue
+
+        # per-program split
+        dead_programs = []
+        for prog in nm["programs"]:
+            prog_key = prog["path"].split("/")[-1]
+            pverdict = verdict.get(prog_key)
+            if pverdict is None:
+                raise SystemExit(f"UNCLASSIFIED PROGRAM for split identifier: {ident} / {prog['path']}")
+            if pverdict == "alias":
+                for line in prog["lines"]:
+                    by_prog_new_hits[prog["path"]][ident].append(line)
+            elif pverdict == "dead":
+                dead_programs.append(prog)
+            elif pverdict == "excluded":
+                excluded_uncertain.append({
+                    "identifier": ident, "path": prog["path"], "lines": prog["lines"],
+                    "reason": "fed by WS-KEY, itself never assigned via any MOVE in this file -- plausible but unprovable",
+                })
+        if dead_programs:
+            remaining_near_miss.append({
+                "identifier": ident,
+                "total_occurrences": sum(len(p["lines"]) for p in dead_programs),
+                "programs": dead_programs,
+            })
+
+    # Attach new alias hits to programs, upgrading tier where needed.
+    existing_paths = {p["path"]: p for p in wide_result["programs"]}
+    for path, alias_lines in by_prog_new_hits.items():
+        alias_hit_entries = []
+        for ident, lines in sorted(alias_lines.items()):
+            lines_sorted = sorted(set(lines))
+            alias_hit_entries.append({
+                "alias": ident,
+                "lines": lines_sorted,
+                "evidence": ALIAS_EVIDENCE.get(ident, ""),
+                "classification_method": "automated pattern match on source_line text per line; see reference note in CHANGELOG.md",
+            })
+        if path in existing_paths:
+            prog = existing_paths[path]
+            prog["alias_hits"] = alias_hit_entries
+            if prog["tier"] != "FIELD-AWARE":
+                prog["tier_before_reclassification"] = prog["tier"]
+                prog["tier"] = "FIELD-AWARE"
+                # structural_evidence (or dead_copy_evidence) is intentionally left in
+                # place -- it's still true and still useful context, just no longer
+                # the reason for the tier.
+        else:
+            # Program had no entry at all before (shouldn't happen for the wide
+            # field slice, since all 21 programs are covered, but guard anyway)
+            raise SystemExit(f"Alias hits found for a program not in the original tiered list: {path}")
+
+    wide_result["programs"].sort(key=lambda p: (p["module"], p["path"]))
+
+    new_near_miss_total = sum(nm["total_occurrences"] for nm in remaining_near_miss)
+    wide_result["near_misses"]["distinct_identifiers"] = remaining_near_miss
+    wide_result["near_misses"]["summary"] = (
+        f"After the 2026-08-29 alias-rule reclassification (see docs/ground_truth/CHANGELOG.md), "
+        f"{new_near_miss_total} lines across {len(remaining_near_miss)} distinct identifiers remain "
+        "genuine near misses -- declared but demonstrably never fed by anything, dead code rather "
+        "than a different entity. This is the precision test set: a tool should find zero of these."
+    )
+
+    wide_result["excluded_from_scoring"] = {
+        "summary": (
+            f"{sum(len(e['lines']) for e in excluded_uncertain)} lines, from WS-CARD-RID-ACCT-ID and "
+            "its -X redefine in COACCT01.cbl, are excluded from both the true-positive and "
+            "false-positive count. Plausible (labeled 'ACCT ID' in a DISPLAY, used identically to "
+            "confirmed alias-fed keys elsewhere) but not provable from an explicit MOVE within this "
+            "file alone -- scoring them either way would misrepresent what was actually verified."
+        ),
+        "entries": excluded_uncertain,
+    }
+
+    wide_result["definitions"] = {
+        "adopted": "2026-08-29",
+        "supersedes": "the original near-miss-by-substring-only classification used through 2026-08-28",
+        "rule": (
+            "A field is an ALIAS of the target if the target's value flows into it via an "
+            "explicit MOVE (either direction -- both operands must co-widen together or the "
+            "narrower one truncates at runtime), or if it REDEFINES a field that is itself "
+            "alias-confirmed (same storage, so any MOVE feeding one feeds both). A field is a "
+            "NEAR MISS only if it is a genuinely different entity -- different data, different "
+            "meaning -- regardless of name similarity. A field that is declared but demonstrably "
+            "never fed by anything is also a near miss (dead code, not a different entity -- just "
+            "no entity)."
+        ),
+        "read_into_extension": (
+            "2026-08-29 extension: a field fed by a whole-record READ ... INTO from a record "
+            "that contains the target field is also an ALIAS, even with no field-level MOVE "
+            "naming it. Rationale: widening the source record's field requires widening the "
+            "receiving record's corresponding field too, or the READ misaligns/truncates on that "
+            "field -- the identical risk a literal MOVE poses, via positional record I/O instead "
+            "of a field-level statement."
+        ),
+        "excluded_from_scoring_rule": (
+            "A candidate that is plausibly fed by the target but whose feed cannot be traced to "
+            "an explicit MOVE from the target or a confirmed alias within the file being checked "
+            "is EXCLUDED FROM SCORING entirely -- counted as neither a true positive nor a false "
+            "positive -- rather than guessed either way."
+        ),
+    }
+    return wide_result
 
 
 # ---------------------------------------------------------------------------
@@ -530,6 +810,7 @@ def build_zip():
 def main():
     os.makedirs(OUT_DIR, exist_ok=True)
     wide = build_wide()
+    wide = apply_2026_08_29_reclassification(wide)
     zip_ = build_zip()
     with open(os.path.join(OUT_DIR, "ACCT-ID.json"), "w") as f:
         json.dump(wide, f, indent=2)

@@ -106,18 +106,33 @@ that COPYs the copybook but never touches the resulting record at all — not
 by field name, not even at group level — is real technical debt worth
 surfacing, not an edge case to argue away).
 
-**Wide field**: 15 FIELD-AWARE + 5 STRUCTURALLY-AFFECTED + 1 DEAD-COPY = 21
-of 21 tiered. `COTRTLIC.cbl` COPYs CVACT02Y but never references
+**Wide field, as of 2026-08-28** (before the alias-rule reclassification —
+see below): 15 FIELD-AWARE + 5 STRUCTURALLY-AFFECTED + 1 DEAD-COPY = 21 of
+21 tiered. `COTRTLIC.cbl` COPYs CVACT02Y but never references
 `CARD-RECORD` anywhere, with no group-level I/O either. One additional
 dead-copy relationship is recorded as a *footnote* rather than a top-level
 tier: `COTRN02C.cbl`'s COPY of CVACT01Y is dead, but the program's overall
 wide-field tier stays FIELD-AWARE because it genuinely uses `XREF-ACCT-ID`
 from a different copybook (CVACT03Y) — a program can be dead-copy on one
-alias and field-aware on another. Near misses: 31 distinct locally-declared
-shadow/commarea variables (e.g. `CDEMO-ACCT-ID`, `CC-ACCT-ID`,
-`WS-CARD-RID-ACCT-ID`) contain one of the three alias names as a substring
-without being that field — 271 lines total that a naive grep would
-misattribute.
+alias and field-aware on another. Near misses at that point: 31 distinct
+locally-declared shadow/commarea variables (e.g. `CDEMO-ACCT-ID`,
+`CC-ACCT-ID`, `WS-CARD-RID-ACCT-ID`) contain one of the three alias names
+as a substring without being that field — 271 lines total that a naive
+grep would misattribute (later corrected to 246 true unique lines; see
+below).
+
+**Updated 2026-08-29**: an alias rule was adopted — a field genuinely fed
+by the target's value via an explicit MOVE (or a whole-record READ from a
+record containing it) is an alias, not a near miss, because widening the
+target requires widening it too. Applying it moved 217 of those 246 lines
+(27 distinct identifiers) from near-miss to alias, and moved 3 programs
+(`COACTVWC.cbl`, `COCRDSLC.cbl`, `COCRDUPC.cbl`) from STRUCTURALLY-AFFECTED
+to FIELD-AWARE. Current wide-field tiers: **18 FIELD-AWARE + 2
+STRUCTURALLY-AFFECTED + 1 DEAD-COPY = 21 of 21**. Current near-miss set (the
+precision test set): **6 distinct identifiers, 23 lines** — genuinely dead
+code, never fed by anything. Full rationale, the rule text, and what this
+made possible: [`docs/ground_truth/CHANGELOG.md`](ground_truth/CHANGELOG.md)
+and [`docs/FINDINGS.md`](FINDINGS.md).
 
 **Narrow field**: 2 FIELD-AWARE + 11 STRUCTURALLY-AFFECTED + 1 DEAD-COPY =
 14 of 14 tiered. `COTRN02C.cbl` is DEAD-COPY outright here (unlike the wide

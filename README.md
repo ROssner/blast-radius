@@ -79,6 +79,27 @@ scoped down to something a human can verify by hand. Full rationale,
 including a correction to an earlier miscount, in
 [`docs/SCOPE.md`](docs/SCOPE.md).
 
+## Key finding: hand-verified ground truth quantifies where agentic analysis silently fails
+
+Running just the SPEC stage in Bob (resolve the target field and its
+aliases) against a real change request found **8 aliases of `ACCT-ID`,
+all 8 correct — 100% precision.** Independently re-verifying every
+account-id-shaped identifier in the same 21-program slice against source
+found **at least 28 real aliases exist. Recall: 8/28 ≈ 28.6%.**
+
+The gap isn't random. Every one of Bob's 8 finds is declared in a shared
+copybook; every one of the 20 it missed is declared locally inside one
+program's own WORKING-STORAGE or FD SECTION — a clean, 100% split, not a
+handful of edge cases. One file alone (`CBACT01C.cbl`) fans `ACCT-ID` out
+to four local output-record fields in about 60 lines; Bob found none of
+the four. Full breakdown, the exact lines, and why this specific gap
+exists in the SPEC design: **[`docs/FINDINGS.md`](docs/FINDINGS.md).**
+
+This is the case for why the pipeline doesn't stop at SPEC — TRACE
+independently inspects every candidate program's own body for exactly
+this kind of local MOVE chain, and VERIFY re-checks every claim regardless
+of which stage produced it.
+
 ## Ground truth: the answer key
 
 **[`docs/ground_truth/`](docs/ground_truth/)** is deliberately public —
@@ -86,24 +107,33 @@ judges should be able to verify every accuracy claim against it directly.
 It is hidden from Bob itself (see below), not from people.
 
 Two fields were traced exhaustively by hand, line by line, every hit
-checked against COBOL column 7 and string-literal boundaries:
+checked against COBOL column 7 and string-literal boundaries. The
+`ACCT-ID` figures below reflect the alias reclassification described in
+[`docs/ground_truth/CHANGELOG.md`](docs/ground_truth/CHANGELOG.md) — a
+field genuinely fed by the target's value via an explicit MOVE (or a
+whole-record READ from a record containing it) counts as an alias, not a
+near miss, because widening the target requires widening it too:
 
-| Field | Aliases | Scope | FIELD-AWARE | STRUCTURALLY-AFFECTED | DEAD-COPY | Near misses rejected |
+| Field | Aliases | Scope | FIELD-AWARE | STRUCTURALLY-AFFECTED | DEAD-COPY | Near misses (precision test set) |
 |---|---|---|---|---|---|---|
-| `ACCT-ID` (wide) | `ACCT-ID` / `CARD-ACCT-ID` / `XREF-ACCT-ID` across 3 copybooks | 21 programs | 15 | 5 | 1 | 31 distinct shadow identifiers, 271 lines |
+| `ACCT-ID` (wide) | 3 declared names + 27 confirmed aliases (commarea/work-area/FD carriers fed by an explicit MOVE or record-level READ) | 21 programs | 18 | 2 | 1 | 6 distinct identifiers, 23 lines — genuinely dead code, never fed by anything |
 | `ACCT-ADDR-ZIP` (narrow) | single field, one copybook | 14 programs (only those copying `CVACT01Y`) | 2 | 11 | 1 | `CUST-ADDR-ZIP`, a distinct customer-level field: 7 exact hits, 6 programs |
 
-Three tiers, not two: **FIELD-AWARE** (names the field directly),
-**STRUCTURALLY-AFFECTED** (copies the copybook and moves the whole record,
-but never names the field), and **DEAD-COPY** (copies the copybook but
-never touches the resulting record at all — real technical debt the
-analysis surfaces for free). Every hit is reproducible from
-[`scripts/ground_truth_extract.py`](scripts/ground_truth_extract.py) (a
-COBOL-column-7-aware, string-literal-aware tokenizer) plus hand-verified
+Three tiers, not two: **FIELD-AWARE** (names the field or a confirmed alias
+directly), **STRUCTURALLY-AFFECTED** (copies the copybook and moves the
+whole record, but never names the field or an alias), and **DEAD-COPY**
+(copies the copybook but never touches the resulting record at all — real
+technical debt the analysis surfaces for free). Every hit is reproducible
+from [`scripts/ground_truth_extract.py`](scripts/ground_truth_extract.py)
+(a COBOL-column-7-aware, string-literal-aware tokenizer) plus verified
 classification in
 [`scripts/ground_truth_build.py`](scripts/ground_truth_build.py) — re-run
 `python3 scripts/ground_truth_build.py` to regenerate both JSON files from
-scratch and confirm they match what's committed.
+scratch and confirm they match what's committed. 6 additional lines (two
+identifiers, both only in `COACCT01.cbl`) are recorded as **excluded from
+scoring** — plausible but not provable from an explicit MOVE within that
+file, so counted as neither a true positive nor a false positive rather
+than guessed either way.
 
 ### Hidden from Bob, visible to everyone else
 
@@ -128,7 +158,9 @@ samples/carddemo/          -- vendored CardDemo application (Apache 2.0) + the l
   app/                     -- the COBOL/JCL/BMS/copybook source being analyzed
 docs/
   SCOPE.md                 -- scoping rationale, slice definition, field selection
+  FINDINGS.md              -- the centerpiece: Bob's SPEC precision/recall against ground truth
   ground_truth/            -- the hand-verified answer key (public; hidden from Bob only)
+    CHANGELOG.md           -- the 2026-08-29 alias-rule reclassification, with rationale
 bob-package/                -- canonical Bob Skill + personas + custom mode (read this to review the design)
 scripts/
   ground_truth_extract.py  -- deterministic COBOL tokenizer (column-7 + string-literal aware)

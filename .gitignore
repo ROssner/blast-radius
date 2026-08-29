@@ -2,3 +2,4 @@
 # canonical, versioned copy of run output lives in bob-package/run-artifacts/
 # and reports/, both populated via scripts/bob_sync_pull.sh.
 samples/carddemo/.blast-radius/
+__pycache__/
