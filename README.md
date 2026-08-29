@@ -79,26 +79,34 @@ scoped down to something a human can verify by hand. Full rationale,
 including a correction to an earlier miscount, in
 [`docs/SCOPE.md`](docs/SCOPE.md).
 
-## Key finding: hand-verified ground truth quantifies where agentic analysis silently fails
+## Key finding: hand-verified ground truth measures agentic analysis, end to end
 
-Running just the SPEC stage in Bob (resolve the target field and its
-aliases) against a real change request found **8 aliases of `ACCT-ID`,
-all 8 correct — 100% precision.** Independently re-verifying every
-account-id-shaped identifier in the same 21-program slice against source
-found **at least 28 real aliases exist. Recall: 8/28 ≈ 28.6%.**
+A full pipeline run (SPEC through SYNTHESIS, core programs, change request
+*"extend the account identifier field"*), scored against the hand-verified
+ground truth: **100% program-level recall (17/17 core programs found),
+100% tier accuracy, and 100% alias-level recall against the documented
+ground truth (25/25) — plus 7 additional real aliases found beyond it**,
+independently re-verified against source. One real gap was found and is
+reported plainly rather than smoothed over: near-miss (dead-code)
+coverage was 9/14 on one identifier family, not 14/14 — an omission, not
+a false claim. Full derivation of every number: **[`docs/ACCURACY.md`](docs/ACCURACY.md).**
 
-The gap isn't random. Every one of Bob's 8 finds is declared in a shared
-copybook; every one of the 20 it missed is declared locally inside one
-program's own WORKING-STORAGE or FD SECTION — a clean, 100% split, not a
-handful of edge cases. One file alone (`CBACT01C.cbl`) fans `ACCT-ID` out
-to four local output-record fields in about 60 lines; Bob found none of
-the four. Full breakdown, the exact lines, and why this specific gap
-exists in the SPEC design: **[`docs/FINDINGS.md`](docs/FINDINGS.md).**
+This result followed directly from an earlier, worse one. A SPEC-only
+run against the same change request found 8 real aliases (100%
+precision) out of a documented true count of at least 28 (recall ≈
+28.6%) — and the gap turned out to be partly *instructed*: the TRACE and
+VERIFY persona prompts encoded the same "different token means near
+miss" mistake the ground truth itself had to unlearn. Fixing that
+persona bug, then re-running the full pipeline, is what produced the
+result above. Full story, the exact failure mode, and the fix:
+**[`docs/FINDINGS.md`](docs/FINDINGS.md).**
 
 This is the case for why the pipeline doesn't stop at SPEC — TRACE
 independently inspects every candidate program's own body for exactly
 this kind of local MOVE chain, and VERIFY re-checks every claim regardless
-of which stage produced it.
+of which stage produced it. It's also a case for treating a bad first
+number as diagnostic rather than embarrassing: it pointed directly at the
+bug that, once fixed, produced the number above.
 
 ## Ground truth: the answer key
 
@@ -158,13 +166,16 @@ samples/carddemo/          -- vendored CardDemo application (Apache 2.0) + the l
   app/                     -- the COBOL/JCL/BMS/copybook source being analyzed
 docs/
   SCOPE.md                 -- scoping rationale, slice definition, field selection
-  FINDINGS.md              -- the centerpiece: Bob's SPEC precision/recall against ground truth
+  FINDINGS.md              -- the SPEC-only measurement, the persona bug it found, and the fix
+  ACCURACY.md              -- the centerpiece: full-pipeline run scored against ground truth
   ground_truth/            -- the hand-verified answer key (public; hidden from Bob only)
     CHANGELOG.md           -- the 2026-08-29 alias-rule reclassification, with rationale
 bob-package/                -- canonical Bob Skill + personas + custom mode (read this to review the design)
+bob_sessions/               -- raw Bob task transcripts backing FINDINGS.md/ACCURACY.md's claims
 scripts/
   ground_truth_extract.py  -- deterministic COBOL tokenizer (column-7 + string-literal aware)
   ground_truth_build.py    -- assembles docs/ground_truth/*.json from the extractor + verified classifications
+  score_run.py             -- scores a completed Bob run against ground truth (docs/ACCURACY.md)
   survey_slice.sh          -- reproduces the slice-selection survey from docs/SCOPE.md
   bob_sync_push.sh         -- deploys bob-package/.bob into samples/carddemo/.bob (what Bob actually reads)
   bob_sync_pull.sh         -- brings a completed run's report + artifacts back out of the isolated workspace

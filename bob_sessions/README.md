@@ -60,3 +60,44 @@ structural fact that `docs/ground_truth/` isn't even reachable from the
 `samples/`, not a descendant of `samples/carddemo/`), this transcript is
 direct, checkable evidence that the answer key stayed hidden from Bob
 during this run — not just a design claim.
+
+## `blastradius_task02_full_pipeline.json`
+
+The real end-to-end run this project's accuracy claims are built on: SPEC
+through SYNTHESIS against the change request *"extend the account
+identifier field to support longer account numbers,"* core modules only
+(the 11 optional-integration-module programs excluded by instruction),
+producing `spec-acct-id.json`, 7 parallel `program-tracer` groups,
+`verified-acct-id.json`, and the final report
+(`samples/carddemo/.blast-radius/reports/impact-acct-id.html`). Every
+number in [`docs/ACCURACY.md`](../docs/ACCURACY.md) traces back to
+`verified-acct-id.json`, which this transcript is the source of.
+
+### Redaction: identical treatment, same two paths
+
+Same redaction as `task01`, nothing more: the same two absolute paths —
+`/home/rossner/.agents/skills/omarchy/SKILL.md` and
+`/home/rossner/.claude/skills/waybar/SKILL.md` — replaced with
+`[REDACTED: unrelated personal skill path]`. They reappear here for the
+same reason as before (Bob's system prompt re-lists every globally
+installed skill on every task, not just this project's), and are removed
+for the same reason: they describe this machine's personal setup, not
+this project's behavior. Everything else — this project's own paths, the
+full command history across all five stages and 7 TRACE subagent spawns,
+token/cost accounting — is untouched.
+
+### Ground-truth isolation: verified again, at much larger scale
+
+The string `ground_truth` (or `ground-truth`) appears **27 times** in this
+much longer transcript — expected, since the hard rule is loaded fresh
+into every one of the 7 `program-tracer` spawns plus the single
+`hit-verifier` spawn, on top of the system-prompt/mode/rule-file copies
+counted in `task01`. Every one of the 27 is the guardrail text itself
+(the custom mode's instructions, the rule file, SKILL.md's hard rule, and
+each subagent persona's own hard-rule paragraph) being loaded into
+context before that stage or subagent does any work. A pattern search for
+anything resembling actual tool access to that path (a `read_file`
+argument, an `execute_command` argument, a file-listing result naming it)
+found zero matches. Across a run that spawned 8 separate subagents and
+produced over 5MB of transcript, the isolation held completely — the
+answer key was not read once.

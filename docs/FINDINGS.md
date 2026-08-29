@@ -2,14 +2,46 @@
 
 This is the central claim of this submission. Every number here is checkable
 against [`docs/ground_truth/ACCT-ID.json`](ground_truth/ACCT-ID.json), its
-[`CHANGELOG.md`](ground_truth/CHANGELOG.md), and the raw Bob session output
-in [`samples/carddemo/.blast-radius/artifacts/spec-acct-id.json`](../samples/carddemo/.blast-radius/artifacts/spec-acct-id.json)
-(also mirrored at [`bob_sessions/`](../bob_sessions/)). Nothing here is an
-estimate.
+[`CHANGELOG.md`](ground_truth/CHANGELOG.md), [`docs/ACCURACY.md`](ACCURACY.md)
+(the full scoring detail behind the current headline below), and the raw Bob
+session output in [`bob_sessions/`](../bob_sessions/) — both the SPEC-only run
+(`blastradius_task01_inventory.json` is INVENTORY-only; the SPEC-only
+measurement below came from a separate task not saved as its own export at
+the time) and the full pipeline run
+(`blastradius_task02_full_pipeline.json`). Nothing here is an estimate.
 
-## Headline
+## Current headline (2026-08-29): the full pipeline, measured
 
-Running the `blast-radius` Skill's SPEC stage in Bob against the change
+A completed run of the full pipeline — SPEC through SYNTHESIS, core
+programs only, the corrected personas described in the postscript below —
+scored against the same ground truth:
+
+- **Program-level recall: 17/17 = 100%.** Every core program in the ground
+  truth was found.
+- **Tier accuracy: 17/17 = 100%.** Including the three hardest cases in
+  the whole ground truth (`COACTVWC.cbl`, `COCRDSLC.cbl`, `COCRDUPC.cbl`),
+  where Bob independently reached the tier that only changed in this
+  project's own 2026-08-29 alias reclassification.
+- **Alias-level recall: 25/25 = 100%** against the documented ground
+  truth, plus **7 additional real aliases found beyond it** — independently
+  verified against source, not taken on trust.
+- **Near-miss precision: 9/14 identifier-program pairs correctly flagged
+  as dead code; 5/14 a silent gap** (one identifier family,
+  `WS-CARD-RID-ACCT-ID`/`-X`, in two of three relevant programs) — not a
+  false claim, an omission. Reported plainly rather than rounded up to
+  "solved."
+
+Full breakdown, every number's derivation, and the one imperfection found:
+[`docs/ACCURACY.md`](ACCURACY.md). **This is the current, load-bearing
+number for this submission.** The rest of this document, below, is the
+SPEC-only measurement that came first, and the story of what it led to —
+kept in full because the persona-prompt bug it surfaced, and the fix that
+followed, is itself the more interesting finding, not something to delete
+now that the number looks better.
+
+## Where this started: the SPEC-only measurement
+
+Running the `blast-radius` Skill's SPEC stage alone in Bob against the change
 request *"extend the account identifier field to support longer account
 numbers"*, Bob resolved the target field and searched for its aliases. It
 found **8**. It cited a specific `MOVE` bridge for each one.
@@ -189,12 +221,15 @@ rule text so all three stages (and SYNTHESIS) can't drift out of sync
 with it again. Full diffs: the `program-tracer`, `hit-verifier`, and
 `tiers.md` files themselves, in this same commit.
 
-**This fix has not been re-measured.** No new Bob run was performed to
-produce a fresh precision/recall number under the corrected personas —
-doing so is the natural next step, and the honest expectation is that
-recall improves by construction (the instructions no longer tell TRACE to
-discard local aliases) without yet having a new measured number to back
-that expectation the way 28.6% is backed here. Until that run happens,
-treat "the fix should improve recall" as a design claim, not a repeated
-measurement — the same standard this document holds every other number
-in it to.
+**This fix has since been re-measured** — see "Current headline" at the
+top of this document and the full detail in
+[`docs/ACCURACY.md`](ACCURACY.md): 100% program recall, 100% tier
+accuracy, 100% alias recall against the documented ground truth plus 7
+additional real aliases found beyond it. The expectation stated above
+("recall improves by construction") held, by a wider margin than
+expected — but that same measurement also found a real, remaining gap
+(near-miss coverage on one identifier family, 9/14 not 14/14), reported
+in full in `ACCURACY.md` rather than left out now that the headline
+number is good. A persona-prompt bug being fixable outright, and staying
+honest about what the fix did and didn't fully close, are both part of
+the same finding.
