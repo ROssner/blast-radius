@@ -73,8 +73,10 @@ the per-program shape.
 ## verified-<field-slug>.json (VERIFY stage)
 
 Exactly the schema in `hit-verifier.md`'s Output section
-(`{"verdicts": [...], "summary": {...}}`), plus a final merged view the
-orchestrator builds by joining verdicts back onto the TRACE claims:
+(`{"verdicts": [...], "alias_verdicts": [...], "summary": {...}}`), plus a
+final merged view the orchestrator builds by joining verdicts back onto
+the TRACE claims (fold every ACCEPTED `alias_verdicts` entry into the
+alias list the same as any other confirmed alias):
 
 ```json
 {

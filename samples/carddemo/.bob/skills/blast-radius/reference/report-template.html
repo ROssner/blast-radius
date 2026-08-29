@@ -303,11 +303,16 @@
       CardDemo application; SPEC resolved the plain-language change request
       above to {{FIELD_NAME}} and its aliases against the actual copybook
       declarations; TRACE dispatched parallel subagents, each scanning a
-      small group of candidate programs; VERIFY independently re-checked
-      every claimed hit against the source, respecting COBOL column-7
-      comment rules and excluding text inside string literals and
-      substring matches inside unrelated identifiers; SYNTHESIS produced
-      this report from only the hits that survived verification.
+      small group of candidate programs and actively chasing MOVE/
+      REDEFINES/record-level READ INTO chains to discover further,
+      locally-declared aliases beyond the copybook-declared ones SPEC
+      found; VERIFY independently re-checked every claimed hit and every
+      newly-discovered alias against the source, respecting COBOL column-7
+      comment rules and string-literal spans, accepting a same-shaped
+      identifier as a real alias when it is genuinely fed by the target's
+      value and rejecting it only when it is a different entity or dead,
+      unfed code; SYNTHESIS produced this report from only the hits that
+      survived verification.
       Risk score = (tier base + sum of access-kind weights) &times; module
       multiplier (core = 1.0, optional-integration = 0.7).
     </p>

@@ -144,4 +144,57 @@ system this project builds doesn't stop at SPEC: TRACE independently
 inspects every candidate program's own body for exactly this kind of local
 MOVE chain, and VERIFY re-checks every claim regardless of which stage
 produced it. This document is the evidence for why that two-stage design
-is load-bearing, not decorative.
+is load-bearing, not decorative — **with one correction, below**: as
+originally written, TRACE and VERIFY's own instructions would not have
+closed this gap either.
+
+## Postscript, 2026-08-29: the gap was partly instructed, not purely emergent
+
+The measurement above was taken by running SPEC alone. When
+`bob-package/.bob/agents/program-tracer.md` and `hit-verifier.md` were
+reviewed afterward, both turned out to encode the *same* mistake this
+document just measured: `program-tracer.md` instructed subagents that any
+identifier not an exact match to the given target/alias list should be
+recorded as a `near_miss_signal`, full stop — no check for whether it was
+genuinely fed by the target's value. `hit-verifier.md`'s Step 4 was the
+same shape: a longer or different token was an automatic **REJECT**,
+labeled "substring of a different identifier," with no alias check at
+all. `reference/tiers.md`'s "Near-miss signals" section defined near miss
+the same way. Under the ground truth's own alias rule
+(`docs/ground_truth/CHANGELOG.md`), that's wrong for the same reason the
+old ground-truth classification was wrong before 2026-08-29's
+reclassification: it treats "different token" as sufficient grounds for
+rejection, when the actual test is whether the target's value flows into
+that token.
+
+This means the 28.6% recall figure measured above is not purely a
+property of how well an LLM reasons about COBOL under good instructions —
+a real share of it is a direct, mechanical consequence of the instructions
+themselves telling TRACE to discard exactly the kind of finding this
+document says it should have made. `FD-ACCT-ID`, `WS-ACCT-ID-N`,
+`ACUP-OLD-ACCT-ID`, and the rest of the 20 misses were not just hard for
+a one-shot SPEC pass to find — they were things a full TRACE run, as
+originally instructed, would have found and then been told to throw away.
+
+**This is the more useful finding of the two.** A model reasoning
+imperfectly about ambiguous COBOL is a capability limit you work around
+with better verification. A persona prompt that enforces the wrong rule
+by construction is a design bug, and design bugs are fixable outright —
+which is what happened: `program-tracer.md` now actively chases MOVE/
+REDEFINES/record-level-READ-INTO chains from any confirmed field to
+discover further local aliases, and both it and `hit-verifier.md` apply
+the same alias-vs-near-miss test the ground truth itself uses before
+calling anything a near miss. `reference/tiers.md` carries the shared
+rule text so all three stages (and SYNTHESIS) can't drift out of sync
+with it again. Full diffs: the `program-tracer`, `hit-verifier`, and
+`tiers.md` files themselves, in this same commit.
+
+**This fix has not been re-measured.** No new Bob run was performed to
+produce a fresh precision/recall number under the corrected personas —
+doing so is the natural next step, and the honest expectation is that
+recall improves by construction (the instructions no longer tell TRACE to
+discard local aliases) without yet having a new measured number to back
+that expectation the way 28.6% is backed here. Until that run happens,
+treat "the fix should improve recall" as a design claim, not a repeated
+measurement — the same standard this document holds every other number
+in it to.

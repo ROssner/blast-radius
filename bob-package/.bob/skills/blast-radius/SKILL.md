@@ -113,29 +113,50 @@ copybook list.
 
 Input: `spec-<field-slug>.json`'s `aliases` and `candidate_programs`.
 
+**The alias list from SPEC is a starting point, not the ceiling for this
+stage.** SPEC only resolves aliases declared in shared copybooks (that's
+what reading copybooks can tell you); a large share of a real field's
+aliases are declared locally inside individual programs' own
+WORKING-STORAGE or FD SECTIONS, and those are only discoverable by reading
+each program's own body. That is TRACE's job, not SPEC's — see
+`docs/FINDINGS.md` in the main repo for a measured run where skipping this
+step cut recall to roughly 29%. Concretely:
+
 1. Split `candidate_programs` into groups of 3-5.
 2. For each group, spawn a subagent using the **program-tracer** persona,
    in the same turn as every other group (parallel dispatch). Give each
    spawn only: the resolved field name and full alias list (with
    copybook/record/PIC info), that group's file paths, and the output
    path `.blast-radius/artifacts/trace-<field-slug>-group-<N>.json`. Do
-   not include anything else.
-3. Wait for all groups to complete, then read each group's output file.
+   not include anything else. Each `program-tracer` persona is itself
+   instructed to actively chase MOVE/REDEFINES/READ-INTO chains from any
+   confirmed field to discover further, locally-declared aliases within
+   its assigned files — you don't need to re-instruct this here, just
+   don't strip it out of the spawn prompt.
+3. Wait for all groups to complete, then read each group's output file,
+   including its `newly_discovered_aliases` array — these are exactly the
+   locally-declared aliases SPEC's copybook-only search couldn't find.
 
 ## Stage 4 — VERIFY
 
 Input: every `trace-<field-slug>-group-*.json` file.
 
 1. Merge all claimed hits (and structural/dead-copy evidence) from every
-   group into one flat claim list.
+   group into one flat claim list, and separately merge every group's
+   `newly_discovered_aliases` into one flat alias-claim list.
 2. Spawn exactly one subagent using the **hit-verifier** persona, giving
-   it the field/alias list, the full merged claim list, and the output
-   path `.blast-radius/artifacts/verified-<field-slug>.json`. Do not spawn
-   more than one verifier and do not split verification by group — the
-   whole point is one independent pass over everything TRACE claimed.
+   it the field/alias list, the full merged hit-claim list, the full
+   merged alias-claim list, and the output path
+   `.blast-radius/artifacts/verified-<field-slug>.json`. Do not spawn more
+   than one verifier and do not split verification by group — the whole
+   point is one independent pass over everything TRACE claimed.
 3. Read the result. Build `final_programs` by keeping only ACCEPTED hits
-   (with any `corrected_access_kind`/`corrected_tier` applied) and
-   dropping REJECTED ones. Anything UNCERTAIN goes in the report's
+   (with any `corrected_alias`/`corrected_access_kind`/`corrected_tier`
+   applied) and dropping REJECTED ones. Fold every ACCEPTED entry from
+   `alias_verdicts` into the alias list for the report exactly like any
+   other confirmed alias — these are the aliases a copybook-only search
+   would have missed, and the report should not distinguish them visually
+   from ones SPEC found first. Anything UNCERTAIN goes in the report's
    methodology/notes section, not into the ranked table, with its reason
    preserved.
 
