@@ -78,7 +78,9 @@ across every future field/change-request run in this session.
    This doesn't need to be exhaustive for this stage to be useful — do not
    spend excessive tool calls chasing every dynamic call target.
 5. Write `.blast-radius/artifacts/inventory.json` per
-   `reference/output-schema.md`.
+   `reference/output-schema.md`. For its `generated_at` field, run
+   `date -u +"%Y-%m-%dT%H:%M:%SZ"` with your `command` tool and use the
+   actual output — never a fabricated or remembered timestamp.
 
 ## Stage 2 — SPEC
 
@@ -176,9 +178,17 @@ Input: `verified-<field-slug>.json`.
 3. Read `reference/report-template.html`. Fill in every `{{PLACEHOLDER}}`
    token with real content:
    - `{{FIELD_NAME}}`, `{{FIELD_ALIAS_BADGES}}` (one `<span class="badge">`
-     per alias), `{{CHANGE_REQUEST_TEXT}}`, `{{GENERATED_AT}}`,
+     per alias), `{{CHANGE_REQUEST_TEXT}}`,
      `{{SCOPE_SUMMARY}}` (e.g. file counts from inventory + candidate count
      from SPEC).
+   - `{{GENERATED_AT}}` — **run `date -u +"%Y-%m-%dT%H:%M:%SZ"` with your
+     `command` tool right before filling this in, and use its actual
+     output.** Do not fabricate a date, do not reuse a date from an
+     earlier artifact or an earlier run, and do not guess based on when
+     you think "now" is — a stale or invented date in a report's own
+     metadata line undermines everything else in it. This placeholder
+     appears twice (header and footer); use the same freshly-fetched
+     value both times.
    - The five `{{STAT_*}}` tiles from your tier and near-miss counts.
    - `{{PROGRAM_TABLE_ROWS}}` — one `<tr>` per program in `final_programs`,
      following the existing table's column order; use the `tier-pill`

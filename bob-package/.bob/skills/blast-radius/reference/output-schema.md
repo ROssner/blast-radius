@@ -22,7 +22,7 @@ turned into hyphens (e.g. `ACCT-ID` -> `acct-id`).
 
 ```json
 {
-  "generated_at": "ISO-8601 timestamp",
+  "generated_at": "ISO-8601 timestamp -- from `date -u +\"%Y-%m-%dT%H:%M:%SZ\"`, run fresh, never fabricated or reused from another artifact",
   "scope": "path walked, e.g. app/",
   "file_counts_by_extension": {".cbl": 0, ".cpy": 0, ".jcl": 0, ".bms": 0},
   "programs": [
