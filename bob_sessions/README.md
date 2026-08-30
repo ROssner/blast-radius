@@ -5,6 +5,23 @@ message/tool-call transcript of a Bob run, exported as JSON from Bob's own
 task history. They exist as verifiable evidence for the claims made
 elsewhere in this repo: what Bob actually did, not a paraphrase of it.
 
+### JSON vs. screenshots
+
+The `.json` files are complete session exports from Bob IDE. The `.png`
+files are screenshots of the session's consumption summary. Both formats
+are included.
+
+`blastradius_task01_inventory.png` is a screenshot of the `task01_inventory`
+run (task title "Run the INVENTORY stage of the blast-radius skill only.
+Stop after it...", cost 4.37), showing the COPY graph, call graph, and
+notable-copybooks sections of Bob's INVENTORY output.
+
+`blastradius_task02_full_pipeline_1.png` and `_2.png` are two screenshots
+from the `task02_full_pipeline` run: the first shows the pipeline's final
+chat summary as Bob wrote it, the second is a scroll further down the same
+summary, showing the headline metrics table, top-5 risk-scored programs,
+and the notable findings.
+
 ## `blastradius_task01_inventory.json`
 
 A run of the Blast Radius skill's INVENTORY stage only (the task was
