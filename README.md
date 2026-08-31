@@ -94,7 +94,7 @@ a false claim. Full derivation of every number: **[`docs/ACCURACY.md`](docs/ACCU
 This result followed directly from an earlier, worse one. A SPEC-only
 run against the same change request found 8 real aliases (100%
 precision) out of a documented true count of at least 28 (recall ≈
-28.6%) — and the gap turned out to be partly *instructed*: the TRACE and
+28.6%) and the gap turned out to be partly *instructed*: the TRACE and
 VERIFY persona prompts encoded the same "different token means near
 miss" mistake the ground truth itself had to unlearn. Fixing that
 persona bug, then re-running the full pipeline, is what produced the
@@ -117,7 +117,7 @@ It is hidden from Bob itself (see below), not from people.
 Two fields were traced exhaustively by hand, line by line, every hit
 checked against COBOL column 7 and string-literal boundaries. The
 `ACCT-ID` figures below reflect the alias reclassification described in
-[`docs/ground_truth/CHANGELOG.md`](docs/ground_truth/CHANGELOG.md) — a
+[`docs/ground_truth/CHANGELOG.md`](docs/ground_truth/CHANGELOG.md) a
 field genuinely fed by the target's value via an explicit MOVE (or a
 whole-record READ from a record containing it) counts as an alias, not a
 near miss, because widening the target requires widening it too:
