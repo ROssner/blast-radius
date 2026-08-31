@@ -21,7 +21,7 @@ name as a naming convention is not the field).
 
 Given a target field and a plain-language change request, it produces an
 impact report: every affected program, tiered by how it's actually
-affected, ranked by risk, with a dependency graph — and it does this
+affected, ranked by risk, with a dependency graph and it does this
 *inside* IBM Bob, using Bob's own agentic tool use (reading files, running
 shell commands it constructs itself, spawning subagents), not a
 standalone script that merely calls an LLM API.
@@ -45,12 +45,12 @@ standalone script that merely calls an LLM API.
    score, and renders a single self-contained HTML report.
 
 Full design and every prompt: [`bob-package/`](bob-package/) (canonical,
-version-controlled) — see [`bob-package/README.md`](bob-package/README.md)
+version-controlled) see [`bob-package/README.md`](bob-package/README.md)
 for how it's deployed into the actual Bob workspace and run.
 
 **Why Bob is the core component, not a wrapper around one:** the
 column-7/string-literal/exact-token discipline that makes this precise is
-taught to the personas as *method*, in plain instructions — not handed to
+taught to the personas as *method*, in plain instructions not handed to
 them as a finished script they execute blind. Bob's subagents write their
 own `sed`/`awk`/`grep` as part of their own reasoning, the same way a
 person would actually do this analysis by hand.
